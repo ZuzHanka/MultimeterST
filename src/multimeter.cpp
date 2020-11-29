@@ -1,8 +1,9 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "main.h"
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
+#include "avg_filter.hpp"
 
 
 /* Define ------------------------------------------------------------*/
@@ -27,6 +28,12 @@ static const uint32_t VREFINT = 1210;
 uint16_t adc_buf[ADC_BUF_LEN];
 // Output ring buffer (specified number of samples for each channel)
 uint32_t out_buf[ADC_BUF_LEN * NUMBER_OF_SAMPLES];
+// Filters
+AvgFilter adc1 = AvgFilter();
+AvgFilter adc2 = AvgFilter();
+AvgFilter adc3 = AvgFilter();
+AvgFilter adc4 = AvgFilter();
+AvgFilter adctemp = AvgFilter();
 
 
 /* Function prototypes -----------------------------------------------*/
@@ -39,8 +46,8 @@ uint16_t receive_msg(uint8_t *pData, uint16_t Size);
 HAL_StatusTypeDef send_msg(const char *msg, const char *pre_esc, const char *post_esc);
 HAL_StatusTypeDef run_adc_poll(HAL_StatusTypeDef hal_status);
 HAL_StatusTypeDef run_adc_poll_DMA(HAL_StatusTypeDef hal_status);
-uint32_t convert2volt(uint16_t adc_value, uint16_t adc_ref);
-uint32_t convert2celsius(uint16_t adc_value);
+uint16_t convert2volt(uint16_t adc_value, uint16_t adc_ref);
+uint16_t convert2celsius(uint16_t adc_value);
 
 
 /* Presunut do BSP ---------------------------------------------------*/
@@ -193,19 +200,23 @@ HAL_StatusTypeDef run_adc_poll_DMA(HAL_StatusTypeDef hal_status) {
 	}
 
 	while (1) {
-//		if (hal_status == HAL_OK) hal_status = HAL_ADC_Stop_DMA(&hadc1);
-//		HAL_Delay(2000);
+		char buffer[250];
+		sprintf(buffer, "V1: %4d mV \tV2: %4d mV \tV3: %4d mV \tV4: %4d mV \tTemp: %4d *C",
+				adc1.get(), adc2.get(), adc3.get(), adc4.get(), adctemp.get());
+		send_msg(buffer, "\x1b[3;0f\x1b[2K\x1b[36;1m", "\x1b[0m");
+
+		HAL_Delay(1000);
 	}
 }
 
-uint32_t convert2volt(uint16_t adc_value, uint16_t adc_ref) {
+uint16_t convert2volt(uint16_t adc_value, uint16_t adc_ref) {
 	uint32_t out_value = ((uint32_t) adc_value * VREFINT) / (adc_ref);
-	return out_value;
+	return (uint16_t) out_value;
 }
 
-uint32_t convert2celsius(uint16_t volt_value) {
+uint16_t convert2celsius(uint16_t volt_value) {
 	uint32_t out_value = ((volt_value - V25) / AVG_SLOPE) + 25;
-	return out_value;
+	return (uint16_t) out_value;
 }
 
 uint32_t compute_Udiff(uint8_t channel1, uint8_t channel0) {
@@ -230,23 +241,19 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc) {
 // Called when buffer is completely filled
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-  uint32_t sample[6];
+  uint16_t sample[6];
   for (int i=0; i<6; i++)
   {
 	  sample[i] = convert2volt(adc_buf[i], adc_buf[4]);
   }
   sample[5] = convert2celsius(sample[5]);
 
-  for (int i=0; i<6; i++)
-  {
-	  out_buf[i] = out_buf[i] + sample[i]/100;
-  }
+  adc1.update(sample[0]);
+  adc2.update(sample[1]);
+  adc3.update(sample[2]);
+  adc4.update(sample[3]);
+  adctemp.update(sample[5]);
 
-  char buffer[250];
-  int i=0;
-  sprintf(buffer, "V1: %4d mV \tV2: %4d mV \tV3: %4d mV \tV4: %4d mV \tVrefint: %4d mV \tTemp: %4d *C",
-		  sample[i++], sample[i++], sample[i++], sample[i++], sample[i++], sample[i]);
-  send_msg(buffer, "\x1b[3;0f\x1b[2K\x1b[36;1m", "\x1b[0m");
 }
 
 extern "C" void multimeter_main() {
