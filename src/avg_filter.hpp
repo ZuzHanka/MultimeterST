@@ -18,10 +18,11 @@ public:
 
 	uint16_t update(uint16_t sample)
 	{
-		m_sum = m_sum + sample;
-		m_idx = m_idx + 1;
+		m_sum += sample;
+		m_idx++;
 		if (m_idx >= m_no_samples)
 		{
+			m_sum += m_idx >> 1;  // division by 2 to correct rounded value
 			m_average = m_sum / m_idx;
 			m_idx = 0;
 			m_sum = 0;
