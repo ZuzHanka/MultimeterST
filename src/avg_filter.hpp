@@ -4,36 +4,58 @@
 class AvgFilter
 {
 public:
-	AvgFilter();
+	AvgFilter()
+	:
+		m_no_samples(100),
+		m_idx(0),
+		m_sum(0),
+		m_average(0),
+		m_is_new_average(false)
+	{
+	}
 
 	~AvgFilter() {}
 
 	uint16_t update(uint16_t sample)
 	{
-		m_sum = m_sum - m_buffer[m_idx_samples] + sample;
-		m_buffer[m_idx_samples] = sample;
-		m_idx_samples = ((m_idx_samples + 1) >= m_no_samples) ? (0) : (m_idx_samples + 1);
-		m_average = (uint16_t) (m_sum / m_no_samples);
+		m_sum = m_sum + sample;
+		m_idx = m_idx + 1;
+		if (m_idx >= m_no_samples)
+		{
+			m_average = m_sum / m_idx;
+			m_idx = 0;
+			m_sum = 0;
+			m_is_new_average = true;
+		}
+
 		return m_average;
 	}
 
 	uint16_t get()
 	{
+		m_is_new_average = false;
 		return m_average;
 	}
 
-	bool set_no_samples(size_t no);
+	bool is_new_average()
+	{
+		return m_is_new_average;
+	}
+
+	void set_no_samples(uint16_t no)
+	{
+		m_no_samples = no;
+	}
+
 
 private:
-	static const size_t BUFFER_SIZE = 100;
+	uint16_t m_no_samples;
 
-	size_t m_no_samples;
-
-	size_t m_idx_samples;
+	uint16_t m_idx;
 
 	uint32_t m_sum;
 
-	uint16_t m_buffer[BUFFER_SIZE];
-
 	volatile uint16_t m_average;
+
+	volatile bool m_is_new_average;
 };
