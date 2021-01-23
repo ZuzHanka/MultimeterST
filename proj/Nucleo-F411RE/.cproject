@@ -51,6 +51,15 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Core/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="C:/ST/workspace/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="C:/Users/ZuzHanka/STM32CubeIDE/workspace_1.4.0/MultimeterST/3party/STM32CubeF4/Drivers/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="C:/ST/workspace/MultimeterST/3party/STM32CubeF4/Drivers/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="../Core/Inc"/>
+									<listOptionValue builtIn="false" value="C:/ST/workspace/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
+									<listOptionValue builtIn="false" value="C:/Users/ZuzHanka/STM32CubeIDE/workspace_1.4.0/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
+									<listOptionValue builtIn="false" value="C:/Users/ZuzHanka/STM32CubeIDE/workspace_1.4.0/MultimeterST/3party/STM32CubeF4/Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
+									<listOptionValue builtIn="false" value="C:/ST/workspace/MultimeterST/3party/STM32CubeF4/Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
+									<listOptionValue builtIn="false" value="C:/Users/ZuzHanka/STM32CubeIDE/workspace_1.4.0/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.602106521" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -69,6 +78,15 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF4/Drivers/CMSIS/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF4/Drivers/CMSIS/Device/ST/STM32F4xx/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy&quot;"/>
+									<listOptionValue builtIn="false" value="C:/ST/workspace/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="C:/Users/ZuzHanka/STM32CubeIDE/workspace_1.4.0/MultimeterST/3party/STM32CubeF4/Drivers/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="C:/ST/workspace/MultimeterST/3party/STM32CubeF4/Drivers/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="../Core/Inc"/>
+									<listOptionValue builtIn="false" value="C:/ST/workspace/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
+									<listOptionValue builtIn="false" value="C:/Users/ZuzHanka/STM32CubeIDE/workspace_1.4.0/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
+									<listOptionValue builtIn="false" value="C:/Users/ZuzHanka/STM32CubeIDE/workspace_1.4.0/MultimeterST/3party/STM32CubeF4/Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
+									<listOptionValue builtIn="false" value="C:/ST/workspace/MultimeterST/3party/STM32CubeF4/Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
+									<listOptionValue builtIn="false" value="C:/Users/ZuzHanka/STM32CubeIDE/workspace_1.4.0/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Inc"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.998822410" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
 							</tool>
@@ -93,9 +111,9 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
+						<entry excluding="adc.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
-						<entry excluding="adc.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

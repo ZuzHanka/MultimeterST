@@ -16,17 +16,15 @@ enum Channel {
 	CHANNEL_2,
 	CHANNEL_3,
 	CHANNEL_4,
-	CHANNEL_VREFINT,
 	CHANNEL_TEMP,
-	CHANNEL_EMPTY
+	CHANNEL_VREFINT,
+	CHANNEL_COUNT
 };
 
 // ADC bits
 static const uint8_t ADC_BITS = 12;
 // ADC number of active channels
-static const uint8_t ADC_CHANNELS = 4;
-// ADC ring buffer size
-static const uint8_t ADC_BUF_LEN = ADC_CHANNELS + 2;
+static const uint8_t ADC_CHANNELS = CHANNEL_COUNT;
 // internal reference voltage [V]
 static const int32_t VREFINT = 1210;
 // temperature sensor average slope [mV/*C]

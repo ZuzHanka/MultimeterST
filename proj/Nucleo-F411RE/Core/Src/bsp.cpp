@@ -26,7 +26,7 @@ static const uint32_t TIMEOUT = 10;
 /* Variables ---------------------------------------------------------*/
 
 // ADC ring buffer (1 sample for each channel)
-uint16_t adc_buf[ADC_BUF_LEN];
+uint16_t adc_buf[ADC_CHANNELS];
 
 /* Functions ---------------------------------------------------------*/
 
@@ -65,7 +65,7 @@ bool adc_run(void)
 	}
 	if (hal_status == HAL_OK)
 	{
-		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_BUF_LEN);
+		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_CHANNELS);
 	}
 
 	return hal_status == HAL_OK;
