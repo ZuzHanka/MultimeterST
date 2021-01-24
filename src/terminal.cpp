@@ -27,53 +27,14 @@ bool Terminal::m_redraw_screen = true;
 
 void Terminal::loop()
 {
-	uint16_t is_new_average = 0;
-	for (int ch=0; ch<ADC_CHANNELS; ch++)
+	if (m_redraw_screen)
 	{
-		if (avgf[ch].is_new_average()) is_new_average++;
+		m_redraw_screen = false;
+		welcome();
+		print_help();
 	}
-	if (is_new_average == ADC_CHANNELS)
-	{
-		float avg[ADC_CHANNELS];
-		float diff[ADC_CHANNELS - 1];
-		for (int ch=0; ch<ADC_CHANNELS; ch++)
-		{
-			if (ch == CHANNEL_TEMP)
-			{
-				avg[ch] = convert2celsius(avgf[ch].get());
-			}
-			else
-			{
-				avg[ch] = convert_mV2V(avgf[ch].get());
-			}
-		}
-		for (int ch=0; ch<ADC_CHANNELS - 1; ch++)
-		{
-			diff[ch] = compute_Vdiff(avg[ch + 1], avg[ch]);
-		}
 
-		if (m_redraw_screen)
-		{
-			m_redraw_screen = false;
-			welcome();
-			print_help();
-		}
-
-		const size_t TERMINAL_WIDTH = 80;
-		char buffer[TERMINAL_WIDTH + 1];
-		buffer[TERMINAL_WIDTH] = '\0';
-
-		snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
-			  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
-		print_advanced(3, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
-			  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
-		print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, "Temp: %5.1f *C",
-				avg[CHANNEL_TEMP]);
-		print_advanced(5, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
-		print_advanced(25, 0, 0, "");
-	}
+	update_voltmeter();
 }
 
 bool Terminal::set_cursor_position(uint8_t row, uint8_t col)
@@ -164,6 +125,50 @@ bool Terminal::welcome()
 	return success;
 }
 
+void Terminal::update_voltmeter()
+{
+	uint16_t is_new_average = 0;
+	for (int ch=0; ch<ADC_CHANNELS; ch++)
+	{
+		if (avgf[ch].is_new_average()) is_new_average++;
+	}
+
+	if (is_new_average == ADC_CHANNELS)
+	{
+		float avg[ADC_CHANNELS];
+		float diff[ADC_CHANNELS - 1];
+		for (int ch=0; ch<ADC_CHANNELS; ch++)
+		{
+			if (ch == CHANNEL_TEMP)
+			{
+				avg[ch] = convert2celsius(avgf[ch].get());
+			}
+			else
+			{
+				avg[ch] = convert_mV2V(avgf[ch].get());
+			}
+		}
+		for (int ch=0; ch<ADC_CHANNELS - 1; ch++)
+		{
+			diff[ch] = compute_Vdiff(avg[ch + 1], avg[ch]);
+		}
+
+		const size_t TERMINAL_WIDTH = 80;
+		char buffer[TERMINAL_WIDTH + 1];
+		buffer[TERMINAL_WIDTH] = '\0';
+
+		snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
+			  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
+		print_advanced(3, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
+		snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
+			  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
+		print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
+		snprintf(buffer, TERMINAL_WIDTH, "Temp: %5.1f *C",
+				avg[CHANNEL_TEMP]);
+		print_advanced(5, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
+		print_advanced(25, 0, 0, "");
+	}
+}
 
 
 // Called when buffer is completely filled

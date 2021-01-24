@@ -47,10 +47,10 @@ protected:
 	static bool print_advanced(uint8_t row, uint8_t col, uint32_t decoration, const char * message);
 	static bool print_help();
 	static bool welcome();
+	static void update_voltmeter();
 
 private:
 	static AvgFilter avgf[ADC_CHANNELS];
-
 	static bool m_redraw_screen;
 };
 
