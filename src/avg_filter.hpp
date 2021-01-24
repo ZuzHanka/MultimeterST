@@ -1,3 +1,6 @@
+#ifndef AVG_FILTER_HPP_
+#define AVG_FILTER_HPP_
+
 #include <cstdint>
 #include <cstdio>
 
@@ -60,3 +63,5 @@ private:
 
 	volatile bool m_is_new_average;
 };
+
+#endif  // AVG_FILTER_HPP_
