@@ -12,6 +12,14 @@ class Terminal
 {
 public:
 
+	Terminal()
+	{
+	}
+
+	void loop();
+	void adc_callback();
+
+protected:
 	enum Decoration
 	{
 		BLACK = 0x001E,
@@ -34,29 +42,25 @@ public:
 		CLEAR_LINE = 0x4000
 	};
 
-	static void loop();
-	static void adc_callback();
-
-protected:
-	static bool send(const char * message)
+	bool send(const char * message)
 	{
 		return terminal_transmit(message, strlen(message));
 	}
-	static bool set_cursor_position(uint8_t row, uint8_t col);
-	static bool text_decoration(uint32_t flags);
-	static bool print_advanced(uint8_t row, uint8_t col, uint32_t decoration, const char * message);
-	static bool print_help();
-	static bool welcome();
-	static void update_voltmeter();
-	static bool key_pressed();
-	static void set_status(const char * message);
-	static void print_status();
+	bool set_cursor_position(uint8_t row, uint8_t col);
+	bool text_decoration(uint32_t flags);
+	bool print_advanced(uint8_t row, uint8_t col, uint32_t decoration, const char * message);
+	bool print_help();
+	bool welcome();
+	void update_voltmeter();
+	bool key_pressed();
+	void set_status(const char * message);
+	void print_status();
 
 private:
-	static AvgFilter avgf[ADC_CHANNELS];
-	static bool m_redraw_screen;
-	static bool m_voltmeter_diff_mode;
-	static const char * m_status_message;
+	AvgFilter avgf[ADC_CHANNELS];
+	bool m_redraw_screen = true;
+	bool m_voltmeter_diff_mode = false;
+	const char * m_status_message = nullptr;
 };
 
 #endif // TERMINAL_HPP_

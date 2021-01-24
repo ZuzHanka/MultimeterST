@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstring>
 
+
 static const char ESC_RESET[] = "\x1b[0m";
 
 static const char ESC_BOLD[] = "\x1b[1m";
@@ -21,13 +22,6 @@ static const char ESC_CLEAR_LINE[] = "\x1b[2K";
 // n=1 clears from cursor to start of line
 // n=2 clears entire line
 
-AvgFilter Terminal::avgf[ADC_CHANNELS];
-
-bool Terminal::m_redraw_screen = true;
-
-bool Terminal::m_voltmeter_diff_mode = false;
-
-const char * Terminal::m_status_message = nullptr;
 
 void Terminal::loop()
 {
@@ -251,9 +245,5 @@ void Terminal::adc_callback() {
 	}
 }
 
-void adc_callback()
-{
-	Terminal::adc_callback();
-}
 
 

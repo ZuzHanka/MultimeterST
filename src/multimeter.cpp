@@ -12,13 +12,18 @@
 /* Constants ---------------------------------------------------------*/
 
 /* Variables ---------------------------------------------------------*/
+Terminal terminal = Terminal();
 
 /* Functions ---------------------------------------------------------*/
+void adc_callback()
+{
+	terminal.adc_callback();
+}
 
 extern "C" void multimeter_main() {
 	(void) adc_run();
 
 	while (1) {
-		Terminal::loop();
+		terminal.loop();
 	}
 }
