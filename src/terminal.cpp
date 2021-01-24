@@ -69,6 +69,8 @@ void Terminal::loop()
 			diff[ch] = compute_Vdiff(avg[ch + 1], avg[ch]);
 		}
 
+		print_help();
+
 		const size_t TERMINAL_WIDTH = 80;
 		char buffer[TERMINAL_WIDTH + 1];
 		buffer[TERMINAL_WIDTH] = '\0';
@@ -103,6 +105,21 @@ bool Terminal::print_advanced(uint8_t row, uint8_t col, const char * color, cons
 	success = success && send(RESET);
 	return success;
 }
+
+bool Terminal::print_help()
+{
+	uint8_t row = 10;
+	bool success = true;
+//	success = success && print_advanced(row++, 0, WHITE, "");
+	success = success && print_advanced(row++, 0, WHITE, "d - toggle differential/normal mode");
+	success = success && print_advanced(row++, 0, WHITE, "q - stop logging");
+	success = success && print_advanced(row++, 0, WHITE, "l - start logging");
+	success = success && print_advanced(row++, 0, WHITE, "z - set zero to current value");
+	success = success && print_advanced(row++, 0, WHITE, "r - reset zero to default");
+	success = success && print_advanced(row++, 0, WHITE, "n - set number of samples per average");
+	return success;
+}
+
 
 // Called when buffer is completely filled
 void Terminal::adc_callback() {

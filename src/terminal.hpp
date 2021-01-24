@@ -54,6 +54,7 @@ protected:
 	}
 	static bool set_cursor_position(uint8_t row, uint8_t col);
 	static bool print_advanced(uint8_t row, uint8_t col, const char * color, const char * message);
+	static bool print_help();
 
 private:
 	static AvgFilter avgf[ADC_CHANNELS];
