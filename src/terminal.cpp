@@ -2,45 +2,28 @@
 
 #include "bsp.hpp"
 #include "calculations.hpp"
-#include "communication.hpp"
 
 #include <cstdio>
 #include <cstring>
 
-const char Terminal::BLACK[] = "\x1b[30m";
-const char Terminal::RED[] = "\x1b[31m";
-const char Terminal::GREEN[] = "\x1b[32m";
-const char Terminal::YELLOW[] = "\x1b[33m";
-const char Terminal::BLUE[] = "\x1b[34m";
-const char Terminal::MAGENTA[] = "\x1b[35m";
-const char Terminal::CYAN[] = "\x1b[36m";
-const char Terminal::WHITE[] = "\x1b[37m";
+static const char ESC_RESET[] = "\x1b[0m";
 
-const char Terminal::BRIGHT_BLACK[] = "\x1b[30;1m";
-const char Terminal::BRIGHT_RED[] = "\x1b[31;1m";
-const char Terminal::BRIGHT_GREEN[] = "\x1b[32;1m";
-const char Terminal::BRIGHT_YELLOW[] = "\x1b[33;1m";
-const char Terminal::BRIGHT_BLUE[] = "\x1b[34;1m";
-const char Terminal::BRIGHT_MAGENTA[] = "\x1b[35;1m";
-const char Terminal::BRIGHT_CYAN[] = "\x1b[36;1m";
-const char Terminal::BRIGHT_WHITE[] = "\x1b[37;1m";
+static const char ESC_BOLD[] = "\x1b[1m";
+static const char ESC_UNDERLINE[] = "\x1b[4m";
+static const char ESC_REVERSED[] = "\x1b[7m";
 
-const char Terminal::RESET[] = "\x1b[0m";
-
-const char Terminal::BOLD[] = "\x1b[1m";
-const char Terminal::UNDERLINE[] = "\x1b[4m";
-const char Terminal::REVERSED[] = "\x1b[7m";
-
-const char Terminal::CLEAR_SCREEN[] = "\x1b[2J";
+static const char ESC_CLEAR_SCREEN[] = "\x1b[2J";
 // n=0 clears from cursor until end of screen,
 // n=1 clears from cursor to beginning of screen
 // n=2 clears entire screen
-const char Terminal::CLEAR_LINE[] = "\x1b[2K";
+static const char ESC_CLEAR_LINE[] = "\x1b[2K";
 // n=0 clears from cursor to end of line
 // n=1 clears from cursor to start of line
 // n=2 clears entire line
 
 AvgFilter Terminal::avgf[ADC_CHANNELS];
+
+bool Terminal::m_redraw_screen = true;
 
 void Terminal::loop()
 {
@@ -69,7 +52,12 @@ void Terminal::loop()
 			diff[ch] = compute_Vdiff(avg[ch + 1], avg[ch]);
 		}
 
-		print_help();
+		if (m_redraw_screen)
+		{
+			m_redraw_screen = false;
+			welcome();
+			print_help();
+		}
 
 		const size_t TERMINAL_WIDTH = 80;
 		char buffer[TERMINAL_WIDTH + 1];
@@ -77,13 +65,14 @@ void Terminal::loop()
 
 		snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
 			  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
-		print_advanced(3, 0, BRIGHT_CYAN, buffer);
+		print_advanced(3, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
 		snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
 			  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
-		print_advanced(4, 0, BRIGHT_CYAN, buffer);
+		print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
 		snprintf(buffer, TERMINAL_WIDTH, "Temp: %5.1f *C",
 				avg[CHANNEL_TEMP]);
-		print_advanced(5, 0, BRIGHT_CYAN, buffer);
+		print_advanced(5, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
+		print_advanced(25, 0, 0, "");
 	}
 }
 
@@ -95,14 +84,62 @@ bool Terminal::set_cursor_position(uint8_t row, uint8_t col)
 	return send(buff);
 }
 
-bool Terminal::print_advanced(uint8_t row, uint8_t col, const char * color, const char * message)
+bool Terminal::text_decoration(uint32_t flags)
+{
+	bool success = true;
+
+	if ((flags & CLEAR_SCREEN) != 0)
+	{
+		success = success && send(ESC_CLEAR_SCREEN);
+	}
+
+	if ((flags & CLEAR_LINE) != 0)
+	{
+		success = success && send(ESC_CLEAR_LINE);
+	}
+
+	if ((flags & COLOR) != 0)
+	{
+		uint8_t color = (uint8_t) (flags & COLOR);
+		uint8_t bright = (uint8_t) (flags & BRIGHT);
+
+		char buff[10];
+		if (bright != 0)
+		{
+			snprintf(buff, sizeof(buff), "\x1b[%d;1m", color);
+		}
+		else
+		{
+			snprintf(buff, sizeof(buff), "\x1b[%dm", color);
+		}
+		success = success && send(buff);
+	}
+
+	if ((flags & BOLD) != 0)
+	{
+		success = success && send(ESC_BOLD);
+	}
+
+	if ((flags & UNDERLINE) != 0)
+	{
+		success = success && send(ESC_UNDERLINE);
+	}
+
+	if ((flags & REVERSED) != 0)
+	{
+		success = success && send(ESC_REVERSED);
+	}
+
+	return success;
+}
+
+bool Terminal::print_advanced(uint8_t row, uint8_t col, uint32_t decoration, const char * message)
 {
 	bool success = true;
 	success = success && set_cursor_position(row, col);
-	success = success && send(CLEAR_LINE);
-	success = success && send(color);
+	success = text_decoration(decoration);
 	success = success && send(message);
-	success = success && send(RESET);
+	success = success && send(ESC_RESET);
 	return success;
 }
 
@@ -110,15 +147,23 @@ bool Terminal::print_help()
 {
 	uint8_t row = 10;
 	bool success = true;
-//	success = success && print_advanced(row++, 0, WHITE, "");
-	success = success && print_advanced(row++, 0, WHITE, "d - toggle differential/normal mode");
-	success = success && print_advanced(row++, 0, WHITE, "q - stop logging");
-	success = success && print_advanced(row++, 0, WHITE, "l - start logging");
-	success = success && print_advanced(row++, 0, WHITE, "z - set zero to current value");
-	success = success && print_advanced(row++, 0, WHITE, "r - reset zero to default");
-	success = success && print_advanced(row++, 0, WHITE, "n - set number of samples per average");
+//	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "d - toggle differential/normal mode");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "q - stop logging");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "l - start logging");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "z - set zero to current value");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "r - reset zero to default");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "n - set number of samples per average");
 	return success;
 }
+
+bool Terminal::welcome()
+{
+	bool success = true;
+	success = success && print_advanced(0, 32, CLEAR_SCREEN | BOLD | UNDERLINE | BRIGHT | YELLOW, "Multimeter ST");
+	return success;
+}
+
 
 
 // Called when buffer is completely filled

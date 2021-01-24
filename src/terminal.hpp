@@ -11,38 +11,28 @@
 class Terminal
 {
 public:
-	static const char BLACK[];
-	static const char RED[];
-	static const char GREEN[];
-	static const char YELLOW[];
-	static const char BLUE[];
-	static const char MAGENTA[];
-	static const char CYAN[];
-	static const char WHITE[];
 
-	static const char BRIGHT_BLACK[];
-	static const char BRIGHT_RED[];
-	static const char BRIGHT_GREEN[];
-	static const char BRIGHT_YELLOW[];
-	static const char BRIGHT_BLUE[];
-	static const char BRIGHT_MAGENTA[];
-	static const char BRIGHT_CYAN[];
-	static const char BRIGHT_WHITE[];
+	enum Decoration
+	{
+		BLACK = 0x001E,
+		RED = 0x001F,
+		GREEN = 0x0020,
+		YELLOW = 0x0021,
+		BLUE = 0x0022,
+		MAGENTA = 0x0023,
+		CYAN = 0x0024,
+		WHITE = 0x0025,
 
-	static const char RESET[];
+		BRIGHT = 0x0040,
+		COLOR = 0x003F,
 
-	static const char BOLD[];
-	static const char UNDERLINE[];
-	static const char REVERSED[];
+		BOLD = 0x0080,
+		UNDERLINE = 0x0100,
+		REVERSED = 0x0200,
 
-	static const char CLEAR_SCREEN[];
-	// n=0 clears from cursor until end of screen,
-	// n=1 clears from cursor to beginning of screen
-	// n=2 clears entire screen
-	static const char CLEAR_LINE[];
-	// n=0 clears from cursor to end of line
-	// n=1 clears from cursor to start of line
-	// n=2 clears entire line
+		CLEAR_SCREEN = 0x8000,
+		CLEAR_LINE = 0x4000
+	};
 
 	static void loop();
 	static void adc_callback();
@@ -53,12 +43,15 @@ protected:
 		return terminal_transmit(message, strlen(message));
 	}
 	static bool set_cursor_position(uint8_t row, uint8_t col);
-	static bool print_advanced(uint8_t row, uint8_t col, const char * color, const char * message);
+	static bool text_decoration(uint32_t flags);
+	static bool print_advanced(uint8_t row, uint8_t col, uint32_t decoration, const char * message);
 	static bool print_help();
+	static bool welcome();
 
 private:
 	static AvgFilter avgf[ADC_CHANNELS];
 
+	static bool m_redraw_screen;
 };
 
 #endif // TERMINAL_HPP_

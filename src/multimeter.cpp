@@ -3,7 +3,6 @@
 #include "avg_filter.hpp"
 #include "bsp.hpp"
 #include "calculations.hpp"
-#include "communication.hpp"
 #include "terminal.hpp"
 
 #include <cstdint>
@@ -17,7 +16,6 @@
 /* Functions ---------------------------------------------------------*/
 
 extern "C" void multimeter_main() {
-	(void) welcome();
 	(void) adc_run();
 
 	while (1) {
