@@ -9,7 +9,6 @@ class AvgFilter
 public:
 	AvgFilter()
 	:
-		m_no_samples(100),
 		m_idx(0),
 		m_sum(0),
 		m_average(0),
@@ -46,14 +45,14 @@ public:
 		return m_is_new_average;
 	}
 
-	void set_no_samples(uint16_t no)
+	static void set_no_samples(uint16_t no)
 	{
 		m_no_samples = no;
 	}
 
 
 private:
-	uint16_t m_no_samples;
+	static uint16_t m_no_samples;
 
 	uint16_t m_idx;
 
