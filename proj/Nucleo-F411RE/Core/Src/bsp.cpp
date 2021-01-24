@@ -51,7 +51,7 @@ size_t terminal_receive(char * buff, size_t buff_size)
 	return len;
 }
 
-bool terminal_transmit(char * buff, size_t buff_size)
+bool terminal_transmit(const char * buff, size_t buff_size)
 {
 	return HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
 }

@@ -33,7 +33,7 @@ static const float AVG_SLOPE = 2.5;
 static const uint16_t V25 = 760;
 
 size_t terminal_receive(char * buff, size_t buff_size);
-bool terminal_transmit(char * buff, size_t buff_size);
+bool terminal_transmit(const char * buff, size_t buff_size);
 
 bool adc_run(void);
 uint16_t adc_get_sample(uint8_t channel);

@@ -7,6 +7,38 @@
 #include <cstdio>
 #include <cstring>
 
+const char Terminal::BLACK[] = "\x1b[30m";
+const char Terminal::RED[] = "\x1b[31m";
+const char Terminal::GREEN[] = "\x1b[32m";
+const char Terminal::YELLOW[] = "\x1b[33m";
+const char Terminal::BLUE[] = "\x1b[34m";
+const char Terminal::MAGENTA[] = "\x1b[35m";
+const char Terminal::CYAN[] = "\x1b[36m";
+const char Terminal::WHITE[] = "\x1b[37m";
+
+const char Terminal::BRIGHT_BLACK[] = "\x1b[30;1m";
+const char Terminal::BRIGHT_RED[] = "\x1b[31;1m";
+const char Terminal::BRIGHT_GREEN[] = "\x1b[32;1m";
+const char Terminal::BRIGHT_YELLOW[] = "\x1b[33;1m";
+const char Terminal::BRIGHT_BLUE[] = "\x1b[34;1m";
+const char Terminal::BRIGHT_MAGENTA[] = "\x1b[35;1m";
+const char Terminal::BRIGHT_CYAN[] = "\x1b[36;1m";
+const char Terminal::BRIGHT_WHITE[] = "\x1b[37;1m";
+
+const char Terminal::RESET[] = "\x1b[0m";
+
+const char Terminal::BOLD[] = "\x1b[1m";
+const char Terminal::UNDERLINE[] = "\x1b[4m";
+const char Terminal::REVERSED[] = "\x1b[7m";
+
+const char Terminal::CLEAR_SCREEN[] = "\x1b[2J";
+// n=0 clears from cursor until end of screen,
+// n=1 clears from cursor to beginning of screen
+// n=2 clears entire screen
+const char Terminal::CLEAR_LINE[] = "\x1b[2K";
+// n=0 clears from cursor to end of line
+// n=1 clears from cursor to start of line
+// n=2 clears entire line
 
 AvgFilter Terminal::avgf[ADC_CHANNELS];
 
@@ -43,15 +75,33 @@ void Terminal::loop()
 
 		snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
 			  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
-		send_msg(buffer, "\x1b[3;0f\x1b[2K\x1b[36;1m", "\x1b[0m");
+		print_advanced(3, 0, BRIGHT_CYAN, buffer);
 		snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
 			  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
-		send_msg(buffer, "\x1b[4;0f\x1b[2K\x1b[36;1m", "\x1b[0m");
+		print_advanced(4, 0, BRIGHT_CYAN, buffer);
 		snprintf(buffer, TERMINAL_WIDTH, "Temp: %5.1f *C",
 				avg[CHANNEL_TEMP]);
-		send_msg(buffer, "\x1b[5;0f\x1b[2K\x1b[36;1m", "\x1b[0m");
+		print_advanced(5, 0, BRIGHT_CYAN, buffer);
 	}
+}
 
+bool Terminal::set_cursor_position(uint8_t row, uint8_t col)
+{
+	constexpr char SET_POSITION[] = "\x1b[%d;%dH";
+	char buff[11];
+	snprintf(buff, sizeof(buff), SET_POSITION, row, col);
+	return send(buff);
+}
+
+bool Terminal::print_advanced(uint8_t row, uint8_t col, const char * color, const char * message)
+{
+	bool success = true;
+	success = success && set_cursor_position(row, col);
+	success = success && send(CLEAR_LINE);
+	success = success && send(color);
+	success = success && send(message);
+	success = success && send(RESET);
+	return success;
 }
 
 // Called when buffer is completely filled
@@ -67,3 +117,5 @@ void adc_callback()
 {
 	Terminal::adc_callback();
 }
+
+
