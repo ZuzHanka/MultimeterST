@@ -48,10 +48,15 @@ protected:
 	static bool print_help();
 	static bool welcome();
 	static void update_voltmeter();
+	static bool key_pressed();
+	static void set_status(const char * message);
+	static void print_status();
 
 private:
 	static AvgFilter avgf[ADC_CHANNELS];
 	static bool m_redraw_screen;
+	static bool m_voltmeter_diff_mode;
+	static const char * m_status_message;
 };
 
 #endif // TERMINAL_HPP_

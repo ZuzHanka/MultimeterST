@@ -25,13 +25,24 @@ AvgFilter Terminal::avgf[ADC_CHANNELS];
 
 bool Terminal::m_redraw_screen = true;
 
+bool Terminal::m_voltmeter_diff_mode = false;
+
+const char * Terminal::m_status_message = nullptr;
+
 void Terminal::loop()
 {
+	bool was_key_pressed = key_pressed();
+
 	if (m_redraw_screen)
 	{
 		m_redraw_screen = false;
 		welcome();
 		print_help();
+	}
+
+	if (was_key_pressed)
+	{
+		print_status();
 	}
 
 	update_voltmeter();
@@ -157,19 +168,79 @@ void Terminal::update_voltmeter()
 		char buffer[TERMINAL_WIDTH + 1];
 		buffer[TERMINAL_WIDTH] = '\0';
 
-		snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
-			  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
-		print_advanced(3, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
-			  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
-		print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, "Temp: %5.1f *C",
+		if (m_voltmeter_diff_mode)
+		{
+			snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
+				  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
+			print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
+		}
+		else
+		{
+			snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
+				  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
+			print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
+		}
+
+		snprintf(buffer, TERMINAL_WIDTH, "%5.1f *C ",
 				avg[CHANNEL_TEMP]);
-		print_advanced(5, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
-		print_advanced(25, 0, 0, "");
+		print_advanced(25, 70, CYAN, buffer);
+		print_advanced(25, 80, 0, "");
 	}
 }
 
+bool Terminal::key_pressed()
+{
+	char key;
+	size_t recv_bytes = terminal_receive(&key, 1);
+
+	if (recv_bytes == 1)
+	{
+		bool valid_key = false;
+
+		switch (key)
+		{
+			case 'd' :
+				{
+					valid_key = true;
+					m_voltmeter_diff_mode = !m_voltmeter_diff_mode;
+					if (m_voltmeter_diff_mode)
+					{
+						set_status("Voltmeter switched to differential mode.");
+					}
+					else
+					{
+						set_status("Voltmeter switched to default mode.");
+					}
+				}
+				break;
+
+			default:
+				set_status("Unsupported key pressed!");
+				break;
+		}
+
+		return valid_key;
+	}
+
+	return false;
+}
+
+void Terminal::set_status(const char * message)
+{
+	m_status_message = message;
+}
+
+void Terminal::print_status()
+{
+	if (m_status_message != nullptr)
+	{
+		print_advanced(25, 0, WHITE, m_status_message);
+	}
+	else
+	{
+		print_advanced(25, 0, WHITE, "");
+	}
+}
 
 // Called when buffer is completely filled
 void Terminal::adc_callback() {
