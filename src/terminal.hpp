@@ -60,7 +60,10 @@ private:
 	AvgFilter avgf[ADC_CHANNELS];
 	bool m_redraw_screen = true;
 	bool m_voltmeter_diff_mode = false;
+	bool m_voltmeter_zero_mode = false;
+	bool m_voltmeter_zero_mode_avg_update = false;
 	const char * m_status_message = nullptr;
+	float m_zero_avg[ADC_CHANNELS];
 };
 
 #endif // TERMINAL_HPP_

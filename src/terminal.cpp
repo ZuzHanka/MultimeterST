@@ -164,14 +164,49 @@ void Terminal::update_voltmeter()
 
 		if (m_voltmeter_diff_mode)
 		{
-			snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
-				  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
+			if (m_voltmeter_zero_mode)
+			{
+				if (m_voltmeter_zero_mode_avg_update)
+				{
+					m_voltmeter_zero_mode_avg_update = false;
+					m_zero_avg[CHANNEL_1] = diff[CHANNEL_1];
+					m_zero_avg[CHANNEL_2] = diff[CHANNEL_2];
+					m_zero_avg[CHANNEL_3] = diff[CHANNEL_3];
+				}
+				snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
+						diff[CHANNEL_1] - m_zero_avg[CHANNEL_1], diff[CHANNEL_2] - m_zero_avg[CHANNEL_2],
+						diff[CHANNEL_3] - m_zero_avg[CHANNEL_3]);
+			}
+			else
+			{
+				snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
+					  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
+			}
+
 			print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
 		}
 		else
 		{
-			snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
-				  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
+			if (m_voltmeter_zero_mode)
+			{
+				if (m_voltmeter_zero_mode_avg_update)
+				{
+					m_voltmeter_zero_mode_avg_update = false;
+					m_zero_avg[CHANNEL_1] = avg[CHANNEL_1];
+					m_zero_avg[CHANNEL_2] = avg[CHANNEL_2];
+					m_zero_avg[CHANNEL_3] = avg[CHANNEL_3];
+					m_zero_avg[CHANNEL_4] = avg[CHANNEL_4];
+				}
+				snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
+					  avg[CHANNEL_1] - m_zero_avg[CHANNEL_1], avg[CHANNEL_2] - m_zero_avg[CHANNEL_2],
+					  avg[CHANNEL_3] - m_zero_avg[CHANNEL_3], avg[CHANNEL_4] - m_zero_avg[CHANNEL_4]);
+			}
+			else
+			{
+				snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
+					  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
+			}
+
 			print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
 		}
 
@@ -197,6 +232,7 @@ bool Terminal::key_pressed()
 				{
 					valid_key = true;
 					m_voltmeter_diff_mode = !m_voltmeter_diff_mode;
+					m_voltmeter_zero_mode = false;
 					if (m_voltmeter_diff_mode)
 					{
 						set_status("Voltmeter switched to differential mode.");
@@ -204,6 +240,37 @@ bool Terminal::key_pressed()
 					else
 					{
 						set_status("Voltmeter switched to default mode.");
+					}
+				}
+				break;
+
+			case 'z' :
+				{
+					valid_key = true;
+					m_voltmeter_zero_mode = !m_voltmeter_zero_mode;
+					if (m_voltmeter_zero_mode)
+					{
+						m_voltmeter_zero_mode_avg_update = true;
+						if (m_voltmeter_diff_mode)
+						{
+							set_status("Voltmeter switched to zero differential mode.");
+						}
+						else
+						{
+							set_status("Voltmeter switched to zero mode.");
+						}
+					}
+					else
+					{
+						m_voltmeter_zero_mode_avg_update = false;
+						if (m_voltmeter_diff_mode)
+						{
+							set_status("Voltmeter switched to differential mode.");
+						}
+						else
+						{
+							set_status("Voltmeter switched to default mode.");
+						}
 					}
 				}
 				break;
@@ -228,7 +295,7 @@ void Terminal::print_status()
 {
 	if (m_status_message != nullptr)
 	{
-		print_advanced(25, 0, WHITE, m_status_message);
+		print_advanced(25, 0, CLEAR_LINE | WHITE, m_status_message);
 	}
 	else
 	{
