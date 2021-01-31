@@ -30,8 +30,15 @@ void Terminal::loop()
 	if (m_redraw_screen)
 	{
 		m_redraw_screen = false;
-		welcome();
-		print_help();
+		if (m_voltmeter_logging)
+		{
+			print_advanced(0, 0, CLEAR_SCREEN, "");
+		}
+		else
+		{
+			welcome();
+			print_help();
+		}
 	}
 
 	if (was_key_pressed)
@@ -115,11 +122,10 @@ bool Terminal::print_help()
 	bool success = true;
 //	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "");
 	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "d - toggle differential/normal mode");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "z - toggle zero/normal mode (set zero to current value)");
 	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "q - stop logging");
 	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "l - start logging");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "z - set zero to current value");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "r - reset zero to default");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "n - set number of samples per average");
+//	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "n - set number of samples per average");
 	return success;
 }
 
@@ -161,9 +167,11 @@ void Terminal::update_voltmeter()
 		const size_t TERMINAL_WIDTH = 80;
 		char buffer[TERMINAL_WIDTH + 1];
 		buffer[TERMINAL_WIDTH] = '\0';
+		const char * formatstring;
 
 		if (m_voltmeter_diff_mode)
 		{
+			formatstring = (m_voltmeter_logging) ? "%7.3f,%7.3f,%7.3f\n" : "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V";
 			if (m_voltmeter_zero_mode)
 			{
 				if (m_voltmeter_zero_mode_avg_update)
@@ -173,20 +181,19 @@ void Terminal::update_voltmeter()
 					m_zero_avg[CHANNEL_2] = diff[CHANNEL_2];
 					m_zero_avg[CHANNEL_3] = diff[CHANNEL_3];
 				}
-				snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
+				snprintf(buffer, TERMINAL_WIDTH, formatstring,
 						diff[CHANNEL_1] - m_zero_avg[CHANNEL_1], diff[CHANNEL_2] - m_zero_avg[CHANNEL_2],
 						diff[CHANNEL_3] - m_zero_avg[CHANNEL_3]);
 			}
 			else
 			{
-				snprintf(buffer, TERMINAL_WIDTH, "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V",
+				snprintf(buffer, TERMINAL_WIDTH, formatstring,
 					  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
 			}
-
-			print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
 		}
 		else
 		{
+			formatstring = (m_voltmeter_logging) ? "%7.3f,%7.3f,%7.3f,%7.3f\n" : "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V";
 			if (m_voltmeter_zero_mode)
 			{
 				if (m_voltmeter_zero_mode_avg_update)
@@ -197,23 +204,28 @@ void Terminal::update_voltmeter()
 					m_zero_avg[CHANNEL_3] = avg[CHANNEL_3];
 					m_zero_avg[CHANNEL_4] = avg[CHANNEL_4];
 				}
-				snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
+				snprintf(buffer, TERMINAL_WIDTH, formatstring,
 					  avg[CHANNEL_1] - m_zero_avg[CHANNEL_1], avg[CHANNEL_2] - m_zero_avg[CHANNEL_2],
 					  avg[CHANNEL_3] - m_zero_avg[CHANNEL_3], avg[CHANNEL_4] - m_zero_avg[CHANNEL_4]);
 			}
 			else
 			{
-				snprintf(buffer, TERMINAL_WIDTH, "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V",
+				snprintf(buffer, TERMINAL_WIDTH, formatstring,
 					  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
 			}
-
-			print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
 		}
 
-		snprintf(buffer, TERMINAL_WIDTH, "%5.1f *C ",
-				avg[CHANNEL_TEMP]);
-		print_advanced(25, 70, CYAN, buffer);
-		print_advanced(25, 80, 0, "");
+		if (m_voltmeter_logging)
+		{
+			send(buffer);
+		}
+		else
+		{
+			print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
+			snprintf(buffer, TERMINAL_WIDTH, "%5.1f *C ", avg[CHANNEL_TEMP]);
+			print_advanced(25, 70, CYAN, buffer);
+			print_advanced(25, 80, 0, "");
+		}
 	}
 }
 
@@ -228,6 +240,14 @@ bool Terminal::key_pressed()
 
 		switch (key)
 		{
+			case 'l' :
+				{
+					valid_key = true;
+					m_voltmeter_logging = !m_voltmeter_logging;
+					m_redraw_screen = true;
+				}
+			break;
+
 			case 'd' :
 				{
 					valid_key = true;

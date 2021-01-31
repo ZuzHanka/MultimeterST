@@ -59,6 +59,7 @@ protected:
 private:
 	AvgFilter avgf[ADC_CHANNELS];
 	bool m_redraw_screen = true;
+	bool m_voltmeter_logging = false;
 	bool m_voltmeter_diff_mode = false;
 	bool m_voltmeter_zero_mode = false;
 	bool m_voltmeter_zero_mode_avg_update = false;
