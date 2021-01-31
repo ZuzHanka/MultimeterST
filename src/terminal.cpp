@@ -41,7 +41,7 @@ void Terminal::loop()
 		}
 	}
 
-	if (was_key_pressed)
+	if (was_key_pressed && (m_voltmeter_logging == false))
 	{
 		print_status();
 	}
@@ -120,12 +120,12 @@ bool Terminal::print_help()
 {
 	uint8_t row = 10;
 	bool success = true;
-//	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "d - toggle differential/normal mode");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "z - toggle zero/normal mode (set zero to current value)");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "q - stop logging");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "l - start logging");
-//	success = success && print_advanced(row++, 0, CLEAR_LINE | WHITE, "n - set number of samples per average");
+//	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "d - toggle differential/normal mode");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "z - toggle zero/normal mode (set zero to current value)");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "l - start/stop logging");
+	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "q - stop current mode");
+//	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "n - set number of samples per average");
 	return success;
 }
 
@@ -221,7 +221,7 @@ void Terminal::update_voltmeter()
 		}
 		else
 		{
-			print_advanced(4, 0, CLEAR_LINE | BRIGHT | CYAN, buffer);
+			print_advanced(4, 0, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer);
 			snprintf(buffer, TERMINAL_WIDTH, "%5.1f *C ", avg[CHANNEL_TEMP]);
 			print_advanced(25, 70, CYAN, buffer);
 			print_advanced(25, 80, 0, "");
@@ -240,49 +240,49 @@ bool Terminal::key_pressed()
 
 		switch (key)
 		{
+			case 'q' :
+				{
+					valid_key = true;
+					if (m_voltmeter_logging)
+					{
+						m_voltmeter_logging = false;
+						m_redraw_screen = true;
+						set_status("Voltmeter logging finished.");
+					}
+					else if (m_voltmeter_zero_mode || m_voltmeter_diff_mode)
+					{
+						m_voltmeter_zero_mode = false;
+						m_voltmeter_diff_mode = false;
+						set_status("Voltmeter switched to default mode.");
+					}
+					else
+					{
+						// TODO: Leave Voltmeter -> main menu
+						valid_key = false;
+						set_status("Unsupported key pressed!");
+					}
+				}
+			break;
+
 			case 'l' :
 				{
 					valid_key = true;
 					m_voltmeter_logging = !m_voltmeter_logging;
 					m_redraw_screen = true;
+					if (m_voltmeter_logging == false)
+					{
+						set_status("Voltmeter logging finished.");
+					}
 				}
 			break;
 
 			case 'd' :
 				{
-					valid_key = true;
-					m_voltmeter_diff_mode = !m_voltmeter_diff_mode;
-					m_voltmeter_zero_mode = false;
-					if (m_voltmeter_diff_mode)
+					if (m_voltmeter_logging == false)
 					{
-						set_status("Voltmeter switched to differential mode.");
-					}
-					else
-					{
-						set_status("Voltmeter switched to default mode.");
-					}
-				}
-				break;
-
-			case 'z' :
-				{
-					valid_key = true;
-					m_voltmeter_zero_mode = !m_voltmeter_zero_mode;
-					if (m_voltmeter_zero_mode)
-					{
-						m_voltmeter_zero_mode_avg_update = true;
-						if (m_voltmeter_diff_mode)
-						{
-							set_status("Voltmeter switched to zero differential mode.");
-						}
-						else
-						{
-							set_status("Voltmeter switched to zero mode.");
-						}
-					}
-					else
-					{
-						m_voltmeter_zero_mode_avg_update = false;
+						valid_key = true;
+						m_voltmeter_diff_mode = !m_voltmeter_diff_mode;
+						m_voltmeter_zero_mode = false;
 						if (m_voltmeter_diff_mode)
 						{
 							set_status("Voltmeter switched to differential mode.");
@@ -290,6 +290,40 @@ bool Terminal::key_pressed()
 						else
 						{
 							set_status("Voltmeter switched to default mode.");
+						}
+					}
+				}
+				break;
+
+			case 'z' :
+				{
+					if (m_voltmeter_logging == false)
+					{
+						valid_key = true;
+						m_voltmeter_zero_mode = !m_voltmeter_zero_mode;
+						if (m_voltmeter_zero_mode)
+						{
+							m_voltmeter_zero_mode_avg_update = true;
+							if (m_voltmeter_diff_mode)
+							{
+								set_status("Voltmeter switched to zero differential mode.");
+							}
+							else
+							{
+								set_status("Voltmeter switched to zero mode.");
+							}
+						}
+						else
+						{
+							m_voltmeter_zero_mode_avg_update = false;
+							if (m_voltmeter_diff_mode)
+							{
+								set_status("Voltmeter switched to differential mode.");
+							}
+							else
+							{
+								set_status("Voltmeter switched to default mode.");
+							}
 						}
 					}
 				}
