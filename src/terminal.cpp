@@ -118,21 +118,28 @@ bool Terminal::print_advanced(uint8_t row, uint8_t col, uint32_t decoration, con
 
 bool Terminal::print_help()
 {
-	uint8_t row = 10;
 	bool success = true;
-//	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "d - toggle differential/normal mode");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "z - toggle zero/normal mode (set zero to current value)");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "l - start/stop logging");
-	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "q - stop current mode");
-//	success = success && print_advanced(row++, 0, CLEAR_LINE | YELLOW, "n - set number of samples per average");
+	success = success && print_advanced(3, 2, CLEAR_LINE | YELLOW, "Application:");
+	success = success && print_advanced(3, 15, BRIGHT | BOLD | YELLOW, "Voltmeter");
+	success = success && print_advanced(4, 2, CLEAR_LINE | YELLOW, "Sample frequency:     /s");
+	success = success && print_advanced(4, 20, BRIGHT | BOLD | YELLOW, "100");
+	success = success && print_advanced(5, 2, CLEAR_LINE | YELLOW, "Samples per average:");
+	success = success && print_advanced(5, 23, BRIGHT | BOLD | YELLOW, "40");
+
+	uint8_t row = 11;
+//	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "");
+	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "d - toggle differential/normal mode");
+	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "z - toggle zero/normal mode (set zero to current value)");
+	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "l - start/stop logging");
+	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "q - stop current mode");
+//	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "n - set number of samples per average");
 	return success;
 }
 
 bool Terminal::welcome()
 {
 	bool success = true;
-	success = success && print_advanced(0, 32, CLEAR_SCREEN | BOLD | UNDERLINE | BRIGHT | YELLOW, "Multimeter ST");
+	success = success && print_advanced(0, 33, CLEAR_SCREEN | BOLD | UNDERLINE | BRIGHT | YELLOW, "Multimeter ST");
 	return success;
 }
 
@@ -221,9 +228,9 @@ void Terminal::update_voltmeter()
 		}
 		else
 		{
-			print_advanced(4, 0, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer);
+			print_advanced(8, 2, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer);
 			snprintf(buffer, TERMINAL_WIDTH, "%5.1f *C ", avg[CHANNEL_TEMP]);
-			print_advanced(25, 70, CYAN, buffer);
+			print_advanced(25, 71, CYAN, buffer);
 			print_advanced(25, 80, 0, "");
 		}
 	}
@@ -240,6 +247,7 @@ bool Terminal::key_pressed()
 
 		switch (key)
 		{
+			case 'Q' :
 			case 'q' :
 				{
 					valid_key = true;
@@ -262,8 +270,9 @@ bool Terminal::key_pressed()
 						set_status("Unsupported key pressed!");
 					}
 				}
-			break;
+				break;
 
+			case 'L' :
 			case 'l' :
 				{
 					valid_key = true;
@@ -274,8 +283,9 @@ bool Terminal::key_pressed()
 						set_status("Voltmeter logging finished.");
 					}
 				}
-			break;
+				break;
 
+			case 'D' :
 			case 'd' :
 				{
 					if (m_voltmeter_logging == false)
@@ -295,6 +305,7 @@ bool Terminal::key_pressed()
 				}
 				break;
 
+			case 'Z' :
 			case 'z' :
 				{
 					if (m_voltmeter_logging == false)
@@ -349,11 +360,11 @@ void Terminal::print_status()
 {
 	if (m_status_message != nullptr)
 	{
-		print_advanced(25, 0, CLEAR_LINE | WHITE, m_status_message);
+		print_advanced(25, 2, CLEAR_LINE | YELLOW, m_status_message);
 	}
 	else
 	{
-		print_advanced(25, 0, WHITE, "");
+		print_advanced(25, 2, YELLOW, "");
 	}
 }
 
