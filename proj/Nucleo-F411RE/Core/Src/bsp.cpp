@@ -91,6 +91,12 @@ uint16_t adc_get_sample_mV(uint8_t channel)
 	return voltage;
 }
 
+float adc_mV_to_Celsius(int16_t value_mV)
+{
+	float out_value = ((float) (value_mV - V25) / AVG_SLOPE) + 25.0;
+	return out_value;
+}
+
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	(void) hadc;

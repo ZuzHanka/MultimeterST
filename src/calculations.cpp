@@ -4,8 +4,7 @@
 
 
 float convert2celsius(int16_t value_mV) {
-	float out_value = ((float) (value_mV - V25) / AVG_SLOPE) + 25.0;
-	return out_value;
+	return adc_mV_to_Celsius(value_mV);
 }
 
 float convert_mV2V(int16_t value_mV)
