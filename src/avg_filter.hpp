@@ -50,6 +50,11 @@ public:
 		m_no_samples = no;
 	}
 
+	static uint16_t get_no_samples()
+	{
+		return m_no_samples;
+	}
+
 
 private:
 	static uint16_t m_no_samples;

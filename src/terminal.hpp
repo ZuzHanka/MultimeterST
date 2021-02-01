@@ -55,6 +55,7 @@ protected:
 	bool key_pressed();
 	void set_status(const char * message);
 	void print_status();
+	bool print_setup();
 
 private:
 	AvgFilter avgf[ADC_CHANNELS];
@@ -65,6 +66,9 @@ private:
 	bool m_voltmeter_zero_mode_avg_update = false;
 	const char * m_status_message = nullptr;
 	float m_zero_avg[ADC_CHANNELS];
+	bool m_voltmeter_no_samples_mode = false;
+	bool m_read_int = false;
+	uint16_t m_no_from_keybord = 0;
 };
 
 #endif // TERMINAL_HPP_
