@@ -49,7 +49,7 @@ protected:
 	bool set_cursor_position(uint8_t row, uint8_t col);
 	bool text_decoration(uint32_t flags);
 	bool print_advanced(uint8_t row, uint8_t col, uint32_t decoration, const char * message);
-	bool print_help();
+	bool print_help(uint8_t help_spec);
 	bool welcome();
 	void update_voltmeter();
 	bool key_pressed();

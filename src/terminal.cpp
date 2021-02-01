@@ -38,13 +38,21 @@ void Terminal::loop()
 		{
 			welcome();
 			print_setup();
-			print_help();
+			print_help(0);
 		}
 	}
 
 	if (was_key_pressed && (m_voltmeter_logging == false))
 	{
 		print_status();
+		if (m_voltmeter_no_samples_mode)
+		{
+			print_help(1);
+		}
+		else
+		{
+			print_help(0);
+		}
 	}
 
 	update_voltmeter();
@@ -117,17 +125,37 @@ bool Terminal::print_advanced(uint8_t row, uint8_t col, uint32_t decoration, con
 	return success;
 }
 
-bool Terminal::print_help()
+bool Terminal::print_help(uint8_t help_spec)
 {
 	bool success = true;
-
 	uint8_t row = 11;
-//	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "");
-	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "d - toggle differential/normal mode");
-	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "z - toggle zero/normal mode (set zero to current value)");
-	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "l - start/stop logging");
-	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "q - stop current mode");
-	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "n - set number of samples per average");
+
+	//	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "");
+
+	switch (help_spec)
+	{
+	case (1) :  // get number from keyboard
+		{
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "0 .. 9 - write numbers");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "n - set number of samples per average");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "q - leave without change");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
+		}
+		break;
+
+	default :  // basic
+		{
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "d - toggle differential/normal mode");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "z - toggle zero/normal mode (set zero to current value)");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "l - start/stop logging");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "q - stop current mode");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "n - set number of samples per average");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
+		}
+		break;
+	}
 	return success;
 }
 
