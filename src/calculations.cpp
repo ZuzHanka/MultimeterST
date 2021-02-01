@@ -3,11 +3,6 @@
 #include "bsp.hpp"
 
 
-int16_t convert2milivolt(uint16_t adc_value, uint16_t adc_ref) {
-	uint32_t out_value = ((uint32_t) adc_value * VREFINT + (adc_ref >> 1)) / (adc_ref);
-	return (uint16_t) out_value;
-}
-
 float convert2celsius(int16_t value_mV) {
 	float out_value = ((float) (value_mV - V25) / AVG_SLOPE) + 25.0;
 	return out_value;

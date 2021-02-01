@@ -17,7 +17,7 @@ size_t terminal_receive(char * buff, size_t buff_size);
 bool terminal_transmit(const char * buff, size_t buff_size);
 
 bool adc_run(void);
-uint16_t adc_get_sample(uint8_t channel);
+uint16_t adc_get_sample_mV(uint8_t channel);
 
 /* Callbacks -----------------------------------------------------------------*/
 

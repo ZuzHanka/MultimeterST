@@ -25,7 +25,7 @@ static const uint32_t TIMEOUT = 10;
 /* Variables ---------------------------------------------------------*/
 
 // ADC ring buffer (1 sample for each channel)
-uint16_t adc_buf[ADC_CHANNELS];
+uint16_t adc_buf[CHANNEL_COUNT];
 
 /* Functions ---------------------------------------------------------*/
 
@@ -64,15 +64,31 @@ bool adc_run(void)
 	}
 	if (hal_status == HAL_OK)
 	{
-		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_CHANNELS);
+		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, CHANNEL_COUNT);
 	}
 
 	return hal_status == HAL_OK;
 }
 
-uint16_t adc_get_sample(uint8_t channel)
+uint16_t adc_get_sample_mV(uint8_t channel)
 {
-	return adc_buf[channel];
+	volatile const uint16_t * p_VREFINT_CAL = (uint16_t*) 0x1FFF7A2A;
+
+	// Vdda = 3.3 V * VREFINT_CAL / VREFINT_DATA
+	uint64_t numerator = 3300ULL * (*p_VREFINT_CAL);
+	uint32_t denominator = adc_buf[CHANNEL_VREFINT];
+
+	// VCHANNELx = Vdda * ADCx_DATA / FULL_SCALE
+	if (channel != CHANNEL_VDDA)
+	{
+		numerator = numerator * adc_buf[channel];
+		uint32_t full_scale = (1UL << ADC_BITS) - 1;
+		denominator = denominator * full_scale;
+	}
+
+	uint16_t voltage = numerator / denominator;
+
+	return voltage;
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)

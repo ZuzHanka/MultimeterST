@@ -361,7 +361,7 @@ void Terminal::print_status()
 void Terminal::adc_callback() {
 	for (int ch=0; ch<ADC_CHANNELS; ch++)
 	{
-		int16_t sample = convert2milivolt(adc_get_sample(ch), adc_get_sample(CHANNEL_VREFINT));
+		int16_t sample = adc_get_sample_mV(ch);
 		avgf[ch].update(sample);
 	}
 }
