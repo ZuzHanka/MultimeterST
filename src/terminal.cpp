@@ -142,15 +142,17 @@ bool Terminal::print_help(uint8_t help_spec)
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
 		}
 		break;
 
 	default :  // basic
 		{
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "q - stop current mode / return");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "SPACE - redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "d - toggle differential/normal mode");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "z - toggle zero/normal mode (set zero to current value)");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "l - start/stop logging");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "q - stop current mode");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "n - set number of samples per average");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
 		}
@@ -297,6 +299,15 @@ bool Terminal::key_pressed()
 
 		switch (key)
 		{
+			case ' ' :
+				{
+					if (m_voltmeter_logging == false)
+					{
+						m_redraw_screen = true;
+					}
+				}
+				break;
+
 			case 'Q' :
 			case 'q' :
 				{
