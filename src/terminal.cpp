@@ -34,6 +34,12 @@ void Terminal::loop()
 		{
 			print_advanced(0, 0, CLEAR_SCREEN, "");
 		}
+		else if (m_voltmeter_no_samples_mode)
+		{
+			welcome();
+			print_setup();
+			print_help(1);
+		}
 		else
 		{
 			welcome();
@@ -45,6 +51,7 @@ void Terminal::loop()
 	if (was_key_pressed && (m_voltmeter_logging == false))
 	{
 		print_status();
+		print_from_keyboard();
 		if (m_voltmeter_no_samples_mode)
 		{
 			print_help(1);
@@ -150,9 +157,9 @@ bool Terminal::print_help(uint8_t help_spec)
 		{
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "q - stop current mode / return");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "SPACE - redraw screen");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "d - toggle differential/normal mode");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "z - toggle zero/normal mode (set zero to current value)");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "l - start/stop logging");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "d - toggle differential / normal mode");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "z - toggle zero / normal mode (set zero to current value)");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "l - start / stop logging");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "n - set number of samples per average");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
 		}
@@ -174,13 +181,14 @@ bool Terminal::print_setup()
 	char buffer[TERMINAL_WIDTH + 1];
 	buffer[TERMINAL_WIDTH] = '\0';
 	snprintf(buffer, TERMINAL_WIDTH, "%5d", AvgFilter::get_no_samples());
-	print_advanced(25, 71, CYAN, buffer);
 
 	bool success = true;
 	success = success && print_advanced(3, 2, CLEAR_LINE | YELLOW, "Application:");
 	success = success && print_advanced(3, 15, BRIGHT | BOLD | YELLOW, "Voltmeter");
+	success = success && print_advanced(3, 65, YELLOW, "VDDA:");
 	success = success && print_advanced(4, 2, CLEAR_LINE | YELLOW, "Sample frequency:     Hz");
 	success = success && print_advanced(4, 20, BRIGHT | BOLD | YELLOW, "100");
+	success = success && print_advanced(4, 65, YELLOW, "TEMP:");
 	success = success && print_advanced(5, 2, CLEAR_LINE | YELLOW, "Samples per average:");
 	success = success && print_advanced(5, 23, BRIGHT | BOLD | YELLOW, buffer);
 	return success;
@@ -281,9 +289,11 @@ void Terminal::update_voltmeter()
 		else
 		{
 			print_advanced(8, 2, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer);
+			snprintf(buffer, TERMINAL_WIDTH, "%7.3f V ", avg[CHANNEL_VDDA]);
+			print_advanced(3, 71, CYAN, buffer);
 			snprintf(buffer, TERMINAL_WIDTH, "%5.1f *C ", avg[CHANNEL_TEMP]);
-			print_advanced(25, 71, CYAN, buffer);
-			print_advanced(25, 80, 0, "");
+			print_advanced(4, 72, CYAN, buffer);
+			print_advanced(24, 80, 0, "");
 		}
 	}
 }
@@ -299,10 +309,11 @@ bool Terminal::key_pressed()
 
 		switch (key)
 		{
-			case ' ' :
+			case ' ' :  // SPACE
 				{
 					if (m_voltmeter_logging == false)
 					{
+						valid_key = true;
 						m_redraw_screen = true;
 					}
 				}
@@ -323,6 +334,7 @@ bool Terminal::key_pressed()
 						m_voltmeter_no_samples_mode = false;
 						m_read_int = false;
 						m_no_from_keybord = 0;
+						m_from_keyboard_message = nullptr;
 						set_status("Number of samples per average was NOT set.");
 					}
 					else if (m_voltmeter_zero_mode || m_voltmeter_diff_mode)
@@ -421,10 +433,11 @@ bool Terminal::key_pressed()
 						m_read_int = (m_voltmeter_no_samples_mode) ? true : false;
 						if (m_voltmeter_no_samples_mode)
 						{
-							set_status("Set number of samples per average:");
+							set_status("Set number of samples per average (1 .. 9999):");
 						}
 						else
 						{
+							m_from_keyboard_message = nullptr;
 							if (m_no_from_keybord < 1)
 							{
 								m_no_from_keybord = 1;
@@ -458,14 +471,16 @@ bool Terminal::key_pressed()
 						{
 							set_status("Number of samples per period reached maximum (9999).");
 							m_no_from_keybord = 9999;
+							m_from_keyboard_message = nullptr;
 						}
 						else
 						{
 							const size_t TERMINAL_WIDTH = 80;
 							static char buffer[TERMINAL_WIDTH + 1];
 							buffer[TERMINAL_WIDTH] = '\0';
-							snprintf(buffer, TERMINAL_WIDTH, "Set number of samples per average: %5d", m_no_from_keybord);
-							set_status(buffer);
+							snprintf(buffer, TERMINAL_WIDTH, "%5d", m_no_from_keybord);
+							set_status("Set number of samples per average (1 .. 9999):");
+							set_from_keyboard(buffer);
 						}
 					}
 				}
@@ -491,13 +506,27 @@ void Terminal::print_status()
 {
 	if (m_status_message != nullptr)
 	{
-		print_advanced(25, 2, CLEAR_LINE | YELLOW, m_status_message);
+		print_advanced(24, 2, CLEAR_LINE | YELLOW, m_status_message);
 	}
 	else
 	{
-		print_advanced(25, 2, YELLOW, "");
+		print_advanced(24, 2, CLEAR_LINE | YELLOW, "");
 	}
 }
+
+void Terminal::set_from_keyboard(const char * message)
+{
+	m_from_keyboard_message = message;
+}
+
+void Terminal::print_from_keyboard()
+{
+	if (m_from_keyboard_message != nullptr)
+	{
+		print_advanced(24, 50, BRIGHT |BOLD |RED, m_from_keyboard_message);
+	}
+}
+
 
 // Called when buffer is completely filled
 void Terminal::adc_callback() {
