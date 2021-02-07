@@ -58,8 +58,6 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 
 bool adc_run(void)
 {
-	terminal_transmit("start\n", 6);
-
 	HAL_StatusTypeDef hal_status = HAL_TIM_Base_Start(&htim1);
 	if (hal_status == HAL_OK)
 	{
