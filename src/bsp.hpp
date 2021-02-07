@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <cstring>
 
+uint32_t get_tick(void);
+
 size_t terminal_receive(char * buff, size_t buff_size);
 bool terminal_transmit(const char * buff, size_t buff_size);
 

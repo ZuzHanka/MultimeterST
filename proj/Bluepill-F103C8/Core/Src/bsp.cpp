@@ -32,6 +32,11 @@ FIFObuffer usb_fifo;
 
 /* Functions ---------------------------------------------------------*/
 
+uint32_t get_tick(void)
+{
+	return HAL_GetTick();
+}
+
 size_t terminal_receive(char * buff, size_t buff_size)
 {
 	size_t len = 0;
