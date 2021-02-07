@@ -8,6 +8,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "bsp.hpp"
+#include "fifo_buffer.hpp"
 
 #include "stm32f1xx_hal.h"
 #include "usbd_cdc_if.h"
@@ -27,26 +28,34 @@ static const uint32_t TIMEOUT = 10;
 
 // ADC ring buffer (1 sample for each channel)
 uint16_t adc_buf[CHANNEL_COUNT];
+FIFObuffer usb_fifo;
 
 /* Functions ---------------------------------------------------------*/
 
 size_t terminal_receive(char * buff, size_t buff_size)
 {
 	size_t len = 0;
-	while (buff_size > 0)
+
+	len = usb_fifo.pop((char *) buff, buff_size);
+
+	if (len == 0)
 	{
-		HAL_StatusTypeDef status = HAL_UART_Receive(&huart1, (uint8_t*) buff, 1, TIMEOUT);
-		if (status == HAL_OK)
+		while (buff_size > 0)
 		{
-			buff++;
-			buff_size--;
-			len++;
-		}
-		else
-		{
-			break;
+			HAL_StatusTypeDef status = HAL_UART_Receive(&huart1, (uint8_t*) buff, 1, TIMEOUT);
+			if (status == HAL_OK)
+			{
+				buff++;
+				buff_size--;
+				len++;
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
+
 	return len;
 }
 
@@ -108,5 +117,5 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 extern "C" void CDC_ReceiveCallback(uint8_t * buffer, uint32_t length)
 {
-
+	usb_fifo.push((char *) buffer, length);
 }
