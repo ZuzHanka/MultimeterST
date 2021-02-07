@@ -113,15 +113,8 @@ float adc_mV_to_Celsius(int16_t value_mV)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	if (hadc == &hadc3)
+	if (hadc == &hadc1)
 	{
-		// Check that all ADC's are completes...
-		while ((HAL_ADC_STATE_REG_EOC & ~HAL_ADC_GetState(&hadc1))
-				&& (HAL_ADC_STATE_REG_EOC & ~HAL_ADC_GetState(&hadc2)))
-		{
-			// wait for end of conversion
-		}
-
 		adc_callback();
 	}
 }
