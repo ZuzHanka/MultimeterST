@@ -7,6 +7,8 @@
 #include <cstring>
 
 
+const char version[20] = "1.0.0";
+
 static const char ESC_RESET[] = "\x1b[0m";
 
 static const char ESC_BOLD[] = "\x1b[1m";
@@ -171,7 +173,8 @@ bool Terminal::print_help(uint8_t help_spec)
 bool Terminal::welcome()
 {
 	bool success = true;
-	success = success && print_advanced(0, 33, CLEAR_SCREEN | BOLD | UNDERLINE | BRIGHT | YELLOW, "Multimeter ST");
+	success = success && print_advanced(1, 33, CLEAR_SCREEN | BOLD | UNDERLINE | BRIGHT | YELLOW, "Multimeter ST");
+	success = success && print_advanced(2, 37, BRIGHT | YELLOW, version);
 	return success;
 }
 
@@ -190,7 +193,7 @@ bool Terminal::print_setup()
 	success = success && print_advanced(4, 20, BRIGHT | BOLD | YELLOW, "100");
 	success = success && print_advanced(4, 65, YELLOW, "TEMP:");
 	success = success && print_advanced(5, 2, CLEAR_LINE | YELLOW, "Samples per average:");
-	success = success && print_advanced(5, 23, BRIGHT | BOLD | YELLOW, buffer);
+	success = success && print_advanced(5, 22, BRIGHT | BOLD | YELLOW, buffer);
 	return success;
 }
 
@@ -213,6 +216,8 @@ void Terminal::update_voltmeter()
 
 	if (is_new_average == ADC_CHANNELS)
 	{
+		static constexpr uint8_t channels_orderred[] = {CHANNEL_1, CHANNEL_2, CHANNEL_3, CHANNEL_4};
+
 		float avg[ADC_CHANNELS];
 		float diff[ADC_CHANNELS - 1];
 		for (int ch=0; ch<ADC_CHANNELS; ch++)
@@ -226,9 +231,9 @@ void Terminal::update_voltmeter()
 				avg[ch] = convert_mV2V(avgf[ch].get());
 			}
 		}
-		for (int ch=0; ch<ADC_CHANNELS - 1; ch++)
+		for (int ch=0; ch< (int) sizeof(channels_orderred) - 1; ch++)
 		{
-			diff[ch] = compute_Vdiff(avg[ch + 1], avg[ch]);
+			diff[ch] = compute_Vdiff(avg[channels_orderred[ch + 1]], avg[channels_orderred[ch]]);
 		}
 
 		const size_t TERMINAL_WIDTH = 80;
@@ -347,7 +352,7 @@ bool Terminal::key_pressed()
 					{
 						// TODO: Leave Voltmeter -> main menu
 						valid_key = false;
-						set_status("Unsupported key pressed!");
+//						set_status("Unsupported key pressed!");
 					}
 				}
 				break;
@@ -487,7 +492,7 @@ bool Terminal::key_pressed()
 				break;
 
 			default:
-				set_status("Unsupported key pressed!");
+//				set_status("Unsupported key pressed!");
 				break;
 		}
 
