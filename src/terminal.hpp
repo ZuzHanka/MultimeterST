@@ -52,6 +52,7 @@ protected:
 	bool print_help(uint8_t help_spec);
 	bool welcome();
 	void update_voltmeter();
+	void update_generator();
 	bool key_pressed();
 	void set_status(const char * message);
 	void print_status();

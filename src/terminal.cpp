@@ -41,12 +41,14 @@ void Terminal::loop()
 			welcome();
 			print_setup();
 			print_help(1);
+			update_generator();
 		}
 		else
 		{
 			welcome();
 			print_setup();
 			print_help(0);
+			update_generator();
 		}
 	}
 
@@ -137,7 +139,7 @@ bool Terminal::print_advanced(uint8_t row, uint8_t col, uint32_t decoration, con
 bool Terminal::print_help(uint8_t help_spec)
 {
 	bool success = true;
-	uint8_t row = 11;
+	uint8_t row = 9;
 
 	//	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "");
 
@@ -184,16 +186,32 @@ bool Terminal::print_setup()
 	char buffer[TERMINAL_WIDTH + 1];
 	buffer[TERMINAL_WIDTH] = '\0';
 	snprintf(buffer, TERMINAL_WIDTH, "%5d", AvgFilter::get_no_samples());
+	uint8_t row = 0;
 
 	bool success = true;
-	success = success && print_advanced(3, 2, CLEAR_LINE | YELLOW, "Application:");
-	success = success && print_advanced(3, 15, BRIGHT | BOLD | YELLOW, "Voltmeter");
-	success = success && print_advanced(3, 65, YELLOW, "VDDA:");
-	success = success && print_advanced(4, 2, CLEAR_LINE | YELLOW, "Sample frequency:     Hz");
-	success = success && print_advanced(4, 20, BRIGHT | BOLD | YELLOW, "100");
-	success = success && print_advanced(4, 65, YELLOW, "TEMP:");
-	success = success && print_advanced(5, 2, CLEAR_LINE | YELLOW, "Samples per average:");
-	success = success && print_advanced(5, 22, BRIGHT | BOLD | YELLOW, buffer);
+	row = 3;
+
+	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "Application:");
+	success = success && print_advanced(row, 15, BRIGHT | BOLD | YELLOW, "Voltmeter");
+	success = success && print_advanced(row++, 65, YELLOW, "VDDA:");
+	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "Sample frequency:     Hz");
+	success = success && print_advanced(row, 20, BRIGHT | BOLD | YELLOW, "100");
+	success = success && print_advanced(row++, 65, YELLOW, "TEMP:");
+	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "Samples per average:");
+	success = success && print_advanced(row, 22, BRIGHT | BOLD | YELLOW, buffer);
+
+	row = 16;
+
+	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "Application:");
+	success = success && print_advanced(row, 15, BRIGHT | BOLD | YELLOW, "Generator");
+	success = success && print_advanced(row++, 65, YELLOW, "VDDA:");
+	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "PWM1:");
+	success = success && print_advanced(row, 10, YELLOW, "frequency:        Hz");
+	success = success && print_advanced(row++, 33, YELLOW, "duty cycle:     %");
+	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "PWM2:");
+	success = success && print_advanced(row, 10, YELLOW, "frequency:        Hz");
+	success = success && print_advanced(row++, 33, YELLOW, "duty cycle:     %");
+
 	return success;
 }
 
@@ -203,6 +221,7 @@ void Terminal::update_voltmeter()
 	{
 		AvgFilter::set_no_samples(m_no_from_keybord);
 		print_setup();
+		update_generator();
 		m_voltmeter_no_samples_mode = false;
 		m_read_int = false;
 		m_no_from_keybord = 0;
@@ -243,7 +262,7 @@ void Terminal::update_voltmeter()
 
 		if (m_voltmeter_diff_mode)
 		{
-			formatstring = (m_voltmeter_logging) ? "%7.3f,%7.3f,%7.3f\n" : "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V";
+			formatstring = (m_voltmeter_logging) ? "%7.3f,%7.3f,%7.3f\n\r" : "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V";
 			if (m_voltmeter_zero_mode)
 			{
 				if (m_voltmeter_zero_mode_avg_update)
@@ -265,7 +284,7 @@ void Terminal::update_voltmeter()
 		}
 		else
 		{
-			formatstring = (m_voltmeter_logging) ? "%7.3f,%7.3f,%7.3f,%7.3f\n" : "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V";
+			formatstring = (m_voltmeter_logging) ? "%7.3f,%7.3f,%7.3f,%7.3f\n\r" : "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V";
 			if (m_voltmeter_zero_mode)
 			{
 				if (m_voltmeter_zero_mode_avg_update)
@@ -293,13 +312,43 @@ void Terminal::update_voltmeter()
 		}
 		else
 		{
-			print_advanced(8, 2, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer);
+			print_advanced(7, 2, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer);
 			snprintf(buffer, TERMINAL_WIDTH, "%7.3f V ", avg[CHANNEL_VDDA]);
 			print_advanced(3, 71, CYAN, buffer);
 			snprintf(buffer, TERMINAL_WIDTH, "%5.1f *C ", avg[CHANNEL_TEMP]);
 			print_advanced(4, 72, CYAN, buffer);
 			print_advanced(24, 80, 0, "");
 		}
+	}
+}
+
+void Terminal::update_generator()
+{
+	if (m_voltmeter_logging == false)
+	{
+		const size_t TERMINAL_WIDTH = 80;
+		char buffer[TERMINAL_WIDTH + 1];
+		buffer[TERMINAL_WIDTH] = '\0';
+		const char * formatstring;
+
+		float f1 = 10;
+		float f2 = 1000;
+		uint16_t d1 = 50;
+		uint16_t d2 = 25;
+
+		formatstring = "%7.1f";
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, f1);
+		print_advanced(17, 20, BOLD | BRIGHT | YELLOW, buffer);
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, f2);
+		print_advanced(18, 20, BOLD | BRIGHT | YELLOW, buffer);
+
+		formatstring = "%3d";
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, d1);
+		print_advanced(17, 45, BOLD | BRIGHT | YELLOW, buffer);
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, d2);
+		print_advanced(18, 45, BOLD | BRIGHT | YELLOW, buffer);
+
+		print_advanced(24, 80, 0, "");
 	}
 }
 

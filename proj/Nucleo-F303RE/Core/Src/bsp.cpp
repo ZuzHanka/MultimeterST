@@ -18,6 +18,8 @@ extern ADC_HandleTypeDef hadc1;
 extern ADC_HandleTypeDef hadc2;
 extern ADC_HandleTypeDef hadc3;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim8;
+
 
 /* Constants ---------------------------------------------------------*/
 
@@ -88,6 +90,23 @@ bool adc_run(void)
 
 	return hal_status == HAL_OK;
 }
+
+bool pwm_run(void)
+{
+	HAL_StatusTypeDef hal_status = HAL_OK;
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+	}
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
+	}
+
+	return hal_status == HAL_OK;
+
+}
+
 
 uint16_t adc_get_sample_mV(uint8_t channel)
 {
