@@ -132,5 +132,10 @@
 			<type>1</type>
 			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</locationURI>
 		</link>
+		<link>
+			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
