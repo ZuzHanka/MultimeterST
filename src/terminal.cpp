@@ -139,7 +139,7 @@ bool Terminal::print_advanced(uint8_t row, uint8_t col, uint32_t decoration, con
 bool Terminal::print_help(uint8_t help_spec)
 {
 	bool success = true;
-	uint8_t row = 9;
+	uint8_t row = 10;
 
 	//	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "");
 
@@ -153,7 +153,6 @@ bool Terminal::print_help(uint8_t help_spec)
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, " ");
 		}
 		break;
 
@@ -161,7 +160,6 @@ bool Terminal::print_help(uint8_t help_spec)
 		{
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "q - stop current mode / return");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "SPACE - redraw screen");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "d - toggle differential / normal mode");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "z - toggle zero / normal mode (set zero to current value)");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "l - start / stop logging");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "n - set number of samples per average");
@@ -193,10 +191,10 @@ bool Terminal::print_setup()
 
 	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "Application:");
 	success = success && print_advanced(row, 15, BRIGHT | BOLD | YELLOW, "Voltmeter");
-	success = success && print_advanced(row++, 65, YELLOW, "VDDA:");
+	success = success && print_advanced(row++, 66, YELLOW, "VDDA:");
 	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "Sample frequency:     Hz");
 	success = success && print_advanced(row, 20, BRIGHT | BOLD | YELLOW, "100");
-	success = success && print_advanced(row++, 65, YELLOW, "TEMP:");
+	success = success && print_advanced(row++, 66, YELLOW, "TEMP:");
 	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "Samples per average:");
 	success = success && print_advanced(row, 22, BRIGHT | BOLD | YELLOW, buffer);
 
@@ -204,7 +202,6 @@ bool Terminal::print_setup()
 
 	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "Application:");
 	success = success && print_advanced(row, 15, BRIGHT | BOLD | YELLOW, "Generator");
-	success = success && print_advanced(row++, 65, YELLOW, "VDDA:");
 	success = success && print_advanced(row, 2, CLEAR_LINE | YELLOW, "PWM1:");
 	success = success && print_advanced(row, 10, YELLOW, "frequency:        Hz");
 	success = success && print_advanced(row++, 33, YELLOW, "duty cycle:     %");
@@ -235,10 +232,26 @@ void Terminal::update_voltmeter()
 
 	if (is_new_average == ADC_CHANNELS)
 	{
-		static constexpr uint8_t channels_orderred[] = {CHANNEL_1, CHANNEL_2, CHANNEL_3, CHANNEL_4};
+		// number of user ADC voltmeter channels
+		int user_volt_channels = sizeof(Channel_ordered);
+		// number of user ADC voltmeter differential channels
+		int user_diff_channels = user_volt_channels - 1;
 
+		// read and convert actual ADC values here
 		float avg[ADC_CHANNELS];
-		float diff[ADC_CHANNELS - 1];
+		float diff[user_diff_channels];
+
+		const size_t TERMINAL_WIDTH = 80;
+		char buffer_avg[TERMINAL_WIDTH + 1] = " ";
+		buffer_avg[TERMINAL_WIDTH] = '\0';
+		char buffer_diff[TERMINAL_WIDTH + 1] = " ";
+		buffer_diff[TERMINAL_WIDTH] = '\0';
+		const char * formatstring;
+		char aux_buffer[TERMINAL_WIDTH + 1];
+		aux_buffer[TERMINAL_WIDTH] = '\0';
+
+
+		// get values from ADC
 		for (int ch=0; ch<ADC_CHANNELS; ch++)
 		{
 			if (ch == CHANNEL_TEMP)
@@ -250,73 +263,105 @@ void Terminal::update_voltmeter()
 				avg[ch] = convert_mV2V(avgf[ch].get());
 			}
 		}
-		for (int ch=0; ch< (int) sizeof(channels_orderred) - 1; ch++)
+		// apply difference
+		for (int ch=0; ch<user_diff_channels; ch++)
 		{
-			diff[ch] = compute_Vdiff(avg[channels_orderred[ch + 1]], avg[channels_orderred[ch]]);
+			diff[ch] = compute_Vdiff(avg[Channel_ordered[ch + 1]], avg[Channel_ordered[ch]]);
 		}
 
-		const size_t TERMINAL_WIDTH = 80;
-		char buffer[TERMINAL_WIDTH + 1];
-		buffer[TERMINAL_WIDTH] = '\0';
-		const char * formatstring;
-
-		if (m_voltmeter_diff_mode)
+		// apply function zero (optional) and compute values for print
+		if (m_voltmeter_zero_mode)
 		{
-			formatstring = (m_voltmeter_logging) ? "%7.3f,%7.3f,%7.3f\n\r" : "V2-V1: %7.3f V     V3-V2: %7.3f V     V4-V3: %7.3f V";
-			if (m_voltmeter_zero_mode)
+			if (m_voltmeter_zero_mode_avg_update)
 			{
-				if (m_voltmeter_zero_mode_avg_update)
+				m_voltmeter_zero_mode_avg_update = false;
+				for (int ch=0; ch<user_volt_channels; ch++)
 				{
-					m_voltmeter_zero_mode_avg_update = false;
-					m_zero_avg[CHANNEL_1] = diff[CHANNEL_1];
-					m_zero_avg[CHANNEL_2] = diff[CHANNEL_2];
-					m_zero_avg[CHANNEL_3] = diff[CHANNEL_3];
+					m_zero_avg[Channel_ordered[ch]] = avg[Channel_ordered[ch]];
 				}
-				snprintf(buffer, TERMINAL_WIDTH, formatstring,
-						diff[CHANNEL_1] - m_zero_avg[CHANNEL_1], diff[CHANNEL_2] - m_zero_avg[CHANNEL_2],
-						diff[CHANNEL_3] - m_zero_avg[CHANNEL_3]);
+				for (int ch=0; ch<user_diff_channels; ch++)
+				{
+					m_zero_diff_avg[ch] = diff[ch];
+				}
 			}
-			else
+			aux_buffer[0] = ' ';
+			for (int ch=0; ch<user_volt_channels; ch++)
 			{
-				snprintf(buffer, TERMINAL_WIDTH, formatstring,
-					  diff[CHANNEL_1], diff[CHANNEL_2], diff[CHANNEL_3]);
+				char aux_string[27] = "";
+				strcat(aux_string, adc_ch_names[Channel_ordered[ch]]);
+				strcat(aux_string, ": %6.3f V     ");
+				formatstring = (m_voltmeter_logging) ? "%6.3f," : aux_string;
+				snprintf(aux_buffer, TERMINAL_WIDTH, formatstring, avg[Channel_ordered[ch]] - m_zero_avg[Channel_ordered[ch]]);
+				if ((m_voltmeter_logging) && (ch == (user_volt_channels - 1)))
+					{
+						strcat(aux_buffer, "\n\r");
+					}
+				strcat(buffer_avg, aux_buffer);
+			}
+			aux_buffer[0] = ' ';
+			for (int ch=0; ch<user_diff_channels; ch++)
+			{
+				char aux_string[27] = "";
+				strcat(aux_string, adc_ch_names[Channel_ordered[ch + 1]]);
+				strcat(aux_string, "-");
+				strcat(aux_string, adc_ch_names[Channel_ordered[ch]]);
+				strcat(aux_string, ": %6.3f V     ");
+				formatstring = (m_voltmeter_logging) ? "%6.3f," : aux_string;
+				snprintf(aux_buffer, TERMINAL_WIDTH, formatstring, diff[ch] - m_zero_diff_avg[ch]);
+				if ((m_voltmeter_logging) && (ch == (user_diff_channels - 1)))
+					{
+						strcat(aux_buffer, "\n\r");
+					}
+				strcat(buffer_diff, aux_buffer);
 			}
 		}
 		else
 		{
-			formatstring = (m_voltmeter_logging) ? "%7.3f,%7.3f,%7.3f,%7.3f\n\r" : "V1: %7.3f V     V2: %7.3f V     V3: %7.3f V     V4: %7.3f V";
-			if (m_voltmeter_zero_mode)
+			aux_buffer[0] = ' ';
+			for (int ch=0; ch<user_volt_channels; ch++)
 			{
-				if (m_voltmeter_zero_mode_avg_update)
-				{
-					m_voltmeter_zero_mode_avg_update = false;
-					m_zero_avg[CHANNEL_1] = avg[CHANNEL_1];
-					m_zero_avg[CHANNEL_2] = avg[CHANNEL_2];
-					m_zero_avg[CHANNEL_3] = avg[CHANNEL_3];
-					m_zero_avg[CHANNEL_4] = avg[CHANNEL_4];
-				}
-				snprintf(buffer, TERMINAL_WIDTH, formatstring,
-					  avg[CHANNEL_1] - m_zero_avg[CHANNEL_1], avg[CHANNEL_2] - m_zero_avg[CHANNEL_2],
-					  avg[CHANNEL_3] - m_zero_avg[CHANNEL_3], avg[CHANNEL_4] - m_zero_avg[CHANNEL_4]);
+				char aux_string[27] = "";
+				strcat(aux_string, adc_ch_names[Channel_ordered[ch]]);
+				strcat(aux_string, ": %6.3f V     ");
+				formatstring = (m_voltmeter_logging) ? "%6.3f," : aux_string;
+				snprintf(aux_buffer, TERMINAL_WIDTH, formatstring, avg[Channel_ordered[ch]]);
+				if ((m_voltmeter_logging) && (ch == (user_volt_channels - 1)))
+					{
+						strcat(aux_buffer, "\n\r");
+					}
+				strcat(buffer_avg, aux_buffer);
 			}
-			else
+			aux_buffer[0] = ' ';
+			for (int ch=0; ch<user_diff_channels; ch++)
 			{
-				snprintf(buffer, TERMINAL_WIDTH, formatstring,
-					  avg[CHANNEL_1], avg[CHANNEL_2], avg[CHANNEL_3], avg[CHANNEL_4]);
+				char aux_string[27] = "";
+				strcat(aux_string, adc_ch_names[Channel_ordered[ch + 1]]);
+				strcat(aux_string, "-");
+				strcat(aux_string, adc_ch_names[Channel_ordered[ch]]);
+				strcat(aux_string, ": %6.3f V     ");
+				formatstring = (m_voltmeter_logging) ? "%6.3f," : aux_string;
+				snprintf(aux_buffer, TERMINAL_WIDTH, formatstring, diff[ch]);
+				if ((m_voltmeter_logging) && (ch == (user_diff_channels - 1)))
+					{
+						strcat(aux_buffer, "\n\r");
+					}
+				strcat(buffer_diff, aux_buffer);
 			}
 		}
 
 		if (m_voltmeter_logging)
 		{
-			send(buffer);
+			send(buffer_avg);
 		}
 		else
 		{
-			print_advanced(7, 2, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer);
-			snprintf(buffer, TERMINAL_WIDTH, "%7.3f V ", avg[CHANNEL_VDDA]);
-			print_advanced(3, 71, CYAN, buffer);
-			snprintf(buffer, TERMINAL_WIDTH, "%5.1f *C ", avg[CHANNEL_TEMP]);
-			print_advanced(4, 72, CYAN, buffer);
+			print_advanced(7, 1, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer_avg);
+			print_advanced(8, 1, CLEAR_LINE | BOLD | BRIGHT | CYAN, buffer_diff);
+			snprintf(buffer_avg, TERMINAL_WIDTH, "%6.3f V ", avg[CHANNEL_VDDA]);
+			print_advanced(3, 72, CYAN, buffer_avg);
+			snprintf(buffer_avg, TERMINAL_WIDTH, "%4.1f *C ", avg[CHANNEL_TEMP]);
+			print_advanced(4, 73, CYAN, buffer_avg);
+			// set cursor to the bottom right corner
 			print_advanced(24, 80, 0, "");
 		}
 	}
@@ -391,10 +436,10 @@ bool Terminal::key_pressed()
 						m_from_keyboard_message = nullptr;
 						set_status("Number of samples per average was NOT set.");
 					}
-					else if (m_voltmeter_zero_mode || m_voltmeter_diff_mode)
+					else if (m_voltmeter_zero_mode)  // || m_voltmeter_diff_mode
 					{
 						m_voltmeter_zero_mode = false;
-						m_voltmeter_diff_mode = false;
+//						m_voltmeter_diff_mode = false;
 						set_status("Voltmeter switched to default mode.");
 					}
 					else
@@ -422,25 +467,25 @@ bool Terminal::key_pressed()
 				}
 				break;
 
-			case 'D' :
-			case 'd' :
-				{
-					if ((m_voltmeter_logging == false) && (m_voltmeter_no_samples_mode == false))
-					{
-						valid_key = true;
-						m_voltmeter_diff_mode = !m_voltmeter_diff_mode;
-						m_voltmeter_zero_mode = false;
-						if (m_voltmeter_diff_mode)
-						{
-							set_status("Voltmeter switched to differential mode.");
-						}
-						else
-						{
-							set_status("Voltmeter switched to default mode.");
-						}
-					}
-				}
-				break;
+//			case 'D' :
+//			case 'd' :
+//				{
+//					if ((m_voltmeter_logging == false) && (m_voltmeter_no_samples_mode == false))
+//					{
+//						valid_key = true;
+//						m_voltmeter_diff_mode = !m_voltmeter_diff_mode;
+//						m_voltmeter_zero_mode = false;
+//						if (m_voltmeter_diff_mode)
+//						{
+//							set_status("Voltmeter switched to differential mode.");
+//						}
+//						else
+//						{
+//							set_status("Voltmeter switched to default mode.");
+//						}
+//					}
+//				}
+//				break;
 
 			case 'Z' :
 			case 'z' :
@@ -452,26 +497,26 @@ bool Terminal::key_pressed()
 						if (m_voltmeter_zero_mode)
 						{
 							m_voltmeter_zero_mode_avg_update = true;
-							if (m_voltmeter_diff_mode)
-							{
-								set_status("Voltmeter switched to zero differential mode.");
-							}
-							else
-							{
+//							if (m_voltmeter_diff_mode)
+//							{
+//								set_status("Voltmeter switched to zero differential mode.");
+//							}
+//							else
+//							{
 								set_status("Voltmeter switched to zero mode.");
-							}
+//							}
 						}
 						else
 						{
 							m_voltmeter_zero_mode_avg_update = false;
-							if (m_voltmeter_diff_mode)
-							{
-								set_status("Voltmeter switched to differential mode.");
-							}
-							else
-							{
+//							if (m_voltmeter_diff_mode)
+//							{
+//								set_status("Voltmeter switched to differential mode.");
+//							}
+//							else
+//							{
 								set_status("Voltmeter switched to default mode.");
-							}
+//							}
 						}
 					}
 				}

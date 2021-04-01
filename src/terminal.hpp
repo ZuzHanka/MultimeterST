@@ -64,12 +64,12 @@ private:
 	AvgFilter avgf[ADC_CHANNELS];
 	bool m_redraw_screen = true;
 	bool m_voltmeter_logging = false;
-	bool m_voltmeter_diff_mode = false;
 	bool m_voltmeter_zero_mode = false;
 	bool m_voltmeter_zero_mode_avg_update = false;
 	const char * m_status_message = nullptr;
 	const char * m_from_keyboard_message = nullptr;
 	float m_zero_avg[ADC_CHANNELS];
+	float m_zero_diff_avg[ADC_CHANNELS - 1];
 	bool m_voltmeter_no_samples_mode = false;
 	bool m_read_int = false;
 	uint16_t m_no_from_keybord = 0;
