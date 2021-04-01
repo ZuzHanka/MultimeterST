@@ -24,6 +24,16 @@ extern UART_HandleTypeDef huart1;
 // timeout for one character receive
 static const uint32_t TIMEOUT = 10;
 
+const char * adc_ch_names[CHANNEL_COUNT] =
+{
+		"A0",
+		"A1",
+		"A2",
+		"A3",
+		"VDDA",
+		"TEMP"
+};
+
 /* Variables ---------------------------------------------------------*/
 
 // ADC ring buffer (1 sample for each channel)
