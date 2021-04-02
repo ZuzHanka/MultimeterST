@@ -51,4 +51,6 @@ enum Channel_PWM {
 	CHANNEL_PWM_COUNT
 };
 
+extern const char * pwm_ch_names[CHANNEL_PWM_COUNT];
+
 #endif /* INC_BSP_CONF_HPP_ */

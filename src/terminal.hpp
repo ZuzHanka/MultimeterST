@@ -58,14 +58,19 @@ protected:
 	void print_status();
 	void set_from_keyboard(const char * message);
 	void print_from_keyboard();
-	bool print_setup();
+	bool print_voltmeter();
+	bool print_generator();
+//	bool print_setup();
 
 private:
 	AvgFilter avgf[ADC_CHANNELS];
 	bool m_redraw_screen = true;
+	bool m_application_voltmeter = false;
+	bool m_application_generator = false;
 	bool m_voltmeter_logging = false;
 	bool m_voltmeter_zero_mode = false;
 	bool m_voltmeter_zero_mode_avg_update = false;
+	bool m_generator_channel_upper = true;
 	const char * m_status_message = nullptr;
 	const char * m_from_keyboard_message = nullptr;
 	float m_zero_avg[ADC_CHANNELS];

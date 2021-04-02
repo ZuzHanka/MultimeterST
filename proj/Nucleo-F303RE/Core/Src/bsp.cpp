@@ -27,6 +27,7 @@ extern TIM_HandleTypeDef htim8;
 // timeout for one character receive
 static const uint32_t TIMEOUT = 10;
 
+// printed voltmeter channel names
 const char * adc_ch_names[CHANNEL_COUNT] =
 {
 		"A0",
@@ -35,6 +36,13 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 		"VDDA",
 		"A2",
 		"A3"
+};
+
+// printed PWM channel names
+const char * pwm_ch_names[CHANNEL_PWM_COUNT] =
+{
+		"D10",
+		"D9"
 };
 
 /* Variables ---------------------------------------------------------*/
@@ -153,6 +161,20 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	}
 }
 
+uint32_t pwm_get_duty(uint32_t channel)
+{
+	uint32_t duty = 0;
+	if (channel == CHANNEL_PWM1)
+	{
+		duty = LL_TIM_OC_GetCompareCH1(htim8.Instance);
+	}
+	if (channel == CHANNEL_PWM2)
+	{
+		duty =  LL_TIM_OC_GetCompareCH2(htim8.Instance);
+	}
+	return duty;
+}
+
 void pwm_set_duty(uint32_t channel, uint32_t duty)
 {
 	if (channel == CHANNEL_PWM1)
@@ -167,12 +189,14 @@ void pwm_set_duty(uint32_t channel, uint32_t duty)
 
 uint32_t pwm_get_freq(void)
 {
-		return LL_TIM_GetAutoReload(htim8.Instance);
+	// uint32_t LL_TIM_GetPrescaler(TIM_TypeDef *TIMx)
+	return LL_TIM_GetPrescaler(htim8.Instance);
 }
 
 void pwm_set_freq(uint32_t freq)
 {
-	LL_TIM_SetAutoReload(htim8.Instance, freq);
+	// void LL_TIM_SetPrescaler(TIM_TypeDef *TIMx, uint32_t Prescaler)
+	LL_TIM_SetPrescaler(htim8.Instance, freq);
 }
-// uint32_t LL_TIM_GetAutoReload(TIM_TypeDef *TIMx)
-// void LL_TIM_SetAutoReload(TIM_TypeDef *TIMx, uint32_t AutoReload)
+
+// __LL_TIM_CALC_PSC(__TIMCLK__, __CNTCLK__)
