@@ -10,6 +10,7 @@
 #include "bsp.hpp"
 
 #include "stm32f3xx_hal.h"
+#include "stm32f3xx_ll_tim.h"
 
 /* Presunut do BSP ---------------------------------------------------*/
 
@@ -117,7 +118,6 @@ bool pwm_run(void)
 
 }
 
-
 uint16_t adc_get_sample_mV(uint8_t channel)
 {
 	volatile const uint16_t * p_VREFINT_CAL = (uint16_t*) 0x1FFFF7BA;
@@ -152,3 +152,27 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 		adc_callback();
 	}
 }
+
+void pwm_set_duty(uint32_t channel, uint32_t duty)
+{
+	if (channel == CHANNEL_PWM1)
+	{
+		LL_TIM_OC_SetCompareCH1(htim8.Instance, duty);
+	}
+	if (channel == CHANNEL_PWM2)
+	{
+		LL_TIM_OC_SetCompareCH2(htim8.Instance, duty);
+	}
+}
+
+uint32_t pwm_get_freq(void)
+{
+		return LL_TIM_GetAutoReload(htim8.Instance);
+}
+
+void pwm_set_freq(uint32_t freq)
+{
+	LL_TIM_SetAutoReload(htim8.Instance, freq);
+}
+// uint32_t LL_TIM_GetAutoReload(TIM_TypeDef *TIMx)
+// void LL_TIM_SetAutoReload(TIM_TypeDef *TIMx, uint32_t AutoReload)

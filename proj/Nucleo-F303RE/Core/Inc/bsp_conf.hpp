@@ -28,6 +28,15 @@ enum Channel {
 	CHANNEL_VDDA = CHANNEL_VREFINT	// Return Vdda instead of Vrefint value.
 };
 
+static constexpr uint8_t Channel_ordered[] =
+{
+		CHANNEL_1,
+		CHANNEL_2,
+		CHANNEL_3,
+		CHANNEL_4
+};
+
+extern const char * adc_ch_names[CHANNEL_COUNT];
 
 // ADC bits
 static const uint8_t ADC_BITS = 12;
@@ -36,6 +45,10 @@ static const float AVG_SLOPE = 4.3;
 // temperature sensor voltage at 25*C [mV]
 static const uint16_t V25 = 1430;
 
-
+enum Channel_PWM {
+	CHANNEL_PWM1,
+	CHANNEL_PWM2,
+	CHANNEL_PWM_COUNT
+};
 
 #endif /* INC_BSP_CONF_HPP_ */

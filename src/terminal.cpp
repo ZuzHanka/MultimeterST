@@ -7,7 +7,7 @@
 #include <cstring>
 
 
-const char version[20] = "1.0.0";
+const char version[20] = "1.1.0";
 
 static const char ESC_RESET[] = "\x1b[0m";
 
@@ -376,22 +376,33 @@ void Terminal::update_generator()
 		buffer[TERMINAL_WIDTH] = '\0';
 		const char * formatstring;
 
-		float f1 = 10;
-		float f2 = 1000;
-		uint16_t d1 = 50;
-		uint16_t d2 = 25;
+		uint16_t duty1 = 333;
+		uint16_t duty2 = 666;
+		uint32_t freq = 2000;
 
-		formatstring = "%7.1f";
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, f1);
+		formatstring = "%5d";
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, pwm_get_freq());
+		print_advanced(23, 25, BOLD | BRIGHT | YELLOW, buffer);
+
+		pwm_set_duty(CHANNEL_PWM1, duty1);
+		pwm_set_duty(CHANNEL_PWM2, duty2);
+		pwm_set_freq(freq);
+
+		formatstring = "%7d";
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, freq);
+		print_advanced(16, 20, BOLD | BRIGHT | YELLOW, buffer);
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, freq);
 		print_advanced(17, 20, BOLD | BRIGHT | YELLOW, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, f2);
-		print_advanced(18, 20, BOLD | BRIGHT | YELLOW, buffer);
 
 		formatstring = "%3d";
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, d1);
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, duty1);
+		print_advanced(16, 45, BOLD | BRIGHT | YELLOW, buffer);
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, duty2);
 		print_advanced(17, 45, BOLD | BRIGHT | YELLOW, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, d2);
-		print_advanced(18, 45, BOLD | BRIGHT | YELLOW, buffer);
+
+		formatstring = "%5d";
+		snprintf(buffer, TERMINAL_WIDTH, formatstring, freq);
+		print_advanced(23, 45, BOLD | BRIGHT | YELLOW, buffer);
 
 		print_advanced(24, 80, 0, "");
 	}
