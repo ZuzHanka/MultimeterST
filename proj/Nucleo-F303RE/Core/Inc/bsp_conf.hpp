@@ -53,4 +53,9 @@ enum Channel_PWM {
 
 extern const char * pwm_ch_names[CHANNEL_PWM_COUNT];
 
+// generator PWM - timer settings
+static const uint16_t COUNTER_PERIOD = 7200;
+static const uint16_t PRESCALER_INIT = 100;
+static const uint16_t FREQUENCY_MAX = (72000000 / COUNTER_PERIOD);
+
 #endif /* INC_BSP_CONF_HPP_ */

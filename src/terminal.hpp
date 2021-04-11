@@ -49,7 +49,7 @@ protected:
 	bool set_cursor_position(uint8_t row, uint8_t col);
 	bool text_decoration(uint32_t flags);
 	bool print_advanced(uint8_t row, uint8_t col, uint32_t decoration, const char * message);
-	bool print_help(uint8_t help_spec);
+	bool print_help(uint16_t help_spec);
 	bool welcome();
 	void update_voltmeter();
 	void update_generator();
@@ -64,6 +64,7 @@ protected:
 
 private:
 	AvgFilter avgf[ADC_CHANNELS];
+
 	bool m_redraw_screen = true;
 	bool m_application_voltmeter = false;
 	bool m_application_generator = false;
@@ -71,13 +72,20 @@ private:
 	bool m_voltmeter_zero_mode = false;
 	bool m_voltmeter_zero_mode_avg_update = false;
 	bool m_generator_channel_upper = true;
+	bool m_generator_channel_switched = false;
+	bool m_generator_freq_mode = false;
+	bool m_generator_duty_mode = false;
+	bool m_generator_flag_duty_nofreq = true;
 	const char * m_status_message = nullptr;
 	const char * m_from_keyboard_message = nullptr;
 	float m_zero_avg[ADC_CHANNELS];
 	float m_zero_diff_avg[ADC_CHANNELS - 1];
 	bool m_voltmeter_no_samples_mode = false;
 	bool m_read_int = false;
-	uint16_t m_no_from_keybord = 0;
+	uint16_t m_no_from_keybord = 65535;
+	bool m_read_sign = false;
+	bool m_generator_step_up = false;
+	bool m_generator_step_down = false;
 };
 
 #endif // TERMINAL_HPP_

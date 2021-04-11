@@ -43,37 +43,68 @@ void Terminal::loop()
 				welcome();
 				print_voltmeter();
 				print_generator();
-	//			print_setup();
 				print_help(11);
-	//			update_generator();
 			}
 			else
 			{
 				welcome();
 				print_voltmeter();
 				print_generator();
-	//			print_setup();
 				print_help(1);
-	//			update_generator();
 			}
 		}
 		else if (m_application_generator)
 		{
-			welcome();
-			print_voltmeter();
-			print_generator();
-//			print_setup();
-			print_help(2);
-//			update_generator();
+			if (m_generator_freq_mode)
+			{
+				welcome();
+				print_voltmeter();
+				print_generator();
+				if (m_read_int && m_read_sign)
+				{
+					print_help(21);
+				}
+				else if (m_read_int)
+				{
+					print_help(210);
+				}
+				else if (m_read_sign)
+				{
+					print_help(211);
+				}
+			}
+			else if (m_generator_duty_mode)
+			{
+				welcome();
+				print_voltmeter();
+				print_generator();
+				if (m_read_int && m_read_sign)
+				{
+					print_help(22);
+				}
+				else if (m_read_int)
+				{
+					print_help(220);
+				}
+				else if (m_read_sign)
+				{
+					print_help(221);
+				}
+			}
+			else
+			{
+				welcome();
+				print_voltmeter();
+				print_generator();
+				print_help(2);
+			}
 		}
 		else
 		{
 			welcome();
 			print_voltmeter();
 			print_generator();
-//			print_setup();
 			print_help(0);
-//			update_generator();
 		}
 	}
 
@@ -94,7 +125,40 @@ void Terminal::loop()
 		}
 		else if (m_application_generator)
 		{
-			print_help(2);
+			if (m_generator_freq_mode)
+			{
+				if (m_read_int && m_read_sign)
+				{
+					print_help(21);
+				}
+				else if (m_read_int)
+				{
+					print_help(210);
+				}
+				else if (m_read_sign)
+				{
+					print_help(211);
+				}
+			}
+			else if (m_generator_duty_mode)
+			{
+				if (m_read_int && m_read_sign)
+				{
+					print_help(22);
+				}
+				else if (m_read_int)
+				{
+					print_help(220);
+				}
+				else if (m_read_sign)
+				{
+					print_help(221);
+				}
+			}
+			else
+			{
+				print_help(2);
+			}
 		}
 		else
 		{
@@ -103,6 +167,7 @@ void Terminal::loop()
 	}
 
 	update_voltmeter();
+	update_generator();
 }
 
 bool Terminal::set_cursor_position(uint8_t row, uint8_t col)
@@ -172,7 +237,7 @@ bool Terminal::print_advanced(uint8_t row, uint8_t col, uint32_t decoration, con
 	return success;
 }
 
-bool Terminal::print_help(uint8_t help_spec)
+bool Terminal::print_help(uint16_t help_spec)
 {
 	bool success = true;
 	uint8_t row = 15;
@@ -184,21 +249,21 @@ bool Terminal::print_help(uint8_t help_spec)
 		case (1) :  // voltmeter active
 		{
 			uint16_t color = YELLOW;
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE - redraw screen");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q - stop current mode / return");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "z - toggle zero / normal mode (set zero to current value)");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "l - start / stop logging");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "n - set number of samples per average");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : stop current mode / return");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "z : toggle zero / normal mode (set zero to current value)");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "l : start / stop logging");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "n : set number of samples per average");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 		}
 		break;
 
-		case (11) :  // voltmeter - get number from keyboard
+		case (11) :  // voltmeter - set number of samples from keyboard
 		{
 			uint16_t color = YELLOW;
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 - write numbers");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "n - set number of samples per average");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q - leave without change");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "n : set number of samples per average");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : leave without change");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
@@ -208,8 +273,80 @@ bool Terminal::print_help(uint8_t help_spec)
 		case (2) :  // generator active
 		{
 			uint16_t color = YELLOW;
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE - redraw screen");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q - stop current mode / return");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : stop current mode / return");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "s : switch channels to edit settings");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f : set frequency");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d : set duty cycle");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (21) :  // generator - set frequency from keyboard
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify frequency");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f or q : stop frequency mode");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (210) :  // generator - set frequency from keyboard - enter digits
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f : set frequency");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : leave without change");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (211) :  // generator - set frequency from keyboard - enter signs
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify frequency");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f or q : stop frequency mode");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (22) :  // generator - set duty cycle from keyboard
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify duty cycle");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d or q : stop duty cycle mode");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (220) :  // generator - set duty cycle from keyboard - enter digits
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d : set duty cycle");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : leave without change");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (221) :  // generator - set duty cycle from keyboard - enter signs
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify duty cycle");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d or q : stop duty cycle mode");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
@@ -221,9 +358,9 @@ bool Terminal::print_help(uint8_t help_spec)
 		{
 			uint16_t color = YELLOW;
 			// success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q - stop current mode / return");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE - redraw screen");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "v - select application Voltmeter");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "g - select application Generator");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "v : select application Voltmeter");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "g : select application Generator");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
@@ -255,10 +392,10 @@ bool Terminal::print_voltmeter()
 
 	success = success && print_advanced(row, 2, CLEAR_LINE | color, "Application:");
 	success = success && print_advanced(row, 15, BRIGHT | BOLD | color, "Voltmeter");
-	success = success && print_advanced(row++, 66, color, "VDDA:");
+	success = success && print_advanced(row++, 66, WHITE, "VDDA:");
 	success = success && print_advanced(row, 2, CLEAR_LINE | color, "Sample frequency:     Hz");
 	success = success && print_advanced(row, 20, BRIGHT | BOLD | color, "100");
-	success = success && print_advanced(row++, 66, color, "TEMP:");
+	success = success && print_advanced(row++, 66, WHITE, "TEMP:");
 	success = success && print_advanced(row, 2, CLEAR_LINE | color, "Samples per average:");
 	success = success && print_advanced(row, 22, BRIGHT | BOLD | color, buffer);
 
@@ -270,7 +407,6 @@ bool Terminal::print_generator()
 	const size_t TERMINAL_WIDTH = 80;
 	char buffer[TERMINAL_WIDTH + 1];
 	buffer[TERMINAL_WIDTH] = '\0';
-	snprintf(buffer, TERMINAL_WIDTH, "%5d", AvgFilter::get_no_samples());
 	uint8_t row = 0;
 
 	bool success = true;
@@ -281,16 +417,26 @@ bool Terminal::print_generator()
 	success = success && print_advanced(row, 2, CLEAR_LINE | color, "Application:");
 	success = success && print_advanced(row++, 15, BRIGHT | BOLD | color, "Generator");
 
-	success = success && print_advanced(row, 2, CLEAR_LINE | color, "Active channel:");
+	success = success && print_advanced(row, 2, CLEAR_LINE | color, "Channel to edit:");
 	success = success && print_advanced(row++, 20, BRIGHT | BOLD | color, ch_active);
 
 	for (int ch=0; ch<CHANNEL_PWM_COUNT; ch++)
 	{
 		success = success && print_advanced(row, 2, CLEAR_LINE | BRIGHT | BOLD | CYAN, pwm_ch_names[ch]);
 		success = success && print_advanced(row, 1 + sizeof(pwm_ch_names[ch]), BRIGHT | BOLD | CYAN, ":");
-		success = success && print_advanced(row, 15, BRIGHT | BOLD | CYAN, "PWM");
-		success = success && print_advanced(row, 30 + 7, BRIGHT | BOLD | CYAN, "Hz");
-		success = success && print_advanced(row++, 45 + 4, BRIGHT | BOLD | CYAN, "%");
+		success = success && print_advanced(row, 10, BRIGHT | BOLD | CYAN, "PWM");
+
+		snprintf(buffer, TERMINAL_WIDTH, "%7.3f", convert2freq(pwm_get_freq()));
+		success = success && print_advanced(row, 18, BRIGHT | BOLD | CYAN, buffer);
+		success = success && print_advanced(row, 18 + 8, BRIGHT | BOLD | CYAN, "Hz");
+		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_freq());
+		success = success && print_advanced(row, 60, BRIGHT | BOLD | CYAN, buffer);
+
+		snprintf(buffer, TERMINAL_WIDTH, "%6.3f", convert2duty(pwm_get_duty(ch)));
+		success = success && print_advanced(row, 33, BRIGHT | BOLD | CYAN, buffer);
+		success = success && print_advanced(row, 33 + 7, BRIGHT | BOLD | CYAN, "%");
+		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_duty(ch));
+		success = success && print_advanced(row++, 70, BRIGHT | BOLD | CYAN, buffer);
 	}
 
 	return success;
@@ -332,13 +478,13 @@ bool Terminal::print_generator()
 
 void Terminal::update_voltmeter()
 {
-	if ((m_voltmeter_no_samples_mode == false) && (m_no_from_keybord > 0))
+	if ((m_application_voltmeter) && (m_voltmeter_no_samples_mode == false) && (m_no_from_keybord < 65535))
 	{
 		AvgFilter::set_no_samples(m_no_from_keybord);
 		print_voltmeter();
 		m_voltmeter_no_samples_mode = false;
 		m_read_int = false;
-		m_no_from_keybord = 0;
+		m_no_from_keybord = 65535;
 	}
 
 	uint16_t is_new_average = 0;
@@ -366,7 +512,6 @@ void Terminal::update_voltmeter()
 		const char * formatstring;
 		char aux_buffer[TERMINAL_WIDTH + 1];
 		aux_buffer[TERMINAL_WIDTH] = '\0';
-
 
 		// get values from ADC
 		for (int ch=0; ch<ADC_CHANNELS; ch++)
@@ -488,49 +633,187 @@ void Terminal::update_generator()
 {
 	if (m_voltmeter_logging == false)
 	{
+		if ((m_application_generator) && (m_no_from_keybord < 65535) && (m_read_int)
+				&& (m_generator_duty_mode == false) && (m_generator_freq_mode == false))
+		{
+			if (m_generator_flag_duty_nofreq)
+			{
+				if (m_generator_channel_upper)
+				{
+					pwm_set_duty(CHANNEL_PWM1, duty2intvalue(m_no_from_keybord));
+				}
+				else
+				{
+					pwm_set_duty(CHANNEL_PWM2, duty2intvalue(m_no_from_keybord));
+				}
+				m_generator_duty_mode = false;
+			}
+			else
+			{
+				if (m_generator_channel_upper)
+				{
+					pwm_set_freq(freq2intvalue(m_no_from_keybord));  // TODO
+				}
+				else
+				{
+					pwm_set_freq(freq2intvalue(m_no_from_keybord));  // TODO
+				}
+				m_generator_freq_mode = false;
+			}
+			m_read_int = false;
+			m_no_from_keybord = 65535;
+			print_generator();
+		}
 
-		const size_t TERMINAL_WIDTH = 80;
-		char buffer[TERMINAL_WIDTH + 1];
-		buffer[TERMINAL_WIDTH] = '\0';
-		const char * formatstring;
+		if ((m_application_generator) && ((m_generator_step_up) || (m_generator_step_down)))
+		{
+			uint32_t value;
+			if (m_generator_flag_duty_nofreq)
+			{
+				if (m_generator_channel_upper)
+				{
+					value = pwm_get_duty(CHANNEL_PWM1);
+					if ((m_generator_step_up) && (value < COUNTER_PERIOD))
+					{
+						pwm_set_duty(CHANNEL_PWM1, value + 1);
+					}
+					if ((m_generator_step_down) && (value > 0))
+					{
+						pwm_set_duty(CHANNEL_PWM1, value - 1);
+					}
+				}
+				else
+				{
+					value = pwm_get_duty(CHANNEL_PWM2);
+					if ((m_generator_step_up) && (value < COUNTER_PERIOD))
+					{
+						pwm_set_duty(CHANNEL_PWM2, value + 1);
+					}
+					if ((m_generator_step_down) && (value > 0))
+					{
+						pwm_set_duty(CHANNEL_PWM2, value - 1);
+					}
+				}
+			}
+			else
+			{
+				if (m_generator_channel_upper)
+				{
+					value = pwm_get_freq();
+					uint32_t step;
+					if (value > 9999)
+					{
+						step = 1000;
+					}
+					else if (value > 4999)
+					{
+						step = 500;
+					}
+					else if (value > 3332)
+					{
+						step = 100;
+					}
+					else if (value > 1999)
+					{
+						step = 50;
+					}
+					else if (value > 1249)
+					{
+						step = 20;
+					}
+					else if (value > 908)
+					{
+						step = 10;
+					}
+					else if (value > 665)
+					{
+						step = 5;
+					}
+					else if (value > 415)
+					{
+						step = 2;
+					}
+					else
+					{
+						step = 1;
+					}
 
-		uint16_t duty1 = 100;
-		uint16_t duty2 = 10000;
-		uint32_t freq = 10;
+					if ((m_generator_step_up) && (value > 1))
+					{
+						// frequency up means prescaler must go down
+						pwm_set_freq(value - step);  // TODO
+					}
+					if ((m_generator_step_down) && (value < 50000))
+					{
+						// frequency down means prescaler must go up
+						pwm_set_freq(value + step);  // TODO
+					}
+				}
+				else
+				{
+					value = pwm_get_freq();
+					uint32_t step;
+					if (value > 9999)
+					{
+						step = 1000;
+					}
+					else if (value > 4999)
+					{
+						step = 500;
+					}
+					else if (value > 3332)
+					{
+						step = 100;
+					}
+					else if (value > 1999)
+					{
+						step = 50;
+					}
+					else if (value > 1249)
+					{
+						step = 20;
+					}
+					else if (value > 908)
+					{
+						step = 10;
+					}
+					else if (value > 665)
+					{
+						step = 5;
+					}
+					else if (value > 415)
+					{
+						step = 2;
+					}
+					else
+					{
+						step = 1;
+					}
+					if ((m_generator_step_up) && (value > 1))
+					{
+						// frequency up means prescaler must go down
+						pwm_set_freq(value - step);  // TODO
+					}
+					if ((m_generator_step_down) && (value < 50000))
+					{
+						// frequency down means prescaler must go up
+						pwm_set_freq(value + step);  // TODO
+					}
+				}
+			}
+			m_generator_step_up = false;
+			m_generator_step_down = false;
+			print_generator();
+		}
 
-		formatstring = "%5d";
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, pwm_get_freq());
-		print_advanced(22, 5, BOLD | BRIGHT | YELLOW, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, pwm_get_duty(CHANNEL_PWM1));
-		print_advanced(22, 25, BOLD | BRIGHT | YELLOW, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, pwm_get_duty(CHANNEL_PWM2));
-		print_advanced(22, 45, BOLD | BRIGHT | YELLOW, buffer);
-
-		pwm_set_duty(CHANNEL_PWM1, duty1);
-		pwm_set_duty(CHANNEL_PWM2, duty2);
-		pwm_set_freq(freq);
-
-//		formatstring = "%7d";
-//		snprintf(buffer, TERMINAL_WIDTH, formatstring, freq);
-//		print_advanced(11, 20, BOLD | BRIGHT | YELLOW, buffer);
-//		snprintf(buffer, TERMINAL_WIDTH, formatstring, freq);
-//		print_advanced(12, 20, BOLD | BRIGHT | YELLOW, buffer);
-//
-//		formatstring = "%3d";
-//		snprintf(buffer, TERMINAL_WIDTH, formatstring, duty1);
-//		print_advanced(11, 45, BOLD | BRIGHT | YELLOW, buffer);
-//		snprintf(buffer, TERMINAL_WIDTH, formatstring, duty2);
-//		print_advanced(12, 45, BOLD | BRIGHT | YELLOW, buffer);
-
-		formatstring = "%5d";
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, pwm_get_freq());
-		print_advanced(23, 5, BOLD | BRIGHT | YELLOW, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, pwm_get_duty(CHANNEL_PWM1));
-		print_advanced(23, 25, BOLD | BRIGHT | YELLOW, buffer);
-		snprintf(buffer, TERMINAL_WIDTH, formatstring, pwm_get_duty(CHANNEL_PWM2));
-		print_advanced(23, 45, BOLD | BRIGHT | YELLOW, buffer);
+		if (m_generator_channel_switched)
+		{
+			m_generator_channel_switched = false;
+			print_generator();
+		}
 
 		print_advanced(24, 80, 0, "");
+
 	}
 }
 
@@ -569,7 +852,7 @@ bool Terminal::key_pressed()
 					{
 						m_voltmeter_no_samples_mode = false;
 						m_read_int = false;
-						m_no_from_keybord = 0;
+						m_no_from_keybord = 65535;
 						m_from_keyboard_message = nullptr;
 						set_status("Number of samples per average was NOT set.");
 					}
@@ -577,6 +860,38 @@ bool Terminal::key_pressed()
 					{
 						m_voltmeter_zero_mode = false;
 						set_status("Voltmeter switched to default mode.");
+					}
+					else if (m_generator_freq_mode)
+					{
+						m_generator_freq_mode = false;
+						m_read_int = false;
+						m_no_from_keybord = 65535;
+						m_from_keyboard_message = nullptr;
+						if (m_read_sign)
+						{
+							m_read_sign = false;
+							set_status("Frequency mode finished.");
+						}
+						else
+						{
+							set_status("Frequency was NOT set.");
+						}
+					}
+					else if (m_generator_duty_mode)
+					{
+						m_generator_duty_mode = false;
+						m_read_int = false;
+						m_no_from_keybord = 65535;
+						m_from_keyboard_message = nullptr;
+						if (m_read_sign)
+						{
+							m_read_sign = false;
+							set_status("Duty cycle mode finished.");
+						}
+						else
+						{
+							set_status("Duty cycle was NOT set.");
+						}
 					}
 					else if (m_application_voltmeter)
 					{
@@ -641,37 +956,6 @@ bool Terminal::key_pressed()
 				}
 				break;
 
-			case 'S' :
-			case 's' :
-				{
-					if (m_application_generator)
-					{
-						valid_key = true;
-						m_generator_channel_upper = !m_generator_channel_upper;
-					}
-				}
-				break;
-
-//			case 'D' :
-//			case 'd' :
-//				{
-//					if ((m_voltmeter_logging == false) && (m_voltmeter_no_samples_mode == false))
-//					{
-//						valid_key = true;
-//						m_voltmeter_diff_mode = !m_voltmeter_diff_mode;
-//						m_voltmeter_zero_mode = false;
-//						if (m_voltmeter_diff_mode)
-//						{
-//							set_status("Voltmeter switched to differential mode.");
-//						}
-//						else
-//						{
-//							set_status("Voltmeter switched to default mode.");
-//						}
-//					}
-//				}
-//				break;
-
 			case 'Z' :
 			case 'z' :
 				{
@@ -703,7 +987,8 @@ bool Terminal::key_pressed()
 						m_read_int = (m_voltmeter_no_samples_mode) ? true : false;
 						if (m_voltmeter_no_samples_mode)
 						{
-							set_status("Set number of samples per average (1 .. 9999):");
+							m_no_from_keybord = 0;
+							set_status("Set number of samples per average (1 .. 1000):");
 						}
 						else
 						{
@@ -717,6 +1002,135 @@ bool Terminal::key_pressed()
 							{
 								set_status("Number of samples per average was set.");
 							}
+						}
+					}
+				}
+				break;
+
+			case 'S' :
+			case 's' :
+				{
+					if ((m_application_generator) && (m_generator_duty_mode == false) && (m_generator_freq_mode == false))
+					{
+						valid_key = true;
+						m_generator_channel_upper = !m_generator_channel_upper;
+						m_generator_channel_switched = true;
+						set_status("Active channel changed.");
+					}
+				}
+				break;
+
+			case 'D' :
+			case 'd' :
+				{
+					if ((m_application_generator) && (m_generator_freq_mode == false))
+					{
+						valid_key = true;
+						m_generator_duty_mode = !m_generator_duty_mode;
+						if (m_generator_duty_mode)
+						{
+							m_read_int = true;
+							m_read_sign = true;
+							m_no_from_keybord = 0;
+							m_generator_flag_duty_nofreq = true;
+							set_status("Set duty cycle for active channel (0 .. 100):");
+						}
+						else
+						{
+							if (m_no_from_keybord < 0)
+							{
+								m_no_from_keybord = 0;
+								set_status("Minimum duty cycle was set.");
+							}
+							else if (m_read_sign)
+							{
+								m_read_int = false;
+								m_no_from_keybord = 65535;
+								set_status("Duty cycle mode finished.");
+							}
+							else
+							{
+								set_status("Duty cycle was set.");
+							}
+							m_read_sign = false;
+							m_from_keyboard_message = nullptr;
+						}
+					}
+				}
+				break;
+
+			case 'F' :
+			case 'f' :
+				{
+					if ((m_application_generator) && (m_generator_duty_mode == false))
+					{
+						valid_key = true;
+						m_generator_freq_mode = !m_generator_freq_mode;
+						if (m_generator_freq_mode)
+						{
+							m_read_int = true;
+							m_read_sign = true;
+							m_no_from_keybord = 0;
+							m_generator_flag_duty_nofreq = false;
+							set_status("Set frequency for active channel (1 .. 10000):");
+						}
+						else
+						{
+							if (m_no_from_keybord < 1)
+							{
+								m_no_from_keybord = 1;
+								set_status("Minimum frequency from keyboard was set.");
+							}
+							else if (m_read_sign)
+							{
+								m_read_int = false;
+								m_no_from_keybord = 65535;
+								set_status("Frequency mode finished.");
+							}
+							else
+							{
+								set_status("Frequency was set.");
+							}
+							m_read_sign = false;
+							m_from_keyboard_message = nullptr;
+						}
+					}
+				}
+				break;
+
+			case '+' :
+				{
+					if ((m_application_generator) && (m_read_sign))
+					{
+						valid_key = true;
+						m_read_int = false;
+						m_generator_step_up = true;
+						if (m_generator_duty_mode)
+						{
+							set_status("Duty cycle slightly increased.");
+						}
+						else if (m_generator_freq_mode)
+						{
+							set_status("Frequency slightly increased.");
+						}
+					}
+				}
+				break;
+
+			case '-' :
+				{
+					if ((m_application_generator) && (m_read_sign))
+					{
+						valid_key = true;
+						m_read_int = false;
+						m_generator_step_down = true;
+						if (m_generator_duty_mode)
+						{
+							set_status("Duty cycle slightly decreased.");
+						}
+						else if (m_generator_freq_mode)
+						{
+							set_status("Frequency slightly decreased.");
 						}
 					}
 				}
@@ -737,10 +1151,10 @@ bool Terminal::key_pressed()
 					{
 						valid_key = true;
 						m_no_from_keybord = 10 * m_no_from_keybord + (key - '0');
-						if (m_no_from_keybord > 9999)
+						if (m_no_from_keybord > 1000)
 						{
-							set_status("Number of samples per period reached maximum (9999).");
-							m_no_from_keybord = 9999;
+							set_status("Number of samples per period reached maximum (1000).");
+							m_no_from_keybord = 1000;
 							m_from_keyboard_message = nullptr;
 						}
 						else
@@ -749,7 +1163,41 @@ bool Terminal::key_pressed()
 							static char buffer[TERMINAL_WIDTH + 1];
 							buffer[TERMINAL_WIDTH] = '\0';
 							snprintf(buffer, TERMINAL_WIDTH, "%5d", m_no_from_keybord);
-							set_status("Set number of samples per average (1 .. 9999):");
+							set_status("Set number of samples per average (1 .. 1000):");
+							set_from_keyboard(buffer);
+						}
+					}
+					if ((m_application_generator) && (m_read_int))
+					{
+						valid_key = true;
+						m_read_sign = false;
+						m_no_from_keybord = 10 * m_no_from_keybord + (key - '0');
+						if ((m_generator_duty_mode) && (m_no_from_keybord > 100))
+						{
+							set_status("Duty cycle reached maximum (100).");
+							m_no_from_keybord = 100;
+							m_from_keyboard_message = nullptr;
+						}
+						else if ((m_generator_freq_mode) && (m_no_from_keybord > 10000))
+						{
+							set_status("Frequency reached maximum (10000).");
+							m_no_from_keybord = 10000;
+							m_from_keyboard_message = nullptr;
+						}
+						else
+						{
+							const size_t TERMINAL_WIDTH = 80;
+							static char buffer[TERMINAL_WIDTH + 1];
+							buffer[TERMINAL_WIDTH] = '\0';
+							snprintf(buffer, TERMINAL_WIDTH, "%5d", m_no_from_keybord);
+							if (m_generator_duty_mode)
+							{
+								set_status("Set duty cycle for active channel (0 .. 100):");
+							}
+							if (m_generator_freq_mode)
+							{
+								set_status("Set frequency for active channel (1 .. 10000):");
+							}
 							set_from_keyboard(buffer);
 						}
 					}
