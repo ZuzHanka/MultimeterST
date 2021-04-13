@@ -190,13 +190,13 @@ void pwm_set_duty(uint32_t channel, uint32_t duty)
 uint32_t pwm_get_freq(void)
 {
 	// uint32_t LL_TIM_GetPrescaler(TIM_TypeDef *TIMx)
-	return LL_TIM_GetPrescaler(htim8.Instance);
+	return (LL_TIM_GetPrescaler(htim8.Instance) + 1);
 }
 
 void pwm_set_freq(uint32_t freq)
 {
 	// void LL_TIM_SetPrescaler(TIM_TypeDef *TIMx, uint32_t Prescaler)
-	LL_TIM_SetPrescaler(htim8.Instance, freq);
+	LL_TIM_SetPrescaler(htim8.Instance, (freq - 1));
 }
 
 // __LL_TIM_CALC_PSC(__TIMCLK__, __CNTCLK__)
