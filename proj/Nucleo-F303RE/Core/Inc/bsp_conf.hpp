@@ -13,20 +13,33 @@
 enum Channel {
 	CHANNEL_1,
 	CHANNEL_2,
-	CHANNEL_TEMP,
-	CHANNEL_VREFINT,
 	CHANNEL_3,
 	CHANNEL_4,
+	CHANNEL_TEMP,
+	CHANNEL_VREFINT,
 	CHANNEL_COUNT,
-	ADC1_IDX = CHANNEL_1,			// Offset of ADC1 channels.
-	ADC2_IDX = CHANNEL_VREFINT,		// Offset of ADC2 channels.
-	ADC3_IDX = CHANNEL_4,			// Offset of ADC3 channels.
-	ADC1_CHANNELS = 3,				// Number of ADC1 channels.
-	ADC2_CHANNELS = 2,				// Number of ADC2 channels.
-	ADC3_CHANNELS = 1,				// Number of ADC3 channels.
-	ADC_CHANNELS = CHANNEL_4 + 1,	// Number of active channels.
-	CHANNEL_VDDA = CHANNEL_VREFINT	// Return Vdda instead of Vrefint value.
+	ADC_CHANNELS = CHANNEL_VREFINT + 1,	// Number of active channels.
+	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
 };
+
+
+//enum Channel {
+//	CHANNEL_1,
+//	CHANNEL_2,
+//	CHANNEL_TEMP,
+//	CHANNEL_VREFINT,
+//	CHANNEL_3,
+//	CHANNEL_4,
+//	CHANNEL_COUNT,
+//	ADC1_IDX = CHANNEL_1,			// Offset of ADC1 channels.
+//	ADC2_IDX = CHANNEL_VREFINT,		// Offset of ADC2 channels.
+//	ADC3_IDX = CHANNEL_4,			// Offset of ADC3 channels.
+//	ADC1_CHANNELS = 3,				// Number of ADC1 channels.
+//	ADC2_CHANNELS = 2,				// Number of ADC2 channels.
+//	ADC3_CHANNELS = 1,				// Number of ADC3 channels.
+//	ADC_CHANNELS = CHANNEL_4 + 1,	// Number of active channels.
+//	CHANNEL_VDDA = CHANNEL_VREFINT	// Return Vdda instead of Vrefint value.
+//};
 
 static constexpr uint8_t Channel_ordered[] =
 {

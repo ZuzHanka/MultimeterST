@@ -16,10 +16,11 @@
 
 extern UART_HandleTypeDef huart2;
 extern ADC_HandleTypeDef hadc1;
-extern ADC_HandleTypeDef hadc2;
-extern ADC_HandleTypeDef hadc3;
+//extern ADC_HandleTypeDef hadc2;
+//extern ADC_HandleTypeDef hadc3;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim8;
+extern TIM_HandleTypeDef htim3;
 
 
 /* Constants ---------------------------------------------------------*/
@@ -32,17 +33,17 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 {
 		"A0",
 		"A1",
+		"A4",
+		"A5",
 		"TEMP",
-		"VDDA",
-		"A2",
-		"A3"
+		"VDDA"
 };
 
 // printed PWM channel names
 const char * pwm_ch_names[CHANNEL_PWM_COUNT] =
 {
 		"D10",
-		"D9"
+		"D12"
 };
 
 /* Variables ---------------------------------------------------------*/
@@ -96,16 +97,16 @@ bool adc_run(void)
 	}	
 	if (hal_status == HAL_OK)
 	{
-		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_buf[ADC1_IDX], ADC1_CHANNELS);
+		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_buf[CHANNEL_1], ADC_CHANNELS);
 	}
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_ADC_Start_DMA(&hadc2, (uint32_t*) &adc_buf[ADC2_IDX], ADC2_CHANNELS);
-	}
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_ADC_Start_DMA(&hadc3, (uint32_t*) &adc_buf[ADC3_IDX], ADC3_CHANNELS);
-	}
+//	if (hal_status == HAL_OK)
+//	{
+//		hal_status = HAL_ADC_Start_DMA(&hadc2, (uint32_t*) &adc_buf[ADC2_IDX], ADC2_CHANNELS);
+//	}
+//	if (hal_status == HAL_OK)
+//	{
+//		hal_status = HAL_ADC_Start_DMA(&hadc3, (uint32_t*) &adc_buf[ADC3_IDX], ADC3_CHANNELS);
+//	}
 
 	return hal_status == HAL_OK;
 }
@@ -119,7 +120,7 @@ bool pwm_run(void)
 	}
 	if (hal_status == HAL_OK)
 	{
-		hal_status = HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
+		hal_status = HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	}
 
 	return hal_status == HAL_OK;
@@ -170,7 +171,7 @@ uint32_t pwm_get_duty(uint32_t channel)
 	}
 	if (channel == CHANNEL_PWM2)
 	{
-		duty =  LL_TIM_OC_GetCompareCH2(htim8.Instance);
+		duty =  LL_TIM_OC_GetCompareCH1(htim3.Instance);
 	}
 	return duty;
 }
@@ -183,20 +184,36 @@ void pwm_set_duty(uint32_t channel, uint32_t duty)
 	}
 	if (channel == CHANNEL_PWM2)
 	{
-		LL_TIM_OC_SetCompareCH2(htim8.Instance, duty);
+		LL_TIM_OC_SetCompareCH1(htim3.Instance, duty);
 	}
 }
 
-uint32_t pwm_get_freq(void)
+uint32_t pwm_get_freq(uint32_t channel)
 {
 	// uint32_t LL_TIM_GetPrescaler(TIM_TypeDef *TIMx)
-	return (LL_TIM_GetPrescaler(htim8.Instance) + 1);
+	uint32_t freq = 0;
+	if (channel == CHANNEL_PWM1)
+	{
+		freq =  (LL_TIM_GetPrescaler(htim8.Instance) + 1);
+	}
+	if (channel == CHANNEL_PWM2)
+	{
+		freq =  (LL_TIM_GetPrescaler(htim3.Instance) + 1);
+	}
+	return freq;
 }
 
-void pwm_set_freq(uint32_t freq)
+void pwm_set_freq(uint32_t channel, uint32_t freq)
 {
 	// void LL_TIM_SetPrescaler(TIM_TypeDef *TIMx, uint32_t Prescaler)
-	LL_TIM_SetPrescaler(htim8.Instance, (freq - 1));
+	if (channel == CHANNEL_PWM1)
+	{
+		LL_TIM_SetPrescaler(htim8.Instance, (freq - 1));
+	}
+	if (channel == CHANNEL_PWM2)
+	{
+		LL_TIM_SetPrescaler(htim3.Instance, (freq - 1));
+	}
 }
 
 // __LL_TIM_CALC_PSC(__TIMCLK__, __CNTCLK__)

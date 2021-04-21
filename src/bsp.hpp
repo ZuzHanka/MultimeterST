@@ -24,8 +24,8 @@ uint16_t adc_get_sample_mV(uint8_t channel);
 float adc_mV_to_Celsius(int16_t value_mV);
 uint32_t pwm_get_duty(uint32_t channel);
 void pwm_set_duty(uint32_t channel, uint32_t duty);
-uint32_t pwm_get_freq(void);
-void pwm_set_freq(uint32_t freq);
+uint32_t pwm_get_freq(uint32_t channel);
+void pwm_set_freq(uint32_t channel, uint32_t freq);
 
 /* Callbacks -----------------------------------------------------------------*/
 

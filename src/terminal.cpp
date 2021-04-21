@@ -426,17 +426,17 @@ bool Terminal::print_generator()
 		success = success && print_advanced(row, 1 + sizeof(pwm_ch_names[ch]), BRIGHT | BOLD | CYAN, ":");
 		success = success && print_advanced(row, 10, BRIGHT | BOLD | CYAN, "PWM");
 
-		snprintf(buffer, TERMINAL_WIDTH, "%7.3f", convert2freq(pwm_get_freq()));
+		snprintf(buffer, TERMINAL_WIDTH, "%7.3f", convert2freq(pwm_get_freq(ch)));
 		success = success && print_advanced(row, 18, BRIGHT | BOLD | CYAN, buffer);
 		success = success && print_advanced(row, 18 + 8, BRIGHT | BOLD | CYAN, "Hz");
-		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_freq());
-		success = success && print_advanced(row, 60, BRIGHT | BOLD | CYAN, buffer);
+//		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_freq());
+//		success = success && print_advanced(row, 60, BRIGHT | BOLD | CYAN, buffer);_
 
 		snprintf(buffer, TERMINAL_WIDTH, "%6.3f", convert2duty(pwm_get_duty(ch)));
 		success = success && print_advanced(row, 33, BRIGHT | BOLD | CYAN, buffer);
-		success = success && print_advanced(row, 33 + 7, BRIGHT | BOLD | CYAN, "%");
-		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_duty(ch));
-		success = success && print_advanced(row++, 70, BRIGHT | BOLD | CYAN, buffer);
+		success = success && print_advanced(row++, 33 + 7, BRIGHT | BOLD | CYAN, "%");
+//		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_duty(ch));
+//		success = success && print_advanced(row++, 70, BRIGHT | BOLD | CYAN, buffer);
 	}
 
 	return success;
@@ -652,11 +652,11 @@ void Terminal::update_generator()
 			{
 				if (m_generator_channel_upper)
 				{
-					pwm_set_freq(freq2intvalue(m_no_from_keybord));  // TODO
+					pwm_set_freq(CHANNEL_PWM1, freq2intvalue(m_no_from_keybord));
 				}
 				else
 				{
-					pwm_set_freq(freq2intvalue(m_no_from_keybord));  // TODO
+					pwm_set_freq(CHANNEL_PWM2, freq2intvalue(m_no_from_keybord));
 				}
 				m_generator_freq_mode = false;
 			}
@@ -699,7 +699,7 @@ void Terminal::update_generator()
 			{
 				if (m_generator_channel_upper)
 				{
-					value = pwm_get_freq();
+					value = pwm_get_freq(CHANNEL_PWM1);
 					uint32_t step;
 					if (value > 9999)
 					{
@@ -741,17 +741,17 @@ void Terminal::update_generator()
 					if ((m_generator_step_up) && (value > 1))
 					{
 						// frequency up means prescaler must go down
-						pwm_set_freq(value - step);  // TODO
+						pwm_set_freq(CHANNEL_PWM1, value - step);  // TODO
 					}
 					if ((m_generator_step_down) && (value < 50000))
 					{
 						// frequency down means prescaler must go up
-						pwm_set_freq(value + step);  // TODO
+						pwm_set_freq(CHANNEL_PWM1, value + step);  // TODO
 					}
 				}
 				else
 				{
-					value = pwm_get_freq();
+					value = pwm_get_freq(CHANNEL_PWM2);
 					uint32_t step;
 					if (value > 9999)
 					{
@@ -792,12 +792,12 @@ void Terminal::update_generator()
 					if ((m_generator_step_up) && (value > 1))
 					{
 						// frequency up means prescaler must go down
-						pwm_set_freq(value - step);  // TODO
+						pwm_set_freq(CHANNEL_PWM2, value - step);  // TODO
 					}
 					if ((m_generator_step_down) && (value < 50000))
 					{
 						// frequency down means prescaler must go up
-						pwm_set_freq(value + step);  // TODO
+						pwm_set_freq(CHANNEL_PWM2, value + step);  // TODO
 					}
 				}
 			}
@@ -1033,7 +1033,7 @@ bool Terminal::key_pressed()
 							m_read_sign = true;
 							m_no_from_keybord = 0;
 							m_generator_flag_duty_nofreq = true;
-							set_status("Set duty cycle for active channel (0 .. 100):");
+							set_status("Set duty cycle for edited channel (0 .. 100):");
 						}
 						else
 						{
@@ -1072,7 +1072,7 @@ bool Terminal::key_pressed()
 							m_read_sign = true;
 							m_no_from_keybord = 0;
 							m_generator_flag_duty_nofreq = false;
-							set_status("Set frequency for active channel (1 .. 10000):");
+							set_status("Set frequency for edited channel (1 .. 10000):");
 						}
 						else
 						{
@@ -1192,11 +1192,11 @@ bool Terminal::key_pressed()
 							snprintf(buffer, TERMINAL_WIDTH, "%5d", m_no_from_keybord);
 							if (m_generator_duty_mode)
 							{
-								set_status("Set duty cycle for active channel (0 .. 100):");
+								set_status("Set duty cycle for edited channel (0 .. 100):");
 							}
 							if (m_generator_freq_mode)
 							{
-								set_status("Set frequency for active channel (1 .. 10000):");
+								set_status("Set frequency for edited channel (1 .. 10000):");
 							}
 							set_from_keyboard(buffer);
 						}
