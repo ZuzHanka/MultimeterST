@@ -97,7 +97,7 @@ bool adc_run(void)
 	}	
 	if (hal_status == HAL_OK)
 	{
-		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_buf[CHANNEL_1], ADC_CHANNELS);
+		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_CHANNELS);
 	}
 //	if (hal_status == HAL_OK)
 //	{

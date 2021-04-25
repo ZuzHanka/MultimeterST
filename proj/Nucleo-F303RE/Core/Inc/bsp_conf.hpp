@@ -15,10 +15,10 @@ enum Channel {
 	CHANNEL_2,
 	CHANNEL_3,
 	CHANNEL_4,
-	CHANNEL_TEMP,
 	CHANNEL_VREFINT,
+	CHANNEL_TEMP,
 	CHANNEL_COUNT,
-	ADC_CHANNELS = CHANNEL_VREFINT + 1,	// Number of active channels.
+	ADC_CHANNELS = CHANNEL_COUNT,		// Number of active channels.
 	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
 };
 
@@ -67,8 +67,7 @@ enum Channel_PWM {
 extern const char * pwm_ch_names[CHANNEL_PWM_COUNT];
 
 // generator PWM - timer settings
-static const uint16_t COUNTER_PERIOD = 7199;
-static const uint16_t PRESCALER_INIT = 99;
-static const uint16_t FREQUENCY_MAX = (72000000 / (COUNTER_PERIOD + 1));
+static const uint16_t COUNTER_PERIOD = 7200;
+static const uint16_t FREQUENCY_MAX = (72000000 / COUNTER_PERIOD);
 
 #endif /* INC_BSP_CONF_HPP_ */

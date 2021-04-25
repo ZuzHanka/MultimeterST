@@ -429,14 +429,14 @@ bool Terminal::print_generator()
 		snprintf(buffer, TERMINAL_WIDTH, "%7.3f", convert2freq(pwm_get_freq(ch)));
 		success = success && print_advanced(row, 18, BRIGHT | BOLD | CYAN, buffer);
 		success = success && print_advanced(row, 18 + 8, BRIGHT | BOLD | CYAN, "Hz");
-//		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_freq());
-//		success = success && print_advanced(row, 60, BRIGHT | BOLD | CYAN, buffer);_
+		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_freq(ch));
+		success = success && print_advanced(row, 60, BRIGHT | BOLD | CYAN, buffer);
 
 		snprintf(buffer, TERMINAL_WIDTH, "%6.3f", convert2duty(pwm_get_duty(ch)));
 		success = success && print_advanced(row, 33, BRIGHT | BOLD | CYAN, buffer);
-		success = success && print_advanced(row++, 33 + 7, BRIGHT | BOLD | CYAN, "%");
-//		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_duty(ch));
-//		success = success && print_advanced(row++, 70, BRIGHT | BOLD | CYAN, buffer);
+		success = success && print_advanced(row, 33 + 7, BRIGHT | BOLD | CYAN, "%");
+		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_duty(ch));
+		success = success && print_advanced(row++, 70, BRIGHT | BOLD | CYAN, buffer);
 	}
 
 	return success;
@@ -556,7 +556,7 @@ void Terminal::update_voltmeter()
 				snprintf(aux_buffer, TERMINAL_WIDTH, formatstring, avg[Channel_ordered[ch]] - m_zero_avg[Channel_ordered[ch]]);
 				if ((m_voltmeter_logging) && (ch == (user_volt_channels - 1)))
 					{
-						strcat(aux_buffer, "\n\r");
+						strcat(aux_buffer, "\n");
 					}
 				strcat(buffer_avg, aux_buffer);
 			}
@@ -572,7 +572,7 @@ void Terminal::update_voltmeter()
 				snprintf(aux_buffer, TERMINAL_WIDTH, formatstring, diff[ch] - m_zero_diff_avg[ch]);
 				if ((m_voltmeter_logging) && (ch == (user_diff_channels - 1)))
 					{
-						strcat(aux_buffer, "\n\r");
+						strcat(aux_buffer, "\n");
 					}
 				strcat(buffer_diff, aux_buffer);
 			}
@@ -589,7 +589,7 @@ void Terminal::update_voltmeter()
 				snprintf(aux_buffer, TERMINAL_WIDTH, formatstring, avg[Channel_ordered[ch]]);
 				if ((m_voltmeter_logging) && (ch == (user_volt_channels - 1)))
 					{
-						strcat(aux_buffer, "\n\r");
+						strcat(aux_buffer, "\n");
 					}
 				strcat(buffer_avg, aux_buffer);
 			}
@@ -605,7 +605,7 @@ void Terminal::update_voltmeter()
 				snprintf(aux_buffer, TERMINAL_WIDTH, formatstring, diff[ch]);
 				if ((m_voltmeter_logging) && (ch == (user_diff_channels - 1)))
 					{
-						strcat(aux_buffer, "\n\r");
+						strcat(aux_buffer, "\n");
 					}
 				strcat(buffer_diff, aux_buffer);
 			}
@@ -951,6 +951,10 @@ bool Terminal::key_pressed()
 						if (m_voltmeter_logging == false)
 						{
 							set_status("Voltmeter logging finished.");
+						}
+						else
+						{
+							send("\n");
 						}
 					}
 				}
