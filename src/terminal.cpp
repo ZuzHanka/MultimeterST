@@ -7,7 +7,7 @@
 #include <cstring>
 
 
-const char version[20] = "1.1.0";
+const char version[20] = "1.2.0";
 
 static const char ESC_RESET[] = "\x1b[0m";
 
@@ -55,7 +55,25 @@ void Terminal::loop()
 		}
 		else if (m_application_generator)
 		{
-			if (m_generator_freq_mode)
+			if (m_generator_dac_mode)
+			{
+				welcome();
+				print_voltmeter();
+				print_generator();
+				if (m_read_int && m_read_sign)
+				{
+					print_help(20);
+				}
+				else if (m_read_int)
+				{
+					print_help(200);
+				}
+				else if (m_read_sign)
+				{
+					print_help(201);
+				}
+			}
+			else if (m_generator_freq_mode)
 			{
 				welcome();
 				print_voltmeter();
@@ -125,7 +143,22 @@ void Terminal::loop()
 		}
 		else if (m_application_generator)
 		{
-			if (m_generator_freq_mode)
+			if (m_generator_dac_mode)
+			{
+				if (m_read_int && m_read_sign)
+				{
+					print_help(20);
+				}
+				else if (m_read_int)
+				{
+					print_help(200);
+				}
+				else if (m_read_sign)
+				{
+					print_help(201);
+				}
+			}
+			else if (m_generator_freq_mode)
 			{
 				if (m_read_int && m_read_sign)
 				{
@@ -240,7 +273,7 @@ bool Terminal::print_advanced(uint8_t row, uint8_t col, uint32_t decoration, con
 bool Terminal::print_help(uint16_t help_spec)
 {
 	bool success = true;
-	uint8_t row = 15;
+	uint8_t row = 16;
 
 	//	success = success && print_advanced(row++, 2, CLEAR_LINE | YELLOW, "");
 
@@ -255,12 +288,14 @@ bool Terminal::print_help(uint16_t help_spec)
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "l : start / stop logging");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "n : set number of samples per average");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 		}
 		break;
 
 		case (11) :  // voltmeter - set number of samples from keyboard
 		{
 			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "n : set number of samples per average");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : leave without change");
@@ -275,9 +310,49 @@ bool Terminal::print_help(uint16_t help_spec)
 			uint16_t color = YELLOW;
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : stop current mode / return");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "s : switch channels to edit settings");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f : set frequency");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d : set duty cycle");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "s : switch PWM channels to edit settings");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f : set frequency for active PWM channel");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d : set duty cycle for active PWM channel");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "v : set DAC voltage");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (20) :  // generator - set DAC voltage from keyboard
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify voltage [mV]");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "v or q : stop voltage edit mode");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (200) :  // generator - set DAC voltage from keyboard - enter digits
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "v : set voltage [mV]");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : leave without change");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+		}
+		break;
+
+		case (201) :  // generator - set DAC voltage from keyboard - enter signs
+		{
+			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify frequency");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "v or q : stop voltage edit mode");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 		}
 		break;
@@ -285,6 +360,7 @@ bool Terminal::print_help(uint16_t help_spec)
 		case (21) :  // generator - set frequency from keyboard
 		{
 			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify frequency");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f or q : stop frequency mode");
@@ -297,6 +373,7 @@ bool Terminal::print_help(uint16_t help_spec)
 		case (210) :  // generator - set frequency from keyboard - enter digits
 		{
 			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f : set frequency");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : leave without change");
@@ -309,6 +386,7 @@ bool Terminal::print_help(uint16_t help_spec)
 		case (211) :  // generator - set frequency from keyboard - enter signs
 		{
 			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify frequency");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f or q : stop frequency mode");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
@@ -321,6 +399,7 @@ bool Terminal::print_help(uint16_t help_spec)
 		case (22) :  // generator - set duty cycle from keyboard
 		{
 			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify duty cycle");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d or q : stop duty cycle mode");
@@ -333,6 +412,7 @@ bool Terminal::print_help(uint16_t help_spec)
 		case (220) :  // generator - set duty cycle from keyboard - enter digits
 		{
 			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "0 .. 9 : write numbers");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d : set duty cycle");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "q : leave without change");
@@ -345,6 +425,7 @@ bool Terminal::print_help(uint16_t help_spec)
 		case (221) :  // generator - set duty cycle from keyboard - enter signs
 		{
 			uint16_t color = YELLOW;
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "SPACE : redraw screen");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "+ or - : slightly modify duty cycle");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d or q : stop duty cycle mode");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
@@ -364,6 +445,7 @@ bool Terminal::print_help(uint16_t help_spec)
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
 		}
 		break;
 	}
@@ -373,8 +455,9 @@ bool Terminal::print_help(uint16_t help_spec)
 bool Terminal::welcome()
 {
 	bool success = true;
-	success = success && print_advanced(1, 33, CLEAR_SCREEN | BOLD | UNDERLINE | BRIGHT | WHITE, "Multimeter ST");
-	success = success && print_advanced(2, 37, BRIGHT | WHITE, version);
+	success = success && print_advanced(1, 30, CLEAR_SCREEN | BOLD | UNDERLINE | BRIGHT | WHITE, "Multimeter ST ");
+	success = success && print_advanced(1, 44, BOLD | UNDERLINE | BRIGHT | WHITE, version);
+	success = success && print_advanced(2, 34, BOLD | UNDERLINE | BRIGHT | WHITE, board_name);
 	return success;
 }
 
@@ -437,6 +520,17 @@ bool Terminal::print_generator()
 		success = success && print_advanced(row, 33 + 7, BRIGHT | BOLD | CYAN, "%");
 		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_duty(ch));
 		success = success && print_advanced(row++, 70, BRIGHT | BOLD | CYAN, buffer);
+	}
+
+	for (int ch=0; ch<CHANNEL_DAC_COUNT; ch++)
+	{
+		success = success && print_advanced(row, 2, CLEAR_LINE | BRIGHT | BOLD | CYAN, dac_ch_names[ch]);
+		success = success && print_advanced(row, 1 + sizeof(dac_ch_names[ch]), BRIGHT | BOLD | CYAN, ":");
+		success = success && print_advanced(row, 10, BRIGHT | BOLD | CYAN, "DAC");
+
+		snprintf(buffer, TERMINAL_WIDTH, "%7.3f", convert_mV2V(m_dac_mV));
+		success = success && print_advanced(row, 18, BRIGHT | BOLD | CYAN, buffer);
+		success = success && print_advanced(row++, 18 + 8, BRIGHT | BOLD | CYAN, "V");
 	}
 
 	return success;
@@ -634,31 +728,39 @@ void Terminal::update_generator()
 	if (m_voltmeter_logging == false)
 	{
 		if ((m_application_generator) && (m_no_from_keybord < 65535) && (m_read_int)
-				&& (m_generator_duty_mode == false) && (m_generator_freq_mode == false))
+				&& (m_generator_duty_mode == false) && (m_generator_freq_mode == false)
+				&& (m_generator_dac_mode == false))
 		{
-			if (m_generator_flag_duty_nofreq)
+			if (m_generator_flag_voltage)
 			{
-				if (m_generator_channel_upper)
-				{
-					pwm_set_duty(CHANNEL_PWM1, duty2intvalue(m_no_from_keybord));
-				}
-				else
-				{
-					pwm_set_duty(CHANNEL_PWM2, duty2intvalue(m_no_from_keybord));
-				}
-				m_generator_duty_mode = false;
+				m_dac_mV = m_no_from_keybord;
+				dac_set_value(m_dac_mV);
+				m_generator_flag_voltage = false;
 			}
 			else
 			{
-				if (m_generator_channel_upper)
+				if (m_generator_flag_duty_nofreq)
 				{
-					pwm_set_freq(CHANNEL_PWM1, freq2intvalue(m_no_from_keybord));
+					if (m_generator_channel_upper)
+					{
+						pwm_set_duty(CHANNEL_PWM1, duty2intvalue(m_no_from_keybord));
+					}
+					else
+					{
+						pwm_set_duty(CHANNEL_PWM2, duty2intvalue(m_no_from_keybord));
+					}
 				}
 				else
 				{
-					pwm_set_freq(CHANNEL_PWM2, freq2intvalue(m_no_from_keybord));
+					if (m_generator_channel_upper)
+					{
+						pwm_set_freq(CHANNEL_PWM1, freq2intvalue(m_no_from_keybord));
+					}
+					else
+					{
+						pwm_set_freq(CHANNEL_PWM2, freq2intvalue(m_no_from_keybord));
+					}
 				}
-				m_generator_freq_mode = false;
 			}
 			m_read_int = false;
 			m_no_from_keybord = 65535;
@@ -667,137 +769,153 @@ void Terminal::update_generator()
 
 		if ((m_application_generator) && ((m_generator_step_up) || (m_generator_step_down)))
 		{
-			uint32_t value;
-			if (m_generator_flag_duty_nofreq)
+			if (m_generator_flag_voltage)
 			{
-				if (m_generator_channel_upper)
+				if ((m_generator_step_up) && (m_dac_mV < 3300))
 				{
-					value = pwm_get_duty(CHANNEL_PWM1);
-					if ((m_generator_step_up) && (value < COUNTER_PERIOD))
-					{
-						pwm_set_duty(CHANNEL_PWM1, value + 1);
-					}
-					if ((m_generator_step_down) && (value > 0))
-					{
-						pwm_set_duty(CHANNEL_PWM1, value - 1);
-					}
+					m_dac_mV++;
+					dac_set_value(m_dac_mV);
 				}
-				else
+				if ((m_generator_step_down) && (m_dac_mV > 0))
 				{
-					value = pwm_get_duty(CHANNEL_PWM2);
-					if ((m_generator_step_up) && (value < COUNTER_PERIOD))
-					{
-						pwm_set_duty(CHANNEL_PWM2, value + 1);
-					}
-					if ((m_generator_step_down) && (value > 0))
-					{
-						pwm_set_duty(CHANNEL_PWM2, value - 1);
-					}
+					m_dac_mV--;
+					dac_set_value(m_dac_mV);
 				}
 			}
 			else
 			{
-				if (m_generator_channel_upper)
+				uint32_t value;
+				if (m_generator_flag_duty_nofreq)
 				{
-					value = pwm_get_freq(CHANNEL_PWM1);
-					uint32_t step;
-					if (value > 9999)
+					if (m_generator_channel_upper)
 					{
-						step = 1000;
-					}
-					else if (value > 4999)
-					{
-						step = 500;
-					}
-					else if (value > 3332)
-					{
-						step = 100;
-					}
-					else if (value > 1999)
-					{
-						step = 50;
-					}
-					else if (value > 1249)
-					{
-						step = 20;
-					}
-					else if (value > 908)
-					{
-						step = 10;
-					}
-					else if (value > 665)
-					{
-						step = 5;
-					}
-					else if (value > 415)
-					{
-						step = 2;
+						value = pwm_get_duty(CHANNEL_PWM1);
+						if ((m_generator_step_up) && (value < COUNTER_PERIOD))
+						{
+							pwm_set_duty(CHANNEL_PWM1, value + 1);
+						}
+						if ((m_generator_step_down) && (value > 0))
+						{
+							pwm_set_duty(CHANNEL_PWM1, value - 1);
+						}
 					}
 					else
 					{
-						step = 1;
-					}
-
-					if ((m_generator_step_up) && (value > 1))
-					{
-						// frequency up means prescaler must go down
-						pwm_set_freq(CHANNEL_PWM1, value - step);  // TODO
-					}
-					if ((m_generator_step_down) && (value < 50000))
-					{
-						// frequency down means prescaler must go up
-						pwm_set_freq(CHANNEL_PWM1, value + step);  // TODO
+						value = pwm_get_duty(CHANNEL_PWM2);
+						if ((m_generator_step_up) && (value < COUNTER_PERIOD))
+						{
+							pwm_set_duty(CHANNEL_PWM2, value + 1);
+						}
+						if ((m_generator_step_down) && (value > 0))
+						{
+							pwm_set_duty(CHANNEL_PWM2, value - 1);
+						}
 					}
 				}
 				else
 				{
-					value = pwm_get_freq(CHANNEL_PWM2);
-					uint32_t step;
-					if (value > 9999)
+					if (m_generator_channel_upper)
 					{
-						step = 1000;
-					}
-					else if (value > 4999)
-					{
-						step = 500;
-					}
-					else if (value > 3332)
-					{
-						step = 100;
-					}
-					else if (value > 1999)
-					{
-						step = 50;
-					}
-					else if (value > 1249)
-					{
-						step = 20;
-					}
-					else if (value > 908)
-					{
-						step = 10;
-					}
-					else if (value > 665)
-					{
-						step = 5;
-					}
-					else if (value > 415)
-					{
-						step = 2;
+						value = pwm_get_freq(CHANNEL_PWM1);
+						uint32_t step;
+						if (value > 9999)
+						{
+							step = 1000;
+						}
+						else if (value > 4999)
+						{
+							step = 500;
+						}
+						else if (value > 3332)
+						{
+							step = 100;
+						}
+						else if (value > 1999)
+						{
+							step = 50;
+						}
+						else if (value > 1249)
+						{
+							step = 20;
+						}
+						else if (value > 908)
+						{
+							step = 10;
+						}
+						else if (value > 665)
+						{
+							step = 5;
+						}
+						else if (value > 415)
+						{
+							step = 2;
+						}
+						else
+						{
+							step = 1;
+						}
+
+						if ((m_generator_step_up) && (value > 1))
+						{
+							// frequency up means prescaler must go down
+							pwm_set_freq(CHANNEL_PWM1, value - step);  // TODO
+						}
+						if ((m_generator_step_down) && (value < 50000))
+						{
+							// frequency down means prescaler must go up
+							pwm_set_freq(CHANNEL_PWM1, value + step);  // TODO
+						}
 					}
 					else
 					{
-						step = 1;
-					}
-					if ((m_generator_step_up) && (value > 1))
-					{
-						// frequency up means prescaler must go down
-						pwm_set_freq(CHANNEL_PWM2, value - step);  // TODO
-					}
-					if ((m_generator_step_down) && (value < 50000))
-					{
-						// frequency down means prescaler must go up
-						pwm_set_freq(CHANNEL_PWM2, value + step);  // TODO
+						value = pwm_get_freq(CHANNEL_PWM2);
+						uint32_t step;
+						if (value > 9999)
+						{
+							step = 1000;
+						}
+						else if (value > 4999)
+						{
+							step = 500;
+						}
+						else if (value > 3332)
+						{
+							step = 100;
+						}
+						else if (value > 1999)
+						{
+							step = 50;
+						}
+						else if (value > 1249)
+						{
+							step = 20;
+						}
+						else if (value > 908)
+						{
+							step = 10;
+						}
+						else if (value > 665)
+						{
+							step = 5;
+						}
+						else if (value > 415)
+						{
+							step = 2;
+						}
+						else
+						{
+							step = 1;
+						}
+						if ((m_generator_step_up) && (value > 1))
+						{
+							// frequency up means prescaler must go down
+							pwm_set_freq(CHANNEL_PWM2, value - step);  // TODO
+						}
+						if ((m_generator_step_down) && (value < 50000))
+						{
+							// frequency down means prescaler must go up
+							pwm_set_freq(CHANNEL_PWM2, value + step);  // TODO
+						}
 					}
 				}
 			}
@@ -860,6 +978,22 @@ bool Terminal::key_pressed()
 					{
 						m_voltmeter_zero_mode = false;
 						set_status("Voltmeter switched to default mode.");
+					}
+					else if (m_generator_dac_mode)
+					{
+						m_generator_dac_mode = false;
+						m_read_int = false;
+						m_no_from_keybord = 65535;
+						m_from_keyboard_message = nullptr;
+						if (m_read_sign)
+						{
+							m_read_sign = false;
+							set_status("Voltage edit mode finished.");
+						}
+						else
+						{
+							set_status("Voltage was NOT set.");
+						}
 					}
 					else if (m_generator_freq_mode)
 					{
@@ -936,6 +1070,39 @@ bool Terminal::key_pressed()
 					m_application_voltmeter = true;
 					m_redraw_screen = true;
 					set_status("Application Voltmeter selected.");
+				}
+				if ((m_application_generator) && (m_generator_freq_mode == false) && (m_generator_duty_mode == false))
+				{
+					valid_key = true;
+					m_generator_dac_mode = !m_generator_dac_mode;
+					if (m_generator_dac_mode)
+					{
+						m_read_int = true;
+						m_read_sign = true;
+						m_no_from_keybord = 0;
+						m_generator_flag_voltage = true;
+						set_status("Set voltage in mV (0 .. 3300):");
+					}
+					else
+					{
+						if (m_no_from_keybord < 0)
+						{
+							m_no_from_keybord = 0;
+							set_status("Minimum voltage was set.");
+						}
+						else if (m_read_sign)
+						{
+							m_read_int = false;
+							m_no_from_keybord = 65535;
+							set_status("Voltage edit mode finished.");
+						}
+						else
+						{
+							set_status("Voltage was set.");
+						}
+						m_read_sign = false;
+						m_from_keyboard_message = nullptr;
+					}
 				}
 				break;
 			}
@@ -1014,7 +1181,8 @@ bool Terminal::key_pressed()
 			case 'S' :
 			case 's' :
 				{
-					if ((m_application_generator) && (m_generator_duty_mode == false) && (m_generator_freq_mode == false))
+					if ((m_application_generator) && (m_generator_dac_mode == false)
+							&& (m_generator_duty_mode == false) && (m_generator_freq_mode == false))
 					{
 						valid_key = true;
 						m_generator_channel_upper = !m_generator_channel_upper;
@@ -1027,7 +1195,7 @@ bool Terminal::key_pressed()
 			case 'D' :
 			case 'd' :
 				{
-					if ((m_application_generator) && (m_generator_freq_mode == false))
+					if ((m_application_generator) && (m_generator_freq_mode == false) && (m_generator_dac_mode == false))
 					{
 						valid_key = true;
 						m_generator_duty_mode = !m_generator_duty_mode;
@@ -1066,7 +1234,7 @@ bool Terminal::key_pressed()
 			case 'F' :
 			case 'f' :
 				{
-					if ((m_application_generator) && (m_generator_duty_mode == false))
+					if ((m_application_generator) && (m_generator_duty_mode == false) && (m_generator_dac_mode == false))
 					{
 						valid_key = true;
 						m_generator_freq_mode = !m_generator_freq_mode;
@@ -1109,11 +1277,15 @@ bool Terminal::key_pressed()
 						valid_key = true;
 						m_read_int = false;
 						m_generator_step_up = true;
+						if (m_generator_dac_mode)
+						{
+							set_status("Voltage slightly increased.");
+						}
 						if (m_generator_duty_mode)
 						{
 							set_status("Duty cycle slightly increased.");
 						}
-						else if (m_generator_freq_mode)
+						if (m_generator_freq_mode)
 						{
 							set_status("Frequency slightly increased.");
 						}
@@ -1128,11 +1300,15 @@ bool Terminal::key_pressed()
 						valid_key = true;
 						m_read_int = false;
 						m_generator_step_down = true;
+						if (m_generator_dac_mode)
+						{
+							set_status("Voltage slightly decreased.");
+						}
 						if (m_generator_duty_mode)
 						{
 							set_status("Duty cycle slightly decreased.");
 						}
-						else if (m_generator_freq_mode)
+						if (m_generator_freq_mode)
 						{
 							set_status("Frequency slightly decreased.");
 						}
@@ -1188,6 +1364,12 @@ bool Terminal::key_pressed()
 							m_no_from_keybord = 10000;
 							m_from_keyboard_message = nullptr;
 						}
+						else if ((m_generator_dac_mode) && (m_no_from_keybord > 3300))
+						{
+							set_status("Voltage [mV] reached maximum (3300).");
+							m_no_from_keybord = 3300;
+							m_from_keyboard_message = nullptr;
+						}
 						else
 						{
 							const size_t TERMINAL_WIDTH = 80;
@@ -1201,6 +1383,10 @@ bool Terminal::key_pressed()
 							if (m_generator_freq_mode)
 							{
 								set_status("Set frequency for edited channel (1 .. 10000):");
+							}
+							if (m_generator_dac_mode)
+							{
+								set_status("Set voltage for DAC (0 .. 3300):");
 							}
 							set_from_keyboard(buffer);
 						}

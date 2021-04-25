@@ -75,17 +75,21 @@ private:
 	bool m_generator_channel_switched = false;
 	bool m_generator_freq_mode = false;
 	bool m_generator_duty_mode = false;
+	bool m_generator_dac_mode = false;
 	bool m_generator_flag_duty_nofreq = true;
+	bool m_generator_flag_voltage = false;
 	const char * m_status_message = nullptr;
 	const char * m_from_keyboard_message = nullptr;
 	float m_zero_avg[ADC_CHANNELS];
 	float m_zero_diff_avg[ADC_CHANNELS - 1];
+	uint16_t m_dac_mV;
 	bool m_voltmeter_no_samples_mode = false;
 	bool m_read_int = false;
 	uint16_t m_no_from_keybord = 65535;
 	bool m_read_sign = false;
 	bool m_generator_step_up = false;
 	bool m_generator_step_down = false;
+
 };
 
 #endif // TERMINAL_HPP_

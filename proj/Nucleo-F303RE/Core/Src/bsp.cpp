@@ -16,11 +16,10 @@
 
 extern UART_HandleTypeDef huart2;
 extern ADC_HandleTypeDef hadc1;
-//extern ADC_HandleTypeDef hadc2;
-//extern ADC_HandleTypeDef hadc3;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim3;
+extern DAC_HandleTypeDef hdac1;
 
 
 /* Constants ---------------------------------------------------------*/
@@ -46,10 +45,19 @@ const char * pwm_ch_names[CHANNEL_PWM_COUNT] =
 		"D12"
 };
 
+// printed DAC channel names
+const char * dac_ch_names[CHANNEL_DAC_COUNT] =
+{
+		"A2"
+};
+
 /* Variables ---------------------------------------------------------*/
 
 // ADC ring buffer (1 sample for each channel)
 uint16_t adc_buf[CHANNEL_COUNT];
+
+uint16_t adc_vdda_mV = 3300;
+
 
 /* Functions ---------------------------------------------------------*/
 
@@ -87,6 +95,11 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 bool adc_run(void)
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
+
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
+	}
 	if (hal_status == HAL_OK)
 	{
 		hal_status = HAL_TIM_Base_Start(&htim1);
@@ -94,19 +107,22 @@ bool adc_run(void)
 	if (hal_status == HAL_OK)
 	{
 		hal_status = HAL_TIM_OC_Start(&htim1, TIM_CHANNEL_3);
-	}	
+	}
 	if (hal_status == HAL_OK)
 	{
 		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_CHANNELS);
 	}
-//	if (hal_status == HAL_OK)
-//	{
-//		hal_status = HAL_ADC_Start_DMA(&hadc2, (uint32_t*) &adc_buf[ADC2_IDX], ADC2_CHANNELS);
-//	}
-//	if (hal_status == HAL_OK)
-//	{
-//		hal_status = HAL_ADC_Start_DMA(&hadc3, (uint32_t*) &adc_buf[ADC3_IDX], ADC3_CHANNELS);
-//	}
+
+	return hal_status == HAL_OK;
+}
+
+bool dac_run(void)
+{
+	HAL_StatusTypeDef hal_status = HAL_OK;
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
+	}
 
 	return hal_status == HAL_OK;
 }
@@ -144,6 +160,11 @@ uint16_t adc_get_sample_mV(uint8_t channel)
 	}
 
 	uint16_t voltage = numerator / denominator;
+
+	if (channel == CHANNEL_VDDA)
+	{
+		adc_vdda_mV = voltage;
+	}
 
 	return voltage;
 }
@@ -216,4 +237,13 @@ void pwm_set_freq(uint32_t channel, uint32_t freq)
 	}
 }
 
-// __LL_TIM_CALC_PSC(__TIMCLK__, __CNTCLK__)
+uint32_t dac_get_value(void)
+{
+	return HAL_DAC_GetValue(&hdac1, CHANNEL_DAC1);
+}
+
+void dac_set_value(uint16_t value_mV)
+{
+	uint32_t value = (4096UL * value_mV) / adc_vdda_mV;
+	HAL_DAC_SetValue(&hdac1, CHANNEL_DAC1, DAC_ALIGN_12B_R, value);
+}
