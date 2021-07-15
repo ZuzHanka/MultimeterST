@@ -28,6 +28,7 @@ static const char ESC_CLEAR_LINE[] = "\x1b[2K";
 void Terminal::loop()
 {
 	bool was_key_pressed = key_pressed();
+	bool was_other_device_data = device_data_received();
 
 	if (m_redraw_screen)
 	{
@@ -201,6 +202,18 @@ void Terminal::loop()
 
 	update_voltmeter();
 	update_generator();
+
+	if (was_other_device_data)
+	{
+		print_device_data_received();
+	}
+
+	if (m_device_send_data)
+	{
+		bool success = false;
+		m_device_send_data = false;
+		success = send_device_data("X");
+	}
 }
 
 bool Terminal::set_cursor_position(uint8_t row, uint8_t col)
@@ -934,6 +947,24 @@ void Terminal::update_generator()
 	}
 }
 
+bool Terminal::device_data_received()
+{
+	char data;
+	size_t recv_bytes = device_receive(&data, 1);
+
+	if (recv_bytes == 1)
+	{
+		const size_t TERMINAL_WIDTH = 80;
+		static char buffer[TERMINAL_WIDTH + 1];
+		buffer[TERMINAL_WIDTH] = '\0';
+		snprintf(buffer, TERMINAL_WIDTH, "Other device data decreased by 1: '%c'", data - 1);
+		set_from_other_device(buffer);
+
+		return true;
+	}
+	return false;
+}
+
 bool Terminal::key_pressed()
 {
 	char key;
@@ -1043,6 +1074,18 @@ bool Terminal::key_pressed()
 						// TODO: Leave Voltmeter -> main menu
 						valid_key = false;
 //						set_status("Unsupported key pressed!");
+					}
+				}
+				break;
+
+			case 'O' :
+			case 'o' :
+				{
+					if ((m_application_voltmeter) && (m_voltmeter_logging == false) && (m_voltmeter_no_samples_mode == false))
+					{
+						valid_key = true;
+						m_device_send_data = true;
+						set_status("Send a sign 'X' to other device.");
 					}
 				}
 				break;
@@ -1431,6 +1474,19 @@ void Terminal::print_from_keyboard()
 	if (m_from_keyboard_message != nullptr)
 	{
 		print_advanced(24, 50, BRIGHT |BOLD |RED, m_from_keyboard_message);
+	}
+}
+
+void Terminal::set_from_other_device(const char * message)
+{
+	m_device_message_received = message;
+}
+
+void Terminal::print_device_data_received()
+{
+	if (m_device_message_received != nullptr)
+	{
+		print_advanced(23, 1, CLEAR_LINE | REVERSED | BOLD | BRIGHT | GREEN, m_device_message_received);
 	}
 }
 

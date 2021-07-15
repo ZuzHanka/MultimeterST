@@ -46,6 +46,10 @@ protected:
 	{
 		return terminal_transmit(message, strlen(message));
 	}
+	bool send_device_data(const char * message)
+	{
+		return device_transmit(message, strlen(message));
+	}
 	bool set_cursor_position(uint8_t row, uint8_t col);
 	bool text_decoration(uint32_t flags);
 	bool print_advanced(uint8_t row, uint8_t col, uint32_t decoration, const char * message);
@@ -61,6 +65,9 @@ protected:
 	bool print_voltmeter();
 	bool print_generator();
 //	bool print_setup();
+	bool device_data_received();
+	void set_from_other_device(const char * message);
+	void print_device_data_received();
 
 private:
 	AvgFilter avgf[ADC_CHANNELS];
@@ -89,7 +96,8 @@ private:
 	bool m_read_sign = false;
 	bool m_generator_step_up = false;
 	bool m_generator_step_down = false;
-
+	const char * m_device_message_received = nullptr;
+	bool m_device_send_data = false;
 };
 
 #endif // TERMINAL_HPP_
