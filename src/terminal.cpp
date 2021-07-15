@@ -734,7 +734,6 @@ void Terminal::update_generator()
 			if (m_generator_flag_voltage)
 			{
 				m_dac_mV = m_no_from_keybord;
-				dac_set_value(m_dac_mV);
 				m_generator_flag_voltage = false;
 			}
 			else
@@ -1442,6 +1441,7 @@ void Terminal::adc_callback() {
 		int16_t sample = adc_get_sample_mV(ch);
 		avgf[ch].update(sample);
 	}
+	dac_set_value(m_dac_mV);
 }
 
 
