@@ -17,7 +17,7 @@ uint32_t get_tick(void);
 
 size_t terminal_receive(char * buff, size_t buff_size);
 bool terminal_transmit(const char * buff, size_t buff_size);
-size_t device_receive(char * buff, size_t buff_size);
+bool device_receive(char * buff, size_t buff_size);
 bool device_transmit(const char * buff, size_t buff_size);
 
 bool adc_run(void);

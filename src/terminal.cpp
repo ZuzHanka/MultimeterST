@@ -950,9 +950,8 @@ void Terminal::update_generator()
 bool Terminal::device_data_received()
 {
 	char data;
-	size_t recv_bytes = device_receive(&data, 1);
 
-	if (recv_bytes == 1)
+	if (device_receive(&data, 1))
 	{
 		const size_t TERMINAL_WIDTH = 80;
 		static char buffer[TERMINAL_WIDTH + 1];

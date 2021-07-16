@@ -93,24 +93,9 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 	return HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
 }
 
-size_t device_receive(char * buff, size_t buff_size)
+bool device_receive(char * buff, size_t buff_size)
 {
-	size_t len = 0;
-	while (buff_size > 0)
-	{
-		HAL_StatusTypeDef status = HAL_UART_Receive(&huart1, (uint8_t*) buff, 1, TIMEOUT);
-		if (status == HAL_OK)
-		{
-			buff++;
-			buff_size--;
-			len++;
-		}
-		else
-		{
-			break;
-		}
-	}
-	return len;
+	return HAL_OK == HAL_UART_Receive(&huart1, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
 }
 
 bool device_transmit(const char * buff, size_t buff_size)
