@@ -1,9 +1,7 @@
 /* Includes ------------------------------------------------------------------*/
 
-#include "avg_filter.hpp"
+#include "comlink.hpp"
 #include "bsp.hpp"
-#include "calculations.hpp"
-#include "terminal.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -12,20 +10,18 @@
 /* Constants ---------------------------------------------------------*/
 
 /* Variables ---------------------------------------------------------*/
-Terminal terminal = Terminal();
 
 /* Functions ---------------------------------------------------------*/
 void adc_callback()
 {
-	terminal.adc_callback();
+	// Do nothing.
 }
 
 extern "C" void project_main()
 {
 	(void) adc_run();
-	(void) pwm_run();
 
 	while (1) {
-		terminal.loop();
+		Comlink::response_loop();
 	}
 }

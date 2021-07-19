@@ -14,6 +14,7 @@
 
 /* Presunut do BSP ---------------------------------------------------*/
 
+extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern ADC_HandleTypeDef hadc1;
 extern ADC_HandleTypeDef hadc2;
@@ -52,9 +53,14 @@ uint16_t adc_buf[CHANNEL_COUNT];
 
 /* Functions ---------------------------------------------------------*/
 
-uint32_t get_tick(void)
+uint32_t get_tick()
 {
 	return HAL_GetTick();
+}
+
+void delay(uint32_t ticks)
+{
+	HAL_Delay(ticks);
 }
 
 size_t terminal_receive(char * buff, size_t buff_size)
@@ -83,7 +89,17 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 	return HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
 }
 
-bool adc_run(void)
+bool comlink_receive(uint8_t * buff, uint16_t buff_size, uint32_t timeout)
+{
+	return HAL_OK == HAL_UART_Receive(&huart1, (uint8_t*) buff, buff_size, timeout);
+}
+
+bool comlink_transmit(const uint8_t * buff, uint16_t buff_size)
+{
+	return HAL_OK == HAL_UART_Transmit(&huart1, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
+}
+
+bool adc_run()
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
 	if (hal_status == HAL_OK)
@@ -110,7 +126,7 @@ bool adc_run(void)
 	return hal_status == HAL_OK;
 }
 
-bool pwm_run(void)
+bool pwm_run()
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
 	if (hal_status == HAL_OK)
@@ -187,7 +203,7 @@ void pwm_set_duty(uint32_t channel, uint32_t duty)
 	}
 }
 
-uint32_t pwm_get_freq(void)
+uint32_t pwm_get_freq()
 {
 	// uint32_t LL_TIM_GetPrescaler(TIM_TypeDef *TIMx)
 	return (LL_TIM_GetPrescaler(htim8.Instance) + 1);

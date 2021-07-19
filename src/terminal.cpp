@@ -2,6 +2,7 @@
 
 #include "bsp.hpp"
 #include "calculations.hpp"
+#include "comlink.hpp" // TODO - remove, just for testing
 
 #include <cstdio>
 #include <cstring>
@@ -519,6 +520,11 @@ void Terminal::update_voltmeter()
 			if (ch == CHANNEL_TEMP)
 			{
 				avg[ch] = convert2celsius(avgf[ch].get());
+			}
+			else if (ch == CHANNEL_2)
+			{
+				Comlink::request_1();
+				avg[ch] = convert_mV2V(Comlink::test_data);
 			}
 			else
 			{
