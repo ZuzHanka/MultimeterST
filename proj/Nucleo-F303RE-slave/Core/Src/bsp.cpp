@@ -9,18 +9,15 @@
 
 #include "bsp.hpp"
 
+#include "main.h"
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx_ll_tim.h"
 
 /* Presunut do BSP ---------------------------------------------------*/
 
 extern UART_HandleTypeDef huart2;
-extern UART_HandleTypeDef huart1;
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim8;
-extern TIM_HandleTypeDef htim3;
-extern DAC_HandleTypeDef hdac1;
 
 
 /* Constants ---------------------------------------------------------*/
@@ -39,18 +36,6 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 		"VDDA"
 };
 
-// printed PWM channel names
-const char * pwm_ch_names[CHANNEL_PWM_COUNT] =
-{
-		"D10",
-		"D12"
-};
-
-// printed DAC channel names
-const char * dac_ch_names[CHANNEL_DAC_COUNT] =
-{
-		"A2"
-};
 
 /* Variables ---------------------------------------------------------*/
 
@@ -93,17 +78,6 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 	return HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
 }
 
-bool device_receive(char * buff, size_t buff_size)
-{
-	return HAL_OK == HAL_UART_Receive(&huart1, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
-}
-
-bool device_transmit(const char * buff, size_t buff_size)
-{
-	return HAL_OK == HAL_UART_Transmit(&huart1, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
-}
-
-
 bool adc_run(void)
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
@@ -112,43 +86,31 @@ bool adc_run(void)
 	{
 		hal_status = HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 	}
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_TIM_Base_Start(&htim1);
-	}
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_TIM_OC_Start(&htim1, TIM_CHANNEL_3);
-	}
+
+	return hal_status == HAL_OK;
+}
+
+bool adc_start(void)
+{
+	HAL_StatusTypeDef hal_status = HAL_OK;
+
 	if (hal_status == HAL_OK)
 	{
 		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_CHANNELS);
 	}
 
 	return hal_status == HAL_OK;
+
 }
 
-bool dac_run(void)
+bool adc_stop(void)
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
-	}
 
-	return hal_status == HAL_OK;
-}
-
-bool pwm_run(void)
-{
-	HAL_StatusTypeDef hal_status = HAL_OK;
 	if (hal_status == HAL_OK)
 	{
-		hal_status = HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-	}
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+		hal_status = HAL_ADC_Stop_DMA(&hadc1);
+		HAL_ADC_DeInit(&hadc1);
 	}
 
 	return hal_status == HAL_OK;
@@ -195,67 +157,19 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	}
 }
 
-uint32_t pwm_get_duty(uint32_t channel)
+void set_switch(bool value)
 {
-	uint32_t duty = 0;
-	if (channel == CHANNEL_PWM1)
-	{
-		duty = LL_TIM_OC_GetCompareCH1(htim8.Instance);
-	}
-	if (channel == CHANNEL_PWM2)
-	{
-		duty =  LL_TIM_OC_GetCompareCH1(htim3.Instance);
-	}
-	return duty;
+	GPIO_PinState pin_state = value ? GPIO_PIN_SET : GPIO_PIN_RESET;
+	HAL_GPIO_WritePin(GPIOA, SWITCH_Pin, pin_state);
 }
 
-void pwm_set_duty(uint32_t channel, uint32_t duty)
+bool get_switch(void)
 {
-	if (channel == CHANNEL_PWM1)
-	{
-		LL_TIM_OC_SetCompareCH1(htim8.Instance, duty);
-	}
-	if (channel == CHANNEL_PWM2)
-	{
-		LL_TIM_OC_SetCompareCH1(htim3.Instance, duty);
-	}
+	GPIO_PinState pin_state = HAL_GPIO_ReadPin(GPIOA, SWITCH_Pin);
+	return pin_state == GPIO_PIN_SET;
 }
 
-uint32_t pwm_get_freq(uint32_t channel)
+void delay(uint32_t time_ms)
 {
-	// uint32_t LL_TIM_GetPrescaler(TIM_TypeDef *TIMx)
-	uint32_t freq = 0;
-	if (channel == CHANNEL_PWM1)
-	{
-		freq =  (LL_TIM_GetPrescaler(htim8.Instance) + 1);
-	}
-	if (channel == CHANNEL_PWM2)
-	{
-		freq =  (LL_TIM_GetPrescaler(htim3.Instance) + 1);
-	}
-	return freq;
-}
-
-void pwm_set_freq(uint32_t channel, uint32_t freq)
-{
-	// void LL_TIM_SetPrescaler(TIM_TypeDef *TIMx, uint32_t Prescaler)
-	if (channel == CHANNEL_PWM1)
-	{
-		LL_TIM_SetPrescaler(htim8.Instance, (freq - 1));
-	}
-	if (channel == CHANNEL_PWM2)
-	{
-		LL_TIM_SetPrescaler(htim3.Instance, (freq - 1));
-	}
-}
-
-uint32_t dac_get_value(void)
-{
-	return HAL_DAC_GetValue(&hdac1, CHANNEL_DAC1);
-}
-
-void dac_set_value(uint16_t value_mV)
-{
-	uint32_t value = (4096UL * value_mV) / adc_vdda_mV;
-	HAL_DAC_SetValue(&hdac1, CHANNEL_DAC1, DAC_ALIGN_12B_R, value);
+	HAL_Delay(time_ms);
 }

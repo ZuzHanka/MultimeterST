@@ -42,26 +42,5 @@ static const float AVG_SLOPE = 4.3;
 // temperature sensor voltage at 25*C [mV]
 static const uint16_t V25 = 1430;
 
-// PWM channels
-enum Channel_PWM {
-	CHANNEL_PWM1,
-	CHANNEL_PWM2,
-	CHANNEL_PWM_COUNT
-};
-
-extern const char * pwm_ch_names[CHANNEL_PWM_COUNT];
-
-// generator PWM - timer settings
-static const uint16_t COUNTER_PERIOD = 7199;
-static const uint16_t FREQUENCY_MAX = (72000000 / (COUNTER_PERIOD + 1));
-
-
-// DAC channels
-enum Channel_DAC {
-	CHANNEL_DAC1,
-	CHANNEL_DAC_COUNT
-};
-
-extern const char * dac_ch_names[CHANNEL_DAC_COUNT];
 
 #endif /* INC_BSP_CONF_HPP_ */
