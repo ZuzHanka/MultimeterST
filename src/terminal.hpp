@@ -51,8 +51,6 @@ protected:
 	void print_measured();
 
 private:
-//	AvgFilter avgf[ADC_CHANNELS];
-//	AvgFilter avgf_measured[ADC_CHANNELS];
 	uint16_t adc_samples[ADC_CHANNELS];
 	uint16_t adc_samples2print[ADC_CHANNELS];
 

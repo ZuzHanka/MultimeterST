@@ -37,7 +37,6 @@ void Terminal::print_measured()
 	int user_volt_channels = sizeof(Channel_ordered);
 
 	// read and convert actual ADC values here
-//	float avg[ADC_CHANNELS];
 	float adc_V[ADC_CHANNELS];
 
 	// get values from ADC
@@ -45,12 +44,10 @@ void Terminal::print_measured()
 	{
 		if (ch == CHANNEL_TEMP)
 		{
-//			avg[ch] = convert2celsius(avgf_measured[ch].get());
 			adc_V[ch] = convert2celsius(adc_samples2print[ch]);
 		}
 		else
 		{
-//			avg[ch] = convert_mV2V(avgf_measured[ch].get());
 			adc_V[ch] = convert_mV2V(adc_samples2print[ch]);
 		}
 	}
@@ -61,7 +58,7 @@ void Terminal::print_measured()
 	aux_buffer[TERMINAL_WIDTH] = '\0';
 
 	// number of measurements for print
-	snprintf(aux_buffer, TERMINAL_WIDTH, "%9d, ", m_no_measurements);
+	snprintf(aux_buffer, TERMINAL_WIDTH, "%d, ", m_loop_counter);
 	strcat(buffer_avg, aux_buffer);
 
 	// DAC value for print
@@ -71,7 +68,6 @@ void Terminal::print_measured()
 	// ADC values for print
 	for (int ch = 0; ch < user_volt_channels; ch++)
 	{
-//		snprintf(aux_buffer, TERMINAL_WIDTH, "%6.3f, ", avg[Channel_ordered[ch]]);
 		snprintf(aux_buffer, TERMINAL_WIDTH, "%6.3f, ", adc_V[Channel_ordered[ch]]);
 		strcat(buffer_avg, aux_buffer);
 	}
@@ -90,7 +86,6 @@ void Terminal::set_dac_mV(uint16_t value_mV)
 void Terminal::adc_callback() {
 	for (int ch = 0; ch < ADC_CHANNELS; ch++)
 	{
-//		avgf[ch].update(adc_get_sample_mV(ch));
 		adc_samples[ch] = adc_get_sample_mV(ch);
 	}
 
@@ -110,7 +105,6 @@ void Terminal::adc_callback() {
 			{
 				for (int ch = 0; ch < ADC_CHANNELS; ch++)
 				{
-//					avgf_measured[ch] = avgf[ch];
 					adc_samples2print[ch] = adc_samples[ch];
 				}
 				m_print_measured = true;
@@ -128,7 +122,6 @@ void Terminal::adc_callback() {
 		{
 			for (int ch = 0; ch < ADC_CHANNELS; ch++)
 			{
-//				avgf_measured[ch] = avgf[ch];
 				adc_samples2print[ch] = adc_samples[ch];
 			}
 			m_print_measured = true;

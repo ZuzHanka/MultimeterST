@@ -35,8 +35,8 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 		"A1",
 		"A4",
 		"A5",
-		"TEMP",
 		"VDDA"
+		"TEMP",
 };
 
 // printed PWM channel names
