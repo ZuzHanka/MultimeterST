@@ -10,6 +10,7 @@
 #include <cstring>
 
 /* Constants ---------------------------------------------------------*/
+const uint16_t DAC_VOLTAGE_mV = 1000;  // value set to DAC [mV]
 
 /* Variables ---------------------------------------------------------*/
 Terminal terminal = Terminal();
@@ -25,7 +26,21 @@ extern "C" void multimeter_main() {
 	(void) pwm_run();
 	(void) dac_run();
 
-	while (1) {
+	// init
+//	AvgFilter::set_no_samples(1);
+
+	terminal.m_process = IDLE;
+	set_switch(false);
+	terminal.reset_loop_counter();
+
+	// 1 measurement round
+	terminal.set_dac_mV(DAC_VOLTAGE_mV);
+	delay(5000);
+	terminal.m_process = READY;
+
+	while (1)
+	{
 		terminal.loop();
 	}
+
 }

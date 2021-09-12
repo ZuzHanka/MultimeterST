@@ -29,6 +29,9 @@ uint32_t pwm_get_freq(uint32_t channel);
 void pwm_set_freq(uint32_t channel, uint32_t freq);
 uint32_t dac_get_value(void);
 void dac_set_value(uint16_t value_mV);
+void set_switch(bool value);
+bool get_switch(void);
+void delay(uint32_t time_ms);
 
 /* Callbacks -----------------------------------------------------------------*/
 

@@ -9,6 +9,7 @@
 
 #include "bsp.hpp"
 
+#include "main.h"
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx_ll_tim.h"
 
@@ -246,4 +247,21 @@ void dac_set_value(uint16_t value_mV)
 {
 	uint32_t value = (4096UL * value_mV) / adc_vdda_mV;
 	HAL_DAC_SetValue(&hdac1, CHANNEL_DAC1, DAC_ALIGN_12B_R, value);
+}
+
+void set_switch(bool value)
+{
+	GPIO_PinState pin_state = value ? GPIO_PIN_SET : GPIO_PIN_RESET;
+	HAL_GPIO_WritePin(GPIOA, SWITCH_Pin, pin_state);
+}
+
+bool get_switch(void)
+{
+	GPIO_PinState pin_state = HAL_GPIO_ReadPin(GPIOA, SWITCH_Pin);
+	return pin_state == GPIO_PIN_SET;
+}
+
+void delay(uint32_t time_ms)
+{
+	HAL_Delay(time_ms);
 }
