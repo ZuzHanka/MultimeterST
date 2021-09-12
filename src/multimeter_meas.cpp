@@ -24,19 +24,17 @@ MeasurementMain measure = MeasurementMain();
 void adc_callback()
 {
 	measure.adc_callback();
-//	(measure.loop_continues_condition()) ? (adc_start()) : (adc_stop());
 }
 
 extern "C" void multimeter_meas()
 {
 	(void) adc_run();
-	measure.reset_loop_counter();
-//	set_switch(false);
-//	delay(5000);
-	(void) adc_start();
-//	set_switch(true);
-	while (measure.loop_continues_condition()) {}
-//	measure.loop();
+//	measure.reset_loop_counter();
+	while (true)
+	{
+//		measure.loop();
+	}
+
 }
 
 

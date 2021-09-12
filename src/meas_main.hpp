@@ -43,14 +43,15 @@ protected:
 		return terminal_transmit(message, strlen(message));
 	}
 	void set_no_measurements();
-	void update_voltmeter();
-	void print_voltmeter();
+	void print_measured();
 
 private:
-	AvgFilter avgf[ADC_CHANNELS];
+	uint16_t adc_samples[ADC_CHANNELS];
+	uint16_t adc_samples2print[ADC_CHANNELS];
 
 	uint16_t m_no_measurements;
 	volatile uint16_t m_loop_counter;
+	bool m_print_measured = false;
 
 	char m_buffer_avg[TERMINAL_WIDTH + 1] = { 0 };
 };

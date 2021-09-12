@@ -86,6 +86,18 @@ bool adc_run(void)
 	{
 		hal_status = HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 	}
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_TIM_Base_Start(&htim1);
+	}
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_TIM_OC_Start(&htim1, TIM_CHANNEL_3);
+	}
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_CHANNELS);
+	}
 
 	return hal_status == HAL_OK;
 }
@@ -157,17 +169,17 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	}
 }
 
-void set_switch(bool value)
-{
-	GPIO_PinState pin_state = value ? GPIO_PIN_SET : GPIO_PIN_RESET;
-	HAL_GPIO_WritePin(GPIOA, SWITCH_Pin, pin_state);
-}
+//void set_switch(bool value)
+//{
+//	GPIO_PinState pin_state = value ? GPIO_PIN_SET : GPIO_PIN_RESET;
+//	HAL_GPIO_WritePin(GPIOA, SWITCH_Pin, pin_state);
+//}
 
-bool get_switch(void)
-{
-	GPIO_PinState pin_state = HAL_GPIO_ReadPin(GPIOA, SWITCH_Pin);
-	return pin_state == GPIO_PIN_SET;
-}
+//bool get_switch(void)
+//{
+//	GPIO_PinState pin_state = HAL_GPIO_ReadPin(GPIOA, SWITCH_Pin);
+//	return pin_state == GPIO_PIN_SET;
+//}
 
 void delay(uint32_t time_ms)
 {
