@@ -26,11 +26,12 @@ public:
 
 	Terminal()
 	{
-		set_no_measurements();
+		set_no_measurements(1);
 		reset_loop_counter();
 	}
 
 	void loop();
+	void set_no_measurements(uint16_t value);
 	void reset_loop_counter()
 	{
 		m_loop_counter = 0;
@@ -47,7 +48,6 @@ protected:
 	{
 		return terminal_transmit(message, strlen(message));
 	}
-	void set_no_measurements();
 	void print_measured();
 
 private:

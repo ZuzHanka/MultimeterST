@@ -10,8 +10,6 @@
 /* Constants ---------------------------------------------------------*/
 const char version[20] = "1.2.0";
 
-const uint16_t NO_MEASUREMENTS = 1000;
-
 
 /* Functions ---------------------------------------------------------*/
 void Terminal::loop()
@@ -23,9 +21,9 @@ void Terminal::loop()
 	}
 }
 
-void Terminal::set_no_measurements()
+void Terminal::set_no_measurements(uint16_t value)
 {
-	m_no_measurements = NO_MEASUREMENTS;
+	m_no_measurements = value;
 }
 
 void Terminal::print_measured()
@@ -58,17 +56,17 @@ void Terminal::print_measured()
 	aux_buffer[TERMINAL_WIDTH] = '\0';
 
 	// number of measurements for print
-	snprintf(aux_buffer, TERMINAL_WIDTH, "%d, ", m_loop_counter);
+	snprintf(aux_buffer, TERMINAL_WIDTH, "%d  ", m_loop_counter);
 	strcat(buffer_avg, aux_buffer);
 
 	// DAC value for print
-	snprintf(aux_buffer, TERMINAL_WIDTH, "%6.3f, ", dac_V);
+	snprintf(aux_buffer, TERMINAL_WIDTH, "%6.3f  ", dac_V);
 	strcat(buffer_avg, aux_buffer);
 
 	// ADC values for print
 	for (int ch = 0; ch < user_volt_channels; ch++)
 	{
-		snprintf(aux_buffer, TERMINAL_WIDTH, "%6.3f, ", adc_V[Channel_ordered[ch]]);
+		snprintf(aux_buffer, TERMINAL_WIDTH, "%6.3f  ", adc_V[Channel_ordered[ch]]);
 		strcat(buffer_avg, aux_buffer);
 	}
 	strcat(buffer_avg, "\n");

@@ -140,12 +140,12 @@
 		<link>
 			<name>Drivers/STM32F3xx_HAL_Driver/stm32f3xx_hal_uart.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F3xx_HAL_Driver/stm32f3xx_hal_uart_ex.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart_ex.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart_ex.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

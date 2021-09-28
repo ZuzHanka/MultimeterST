@@ -10,7 +10,12 @@
 #include <cstring>
 
 /* Constants ---------------------------------------------------------*/
-const uint16_t DAC_VOLTAGE_mV = 3000;  // value set to DAC [mV]
+const uint16_t DAC_VOLTAGE_MIN_mV = 0;  // minimum value set to DAC [mV]
+const uint16_t DAC_VOLTAGE_MAX_mV = 300;  // maximum value set to DAC [mV]
+const uint16_t DAC_VOLTAGE_STEP_mV = 100;  // step rising value set to DAC [mV]
+
+const uint16_t NO_MEASUREMENTS = 10000;  // number of integration rounds
+
 
 /* Variables ---------------------------------------------------------*/
 Terminal terminal = Terminal();
@@ -28,17 +33,25 @@ extern "C" void multimeter_main()
 	(void) dac_run();
 
 	// init
+	terminal.set_no_measurements(NO_MEASUREMENTS);
 	terminal.m_process = IDLE;
 	set_switch(false);
 	terminal.reset_loop_counter();
 
-	// 1 measurement round
-	terminal.set_dac_mV(DAC_VOLTAGE_mV);
-	delay(3000);
-	terminal.m_process = READY;
+	uint16_t dac_voltage_mV = DAC_VOLTAGE_MIN_mV;
 
-	while (true)
+	while (dac_voltage_mV <= DAC_VOLTAGE_MAX_mV)
 	{
-		terminal.loop();
+		// 1 measurement round
+		terminal.set_dac_mV(dac_voltage_mV);
+		delay(3000);
+		terminal.m_process = READY;
+
+		while (terminal.m_process != IDLE)
+		{
+			terminal.loop();
+		}
+
+		dac_voltage_mV += DAC_VOLTAGE_STEP_mV;
 	}
 }
