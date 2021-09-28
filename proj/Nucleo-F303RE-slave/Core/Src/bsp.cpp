@@ -15,7 +15,7 @@
 
 /* Presunut do BSP ---------------------------------------------------*/
 
-extern UART_HandleTypeDef huart2;
+//extern UART_HandleTypeDef huart2;
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim1;
 
@@ -52,31 +52,31 @@ uint32_t get_tick(void)
 	return HAL_GetTick();
 }
 
-size_t terminal_receive(char * buff, size_t buff_size)
-{
-	size_t len = 0;
-	while (buff_size > 0)
-	{
-		HAL_StatusTypeDef status = HAL_UART_Receive(&huart2, (uint8_t*) buff, 1, TIMEOUT);
-		// HAL_UART_Transmit(&huart2, buff, 1, 10);
-		if (status == HAL_OK)
-		{
-			buff++;
-			buff_size--;
-			len++;
-		}
-		else
-		{
-			break;
-		}
-	}
-	return len;
-}
+//size_t terminal_receive(char * buff, size_t buff_size)
+//{
+//	size_t len = 0;
+//	while (buff_size > 0)
+//	{
+//		HAL_StatusTypeDef status = HAL_UART_Receive(&huart2, (uint8_t*) buff, 1, TIMEOUT);
+//		// HAL_UART_Transmit(&huart2, buff, 1, 10);
+//		if (status == HAL_OK)
+//		{
+//			buff++;
+//			buff_size--;
+//			len++;
+//		}
+//		else
+//		{
+//			break;
+//		}
+//	}
+//	return len;
+//}
 
-bool terminal_transmit(const char * buff, size_t buff_size)
-{
-	return HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
-}
+//bool terminal_transmit(const char * buff, size_t buff_size)
+//{
+//	return HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
+//}
 
 bool adc_run(void)
 {
