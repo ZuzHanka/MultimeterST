@@ -29,24 +29,27 @@ void Terminal::set_no_measurements(uint16_t value)
 void Terminal::print_measured()
 {
 	// value set to DAC
-	float dac_V = convert_mV2V(m_dac_mV);
+	float dac_V = convert_mV2V(dac_sample2print);
 
 	// number of user ADC voltmeter channels
 	int user_volt_channels = sizeof(Channel_ordered);
 
 	// read and convert actual ADC values here
-	float adc_V[ADC_CHANNELS];
+	float adc_V1[ADC_CHANNELS];
+	float adc_V2[ADC_CHANNELS];
 
 	// get values from ADC
 	for (int ch = 0; ch < ADC_CHANNELS; ch++)
 	{
 		if (ch == CHANNEL_TEMP)
 		{
-			adc_V[ch] = convert2celsius(adc_samples2print[ch]);
+			adc_V1[ch] = convert2celsius(adc_samples2print1[ch]);
+			adc_V2[ch] = convert2celsius(adc_samples2print2[ch]);
 		}
 		else
 		{
-			adc_V[ch] = convert_mV2V(adc_samples2print[ch]);
+			adc_V1[ch] = convert_mV2V(adc_samples2print1[ch]);
+			adc_V2[ch] = convert_mV2V(adc_samples2print2[ch]);
 		}
 	}
 
@@ -60,13 +63,18 @@ void Terminal::print_measured()
 	strcat(buffer_avg, aux_buffer);
 
 	// DAC value for print
-	snprintf(aux_buffer, TERMINAL_WIDTH, "%6.3f  ", dac_V);
+	snprintf(aux_buffer, TERMINAL_WIDTH, "%5.3f  ", dac_V);
 	strcat(buffer_avg, aux_buffer);
 
 	// ADC values for print
 	for (int ch = 0; ch < user_volt_channels; ch++)
 	{
-		snprintf(aux_buffer, TERMINAL_WIDTH, "%6.3f  ", adc_V[Channel_ordered[ch]]);
+		snprintf(aux_buffer, TERMINAL_WIDTH, "%5.3f  ", adc_V1[Channel_ordered[ch]]);
+		strcat(buffer_avg, aux_buffer);
+	}
+	for (int ch = 0; ch < user_volt_channels; ch++)
+	{
+		snprintf(aux_buffer, TERMINAL_WIDTH, "%5.3f  ", adc_V2[Channel_ordered[ch]]);
 		strcat(buffer_avg, aux_buffer);
 	}
 	strcat(buffer_avg, "\n");
@@ -103,7 +111,8 @@ void Terminal::adc_callback() {
 			{
 				for (int ch = 0; ch < ADC_CHANNELS; ch++)
 				{
-					adc_samples2print[ch] = adc_samples[ch];
+					adc_samples2print2[ch] = adc_samples[ch];
+					dac_sample2print = m_dac_mV;
 				}
 				m_print_measured = true;
 				m_process = STOP;
@@ -112,18 +121,56 @@ void Terminal::adc_callback() {
 		}
 		case START :
 		{
+			for (int ch = 0; ch < ADC_CHANNELS; ch++)
+			{
+				adc_samples2print1[ch] = adc_samples[ch];
+			}
+//			m_print_measured = true;
 			set_switch(true);
 			m_process = RUNNING;
 			break;
 		}
-		case READY :
+		case RESETDAC :
+		{
+			reset_loop_counter();
+			m_process = START;
+			break;
+		}
+		case CHARGED :
+		{
+			reset_loop_counter();
+			break;
+		}
+		case CHARGING :
+		{
+			m_loop_counter++;
+			if (loop_continues_condition() == false)
+			{
+				for (int ch = 0; ch < ADC_CHANNELS; ch++)
+				{
+					adc_samples2print2[ch] = adc_samples[ch];
+					dac_sample2print = m_dac_mV;
+				}
+//				m_print_measured = true;
+				m_process = CHARGED;
+			}
+			break;
+		}
+		case PRESTART :
 		{
 			for (int ch = 0; ch < ADC_CHANNELS; ch++)
 			{
-				adc_samples2print[ch] = adc_samples[ch];
+				adc_samples2print1[ch] = adc_samples[ch];
 			}
-			m_print_measured = true;
-			m_process = START;
+//			m_print_measured = true;
+			set_switch(true);
+			m_process = CHARGING;
+			break;
+		}
+		case SETDAC :
+		{
+			reset_loop_counter();
+			m_process = PRESTART;
 			break;
 		}
 		default : {}

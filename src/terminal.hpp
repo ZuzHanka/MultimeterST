@@ -10,8 +10,15 @@
 
 enum MeasuringProcess {
 	IDLE,       // do nothing
-	READY,      // capacitor uncharged -> print
-	START,      // next ADC callback starts measuring, switch ON
+	SETDAC,     // set DAC value before charging
+	PRESTART,   // capacitor uncharged -> save data for print
+				// next ADC callback starts charging, switch on
+	CHARGING,   // charging capacitor
+    			// ADC callback reached N loops -> print
+	CHARGED,    // reset loop counter
+	RESETDAC,   // reset DAC value after charging
+	START,      // capacitor uncharged -> save data for print
+	            // next ADC callback starts measuring, switch ON
 	RUNNING,    // measuring N loops
 	            // ADC callback reached N loops -> print
 	STOP        // switch OFF
@@ -52,7 +59,9 @@ protected:
 
 private:
 	uint16_t adc_samples[ADC_CHANNELS];
-	uint16_t adc_samples2print[ADC_CHANNELS];
+	uint16_t adc_samples2print1[ADC_CHANNELS];
+	uint16_t adc_samples2print2[ADC_CHANNELS];
+	uint16_t dac_sample2print;
 
 	uint16_t m_dac_mV;
 

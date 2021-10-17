@@ -10,12 +10,15 @@
 #include <cstring>
 
 /* Constants ---------------------------------------------------------*/
-const uint16_t DAC_VOLTAGE_MIN_mV = 0;  // minimum value set to DAC [mV]
-const uint16_t DAC_VOLTAGE_MAX_mV = 300;  // maximum value set to DAC [mV]
-const uint16_t DAC_VOLTAGE_STEP_mV = 100;  // step rising value set to DAC [mV]
-
 const uint16_t NO_MEASUREMENTS = 10000;  // number of integration rounds
 
+const uint16_t DAC_VOLTAGE_MIN_mV = 0;  // minimum value set to DAC [mV]
+const uint16_t DAC_VOLTAGE_MAX_mV = 3300;  // maximum value set to DAC [mV]
+const uint16_t DAC_VOLTAGE_STEP_mV = 100;  // step rising value set to DAC [mV]
+
+// voltage close to 0V - reverted current
+const uint16_t DAC_VOLTAGE_REVERT_mV = 500;  // max voltage [mV]
+const uint16_t DAC_VOLTAGE_PRECHARGE_mV = 2500;  // precharge value set to DAC [mV]
 
 /* Variables ---------------------------------------------------------*/
 Terminal terminal = Terminal();
@@ -41,12 +44,36 @@ extern "C" void multimeter_main()
 	uint16_t dac_voltage_mV = DAC_VOLTAGE_MIN_mV;
 
 	while (dac_voltage_mV <= DAC_VOLTAGE_MAX_mV)
-	{
-		// 1 measurement round
-		terminal.set_dac_mV(dac_voltage_mV);
-		delay(3000);
-		terminal.m_process = READY;
+	{// 1 measurement round
 
+		if (dac_voltage_mV <= DAC_VOLTAGE_REVERT_mV)
+		{
+			// reset capacitor
+			terminal.set_dac_mV(DAC_VOLTAGE_PRECHARGE_mV);
+			delay(1000);
+			// prepare recharge
+			terminal.m_process = SETDAC;
+
+			// charge capacitor
+			while (terminal.m_process != CHARGED)
+			{
+				terminal.loop();
+			}
+
+			// prepare measuring
+			terminal.set_dac_mV(dac_voltage_mV);
+			terminal.m_process = RESETDAC;
+		}
+		else
+		{
+			// reset capacitor
+			terminal.set_dac_mV(dac_voltage_mV);
+			delay(1000);
+			// prepare measuring
+			terminal.m_process = START;
+		}
+
+		// measure
 		while (terminal.m_process != IDLE)
 		{
 			terminal.loop();
