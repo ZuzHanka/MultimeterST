@@ -26,6 +26,11 @@ void Terminal::set_no_measurements(uint16_t value)
 	m_no_measurements = value;
 }
 
+void Terminal::set_recharge_loops(uint16_t value)
+{
+	m_recharge_loops = value;
+}
+
 void Terminal::print_measured()
 {
 	// value set to DAC
@@ -59,7 +64,7 @@ void Terminal::print_measured()
 	aux_buffer[TERMINAL_WIDTH] = '\0';
 
 	// number of measurements for print
-	snprintf(aux_buffer, TERMINAL_WIDTH, "%d  ", m_loop_counter);
+	snprintf(aux_buffer, TERMINAL_WIDTH, "%d  ", m_no_measurements);
 	strcat(buffer_avg, aux_buffer);
 
 	// DAC value for print
@@ -107,7 +112,7 @@ void Terminal::adc_callback() {
 		case RUNNING :
 		{
 			m_loop_counter++;
-			if (loop_continues_condition() == false)
+			if (m_loop_counter >= m_no_measurements)
 			{
 				for (int ch = 0; ch < ADC_CHANNELS; ch++)
 				{
@@ -130,10 +135,20 @@ void Terminal::adc_callback() {
 			m_process = RUNNING;
 			break;
 		}
+		case RECHARGING :
+		{
+			m_loop_counter++;
+			if (m_loop_counter >= m_recharge_loops)
+			{
+				reset_loop_counter();
+				m_process = START;
+			}
+			break;
+		}
 		case RESETDAC :
 		{
 			reset_loop_counter();
-			m_process = START;
+			m_process = RECHARGING;
 			break;
 		}
 		case CHARGED :
@@ -144,7 +159,7 @@ void Terminal::adc_callback() {
 		case CHARGING :
 		{
 			m_loop_counter++;
-			if (loop_continues_condition() == false)
+			if (m_loop_counter >= m_no_measurements)
 			{
 				for (int ch = 0; ch < ADC_CHANNELS; ch++)
 				{

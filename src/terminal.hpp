@@ -17,6 +17,7 @@ enum MeasuringProcess {
     			// ADC callback reached N loops -> print
 	CHARGED,    // reset loop counter
 	RESETDAC,   // reset DAC value after charging
+	RECHARGING, // wait to recharge
 	START,      // capacitor uncharged -> save data for print
 	            // next ADC callback starts measuring, switch ON
 	RUNNING,    // measuring N loops
@@ -39,13 +40,10 @@ public:
 
 	void loop();
 	void set_no_measurements(uint16_t value);
+	void set_recharge_loops(uint16_t value);
 	void reset_loop_counter()
 	{
 		m_loop_counter = 0;
-	}
-	bool loop_continues_condition()
-	{
-		return m_loop_counter < m_no_measurements;
 	}
 	void set_dac_mV(uint16_t value_mV);
 	void adc_callback();
@@ -65,7 +63,8 @@ private:
 
 	uint16_t m_dac_mV;
 
-	uint16_t m_no_measurements;
+	uint16_t m_no_measurements = 1;
+	uint16_t m_recharge_loops = 1;
 	volatile uint16_t m_loop_counter;
 	bool m_print_measured = false;
 };

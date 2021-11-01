@@ -13,12 +13,13 @@
 const uint16_t NO_MEASUREMENTS = 10000;  // number of integration rounds
 
 const uint16_t DAC_VOLTAGE_MIN_mV = 0;  // minimum value set to DAC [mV]
-const uint16_t DAC_VOLTAGE_MAX_mV = 3300;  // maximum value set to DAC [mV]
+const uint16_t DAC_VOLTAGE_MAX_mV = 3200;  // maximum value set to DAC [mV]
 const uint16_t DAC_VOLTAGE_STEP_mV = 100;  // step rising value set to DAC [mV]
 
 // voltage close to 0V - reverted current
 const uint16_t DAC_VOLTAGE_REVERT_mV = 500;  // max voltage [mV]
-const uint16_t DAC_VOLTAGE_PRECHARGE_mV = 2500;  // precharge value set to DAC [mV]
+const uint16_t DAC_VOLTAGE_PRECHARGE_mV = 3000;  // precharge value set to DAC [mV]
+const uint16_t DAC_RECHARGE_LOOPS = 100;  // recharge loops after voltage reset just before measuring
 
 /* Variables ---------------------------------------------------------*/
 Terminal terminal = Terminal();
@@ -37,6 +38,7 @@ extern "C" void multimeter_main()
 
 	// init
 	terminal.set_no_measurements(NO_MEASUREMENTS);
+	terminal.set_recharge_loops(DAC_RECHARGE_LOOPS);
 	terminal.m_process = IDLE;
 	set_switch(false);
 	terminal.reset_loop_counter();
