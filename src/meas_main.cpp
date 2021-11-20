@@ -38,14 +38,14 @@ void MeasurementMain::print_measured()
 	// get values from ADC
 	for (int ch = 0; ch < ADC_CHANNELS; ch++)
 	{
-		if (ch == CHANNEL_TEMP)
-		{
-			adc_V[ch] = convert2celsius(adc_samples2print[ch]);
-		}
-		else
-		{
+//		if (ch == CHANNEL_TEMP)
+//		{
+//			adc_V[ch] = convert2celsius(adc_samples2print[ch]);
+//		}
+//		else
+//		{
 			adc_V[ch] = convert_mV2V(adc_samples2print[ch]);
-		}
+//		}
 	}
 
 	char buffer_avg[TERMINAL_WIDTH + 1] = " ";
@@ -66,7 +66,7 @@ void MeasurementMain::print_measured()
 	strcat(buffer_avg, "\n");
 
 	// print
-	send(buffer_avg);
+//	send(buffer_avg);
 }
 
 void MeasurementMain::set_no_measurements()
@@ -77,10 +77,10 @@ void MeasurementMain::set_no_measurements()
 // Called when buffer is completely filled
 void MeasurementMain::adc_callback()
 {
-	for (int ch = 0; ch < ADC_CHANNELS; ch++)
-	{
-		adc_samples[ch] = adc_get_sample_mV(ch);
-	}
+//	for (int ch = 0; ch < ADC_CHANNELS; ch++)
+//	{
+//		adc_samples[ch] = adc_get_sample_mV(ch);
+//	}
 //	if (loop_continues_condition())
 //	{
 //		m_loop_counter++;

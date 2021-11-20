@@ -38,10 +38,10 @@ public:
 	void adc_callback();
 
 protected:
-	bool send(const char * message)
-	{
-		return terminal_transmit(message, strlen(message));
-	}
+//	bool send(const char * message)
+//	{
+//		return terminal_transmit(message, strlen(message));
+//	}
 	void set_no_measurements();
 	void print_measured();
 

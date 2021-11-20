@@ -19,7 +19,6 @@
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim1;
 
-
 /* Constants ---------------------------------------------------------*/
 
 // timeout for one character receive
@@ -29,13 +28,12 @@ static const uint32_t TIMEOUT = 10;
 const char * adc_ch_names[CHANNEL_COUNT] =
 {
 		"A0",
-		"A1",
-		"A4",
-		"A5",
-		"TEMP",
-		"VDDA"
+//		"A1",
+//		"A4",
+//		"A5",
+//		"TEMP",
+//		"VDDA"
 };
-
 
 /* Variables ---------------------------------------------------------*/
 
@@ -112,7 +110,6 @@ bool adc_start(void)
 	}
 
 	return hal_status == HAL_OK;
-
 }
 
 bool adc_stop(void)
@@ -122,38 +119,37 @@ bool adc_stop(void)
 	if (hal_status == HAL_OK)
 	{
 		hal_status = HAL_ADC_Stop_DMA(&hadc1);
-		HAL_ADC_DeInit(&hadc1);
+//		HAL_ADC_DeInit(&hadc1);
 	}
 
 	return hal_status == HAL_OK;
-
 }
 
-uint16_t adc_get_sample_mV(uint8_t channel)
-{
-	volatile const uint16_t * p_VREFINT_CAL = (uint16_t*) 0x1FFFF7BA;
-
-	// Vdda = 3.3 V * VREFINT_CAL / VREFINT_DATA
-	uint64_t numerator = 3300ULL * (*p_VREFINT_CAL);
-	uint32_t denominator = adc_buf[CHANNEL_VREFINT];
-
-	// VCHANNELx = Vdda * ADCx_DATA / FULL_SCALE
-	if (channel != CHANNEL_VDDA)
-	{
-		numerator = numerator * adc_buf[channel];
-		uint32_t full_scale = (1UL << ADC_BITS) - 1;
-		denominator = denominator * full_scale;
-	}
-
-	uint16_t voltage = numerator / denominator;
-
-	if (channel == CHANNEL_VDDA)
-	{
-		adc_vdda_mV = voltage;
-	}
-
-	return voltage;
-}
+//uint16_t adc_get_sample_mV(uint8_t channel)
+//{
+//	volatile const uint16_t * p_VREFINT_CAL = (uint16_t*) 0x1FFFF7BA;
+//
+//	// Vdda = 3.3 V * VREFINT_CAL / VREFINT_DATA
+//	uint64_t numerator = 3300ULL * (*p_VREFINT_CAL);
+//	uint32_t denominator = adc_buf[CHANNEL_VREFINT];
+//
+//	// VCHANNELx = Vdda * ADCx_DATA / FULL_SCALE
+//	if (channel != CHANNEL_VDDA)
+//	{
+//		numerator = numerator * adc_buf[channel];
+//		uint32_t full_scale = (1UL << ADC_BITS) - 1;
+//		denominator = denominator * full_scale;
+//	}
+//
+//	uint16_t voltage = numerator / denominator;
+//
+//	if (channel == CHANNEL_VDDA)
+//	{
+//		adc_vdda_mV = voltage;
+//	}
+//
+//	return voltage;
+//}
 
 float adc_mV_to_Celsius(int16_t value_mV)
 {

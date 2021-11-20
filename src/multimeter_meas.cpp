@@ -29,10 +29,11 @@ void adc_callback()
 extern "C" void multimeter_meas()
 {
 	(void) adc_run();
-//	measure.reset_loop_counter();
+	measure.reset_loop_counter();
+//	(void) adc_stop();
 	while (true)
 	{
-//		measure.loop();
+		measure.loop();
 	}
 
 }

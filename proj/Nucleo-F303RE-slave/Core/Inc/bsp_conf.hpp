@@ -2,7 +2,7 @@
  * bsp_conf.hpp
  *
  *  Created on: Feb 1, 2021
- *      Author: jan.humpl
+ *      Author: ZuzHanka
  */
 
 #ifndef INC_BSP_CONF_HPP_
@@ -15,22 +15,22 @@ const char board_name[30] = "Nucleo-F303RE";
 // ADC channels
 enum Channel {
 	CHANNEL_1,
-	CHANNEL_2,
-	CHANNEL_3,
-	CHANNEL_4,
-	CHANNEL_VREFINT,
-	CHANNEL_TEMP,
+//	CHANNEL_2,
+//	CHANNEL_3,
+//	CHANNEL_4,
+//	CHANNEL_VREFINT,
+//	CHANNEL_TEMP,
 	CHANNEL_COUNT,
 	ADC_CHANNELS = CHANNEL_COUNT,		// Number of active channels.
-	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
+//	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
 };
 
 static constexpr uint8_t Channel_ordered[] =
 {
 		CHANNEL_1,
-		CHANNEL_2,
-		CHANNEL_3,
-		CHANNEL_4
+//		CHANNEL_2,
+//		CHANNEL_3,
+//		CHANNEL_4
 };
 
 extern const char * adc_ch_names[CHANNEL_COUNT];
