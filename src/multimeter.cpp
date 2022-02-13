@@ -19,7 +19,7 @@ const uint16_t DAC_VOLTAGE_STEP_mV = 100;  // step rising value set to DAC [mV]
 // voltage close to 0V - reverted current
 const uint16_t DAC_VOLTAGE_REVERT_mV = 500;  // max voltage [mV]
 const uint16_t DAC_VOLTAGE_PRECHARGE_mV = 3000;  // precharge value set to DAC [mV]
-const uint16_t DAC_RECHARGE_LOOPS = 100;  // recharge loops after voltage reset just before measuring
+const uint16_t DAC_RECHARGE_LOOPS = 50;  // recharge loops after voltage reset just before measuring
 
 /* Variables ---------------------------------------------------------*/
 Terminal terminal = Terminal();

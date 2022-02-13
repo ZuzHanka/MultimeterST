@@ -2,7 +2,7 @@
  * bsp_conf.hpp
  *
  *  Created on: Feb 1, 2021
- *      Author: jan.humpl
+ *      Author: ZuzHanka
  */
 
 #ifndef BSP_CONF_HPP_
@@ -10,6 +10,8 @@
 
 #include <cstdint>
 #include <cstring>
+
+const char board_name[30] = "Nucleo-F411RE";
 
 enum Channel {
 	CHANNEL_1,

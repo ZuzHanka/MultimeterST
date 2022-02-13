@@ -159,7 +159,7 @@ void Terminal::adc_callback() {
 		case CHARGING :
 		{
 			m_loop_counter++;
-			if (m_loop_counter >= m_no_measurements)
+			if (m_loop_counter >= 3 * m_no_measurements)  // needs more loops to charge
 			{
 				for (int ch = 0; ch < ADC_CHANNELS; ch++)
 				{
