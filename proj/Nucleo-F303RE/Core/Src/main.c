@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "app_type.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,6 +53,7 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 extern void multimeter_main(void);
+extern void multimeter_meas(void);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -110,7 +111,14 @@ int main(void)
   MX_TIM3_Init();
   MX_DAC1_Init();
   /* USER CODE BEGIN 2 */
+// TODO: find better solution than this ifdef
+#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_MULTIMETER)
   multimeter_main();
+#elif (defined APP_TYPE) && (APP_TYPE == APP_TYPE_TESTED_SLAVE)
+  multimeter_meas();
+#else
+  #error Invalid APP_TYPE.
+#endif
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -32,11 +32,14 @@ static const uint32_t TIMEOUT = 10;
 const char * adc_ch_names[CHANNEL_COUNT] =
 {
 		"A0",
+// TODO: find better solution than this ifdef
+#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_MULTIMETER)
 		"A1",
 		"A4",
 		"A5",
 		"VDDA"
 		"TEMP",
+#endif
 };
 
 // printed PWM channel names
@@ -112,6 +115,31 @@ bool adc_run(void)
 	if (hal_status == HAL_OK)
 	{
 		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_CHANNELS);
+	}
+
+	return hal_status == HAL_OK;
+}
+
+bool adc_start(void)
+{
+	HAL_StatusTypeDef hal_status = HAL_OK;
+
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buf, ADC_CHANNELS);
+	}
+
+	return hal_status == HAL_OK;
+}
+
+bool adc_stop(void)
+{
+	HAL_StatusTypeDef hal_status = HAL_OK;
+
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_ADC_Stop_DMA(&hadc1);
+//		HAL_ADC_DeInit(&hadc1);
 	}
 
 	return hal_status == HAL_OK;

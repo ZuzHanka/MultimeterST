@@ -1,12 +1,7 @@
-/*
- * bsp_conf.hpp
- *
- *  Created on: Feb 1, 2021
- *      Author: jan.humpl
- */
-
 #ifndef INC_BSP_CONF_HPP_
 #define INC_BSP_CONF_HPP_
+
+#include "app_type.h"
 
 #include <cstdint>
 
@@ -14,6 +9,8 @@ const char board_name[30] = "Nucleo-F303RE";
 
 // ADC channels
 enum Channel {
+// TODO: find better solution than this ifdef
+#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_MULTIMETER)
 	CHANNEL_1,
 	CHANNEL_2,
 	CHANNEL_3,
@@ -23,14 +20,30 @@ enum Channel {
 	CHANNEL_COUNT,
 	ADC_CHANNELS = CHANNEL_COUNT,		// Number of active channels.
 	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
+#elif (defined APP_TYPE) && (APP_TYPE == APP_TYPE_TESTED_SLAVE)
+	CHANNEL_1,
+//	CHANNEL_2,
+//	CHANNEL_3,
+//	CHANNEL_4,
+//	CHANNEL_VREFINT,
+	CHANNEL_COUNT,
+	ADC_CHANNELS = CHANNEL_COUNT,		// Number of active channels.
+//	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
+	CHANNEL_TEMP, // TODO: print_measured() will not compile without it
+	CHANNEL_VREFINT, // TODO: adc_get_sample_mV() will not compile without it
+	CHANNEL_VDDA, // TODO: adc_get_sample_mV() will not compile without it
+#endif
 };
 
 static constexpr uint8_t Channel_ordered[] =
 {
 		CHANNEL_1,
+// TODO: find better solution than this ifdef
+#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_MULTIMETER)
 		CHANNEL_2,
 		CHANNEL_3,
 		CHANNEL_4
+#endif
 };
 
 extern const char * adc_ch_names[CHANNEL_COUNT];
