@@ -32,6 +32,8 @@ void adc_callback()
 
 extern "C" void multimeter_main()
 {
+	dac_init();
+
 	(void) adc_run();
 	(void) dac_run();
 

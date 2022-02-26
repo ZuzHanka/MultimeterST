@@ -15,6 +15,9 @@
   *
   ******************************************************************************
   */
+#ifndef __STM32F3xx_HAL_CONF_H
+#define HAL_DAC_MODULE_ENABLED
+#endif
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -49,7 +52,7 @@
 /*#define HAL_COMP_MODULE_ENABLED   */
 /*#define HAL_CRC_MODULE_ENABLED   */
 /*#define HAL_CRYP_MODULE_ENABLED   */
-#define HAL_DAC_MODULE_ENABLED
+/*#define HAL_DAC_MODULE_ENABLED   */
 /*#define HAL_I2S_MODULE_ENABLED   */
 /*#define HAL_IWDG_MODULE_ENABLED   */
 /*#define HAL_LCD_MODULE_ENABLED   */

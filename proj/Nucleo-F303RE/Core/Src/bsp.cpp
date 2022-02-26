@@ -20,8 +20,7 @@ extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim3;
-extern DAC_HandleTypeDef hdac1;
-
+DAC_HandleTypeDef hdac1;
 
 /* Constants ---------------------------------------------------------*/
 
@@ -143,6 +142,49 @@ bool adc_stop(void)
 	}
 
 	return hal_status == HAL_OK;
+}
+
+void dac_init(void)
+{
+    /* Peripheral clock enable */
+    __HAL_RCC_DAC1_CLK_ENABLE();
+
+    /**DAC1 GPIO Configuration
+    PA4     ------> DAC1_OUT1
+    */
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = ADC2_IN1_DAC1_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(ADC2_IN1_DAC1_GPIO_Port, &GPIO_InitStruct);
+
+    /** DAC Initialization
+    */
+    DAC_ChannelConfTypeDef sConfig = {0};
+    hdac1.Instance = DAC1;
+    if (HAL_DAC_Init(&hdac1) != HAL_OK)
+    {
+      Error_Handler();
+    }
+    /** DAC channel OUT1 config
+    */
+    sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+    sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+    if (HAL_DAC_ConfigChannel(&hdac1, &sConfig, DAC_CHANNEL_1) != HAL_OK)
+    {
+      Error_Handler();
+    }
+}
+
+void dac_deinit()
+{
+    /* Peripheral clock disable */
+    __HAL_RCC_DAC1_CLK_DISABLE();
+
+    /**DAC1 GPIO Configuration
+    PA4     ------> DAC1_OUT1
+    */
+    HAL_GPIO_DeInit(ADC2_IN1_DAC1_GPIO_Port, ADC2_IN1_DAC1_Pin);
 }
 
 bool dac_run(void)

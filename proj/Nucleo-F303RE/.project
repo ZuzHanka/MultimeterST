@@ -43,6 +43,16 @@
 			<locationURI>PARENT-2-PROJECT_LOC/src</locationURI>
 		</link>
 		<link>
+			<name>Core/Src/stm32f3xx_hal_dac.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac.c</locationURI>
+		</link>
+		<link>
+			<name>Core/Src/stm32f3xx_hal_dac_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac_ex.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32F3xx_HAL_Driver/stm32f3xx_hal.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.c</locationURI>
@@ -61,16 +71,6 @@
 			<name>Drivers/STM32F3xx_HAL_Driver/stm32f3xx_hal_cortex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F3xx_HAL_Driver/stm32f3xx_hal_dac.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F3xx_HAL_Driver/stm32f3xx_hal_dac_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dac_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F3xx_HAL_Driver/stm32f3xx_hal_dma.c</name>
