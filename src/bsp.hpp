@@ -22,7 +22,6 @@ bool adc_run(void);
 bool adc_start(void);
 bool adc_stop(void);
 bool dac_run(void);
-bool pwm_run(void);
 uint16_t adc_get_sample_mV(uint8_t channel);
 float adc_mV_to_Celsius(int16_t value_mV);
 uint32_t pwm_get_duty(uint32_t channel);

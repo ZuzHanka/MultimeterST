@@ -156,22 +156,6 @@ bool dac_run(void)
 	return hal_status == HAL_OK;
 }
 
-bool pwm_run(void)
-{
-	HAL_StatusTypeDef hal_status = HAL_OK;
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-	}
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-	}
-
-	return hal_status == HAL_OK;
-
-}
-
 uint16_t adc_get_sample_mV(uint8_t channel)
 {
 	volatile const uint16_t * p_VREFINT_CAL = (uint16_t*) 0x1FFFF7BA;
