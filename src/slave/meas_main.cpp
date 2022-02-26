@@ -6,7 +6,7 @@
  */
 
 
-#include "meas_main.hpp"
+#include <slave/meas_main.hpp>
 #include "bsp.hpp"
 #include "calculations.hpp"
 

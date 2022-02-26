@@ -2,7 +2,7 @@
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354" moduleId="org.eclipse.cdt.core.settings" name="Multimeter - Debug">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354" moduleId="org.eclipse.cdt.core.settings" name="Tester - Debug">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -14,7 +14,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354" name="Multimeter - Debug" parent="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug">
+				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="The device which tests other device." id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354" name="Tester - Debug" parent="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug">
 					<folderInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354." name="/" resourcePath="">
 						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug.2096156400" name="MCU ARM GCC" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug">
 							<option id="com.st.stm32cube.ide.mcu.option.internal.toolchain.type.1345148223" name="Internal Toolchain Type" superClass="com.st.stm32cube.ide.mcu.option.internal.toolchain.type" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.base.gnu-tools-for-stm32" valueType="string"/>
@@ -43,12 +43,11 @@
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F303xE"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
-									<listOptionValue builtIn="false" value="__APP_TYPE__=APP_TYPE_MULTIMETER"/>
+									<listOptionValue builtIn="false" value="__APP_TYPE__=APP_TYPE_TESTER"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1692202074" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Core/Inc&quot;"/>
-									<listOptionValue builtIn="false" value="../Core/Inc"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/CMSIS/Device/ST/STM32F3xx/Include&quot;"/>
@@ -63,12 +62,11 @@
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F303xE"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
-									<listOptionValue builtIn="false" value="__APP_TYPE__=APP_TYPE_MULTIMETER"/>
+									<listOptionValue builtIn="false" value="__APP_TYPE__=APP_TYPE_TESTER"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths.638677580" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Core/Inc&quot;"/>
-									<listOptionValue builtIn="false" value="../Core/Inc"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/CMSIS/Device/ST/STM32F3xx/Include&quot;"/>
@@ -97,14 +95,14 @@
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
-						<entry excluding="tested-slave" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="slave" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354.121227217">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354.121227217" moduleId="org.eclipse.cdt.core.settings" name="Tested Slave - Debug">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354.121227217" moduleId="org.eclipse.cdt.core.settings" name="Slave - Debug">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -116,7 +114,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354.121227217" name="Tested Slave - Debug" parent="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug">
+				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="The device which is under the test." id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354.121227217" name="Slave - Debug" parent="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug">
 					<folderInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.90387354.121227217." name="/" resourcePath="">
 						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug.1277180679" name="MCU ARM GCC" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug">
 							<option id="com.st.stm32cube.ide.mcu.option.internal.toolchain.type.1951297067" name="Internal Toolchain Type" superClass="com.st.stm32cube.ide.mcu.option.internal.toolchain.type" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.base.gnu-tools-for-stm32" valueType="string"/>
@@ -145,12 +143,11 @@
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F303xE"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
-									<listOptionValue builtIn="false" value="__APP_TYPE__=APP_TYPE_TESTED_SLAVE"/>
+									<listOptionValue builtIn="false" value="__APP_TYPE__=APP_TYPE_SLAVE"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.2116367668" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Core/Inc&quot;"/>
-									<listOptionValue builtIn="false" value="../Core/Inc"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/CMSIS/Device/ST/STM32F3xx/Include&quot;"/>
@@ -165,12 +162,11 @@
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F303xE"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
-									<listOptionValue builtIn="false" value="__APP_TYPE__=APP_TYPE_TESTED_SLAVE"/>
+									<listOptionValue builtIn="false" value="__APP_TYPE__=APP_TYPE_SLAVE"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths.1078622473" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Core/Inc&quot;"/>
-									<listOptionValue builtIn="false" value="../Core/Inc"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/STM32F3xx_HAL_Driver/Inc/Legacy&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../3party/STM32CubeF3/Drivers/CMSIS/Device/ST/STM32F3xx/Include&quot;"/>
@@ -199,7 +195,7 @@
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
-						<entry excluding="multimeter" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="tester" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -213,6 +209,11 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Slave - Debug">
+			<resource resourceType="PROJECT" workspacePath="/Nucleo-F303RE"/>
+		</configuration>
+		<configuration configurationName="Multimeter - Debug"/>
+		<configuration configurationName="Tested Slave - Debug"/>
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/Nucleo-F303RE"/>
 		</configuration>

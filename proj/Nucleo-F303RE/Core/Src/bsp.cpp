@@ -33,7 +33,7 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 {
 		"A0",
 // TODO: find better solution than this ifdef
-#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_MULTIMETER)
+#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_TESTER)
 		"A1",
 		"A4",
 		"A5",

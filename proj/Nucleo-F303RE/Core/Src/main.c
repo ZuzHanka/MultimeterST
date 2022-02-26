@@ -112,9 +112,9 @@ int main(void)
   MX_DAC1_Init();
   /* USER CODE BEGIN 2 */
 // TODO: find better solution than this ifdef
-#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_MULTIMETER)
+#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_TESTER)
   multimeter_main();
-#elif (defined APP_TYPE) && (APP_TYPE == APP_TYPE_TESTED_SLAVE)
+#elif (defined APP_TYPE) && (APP_TYPE == APP_TYPE_SLAVE)
   multimeter_meas();
 #else
   #error Invalid APP_TYPE.
