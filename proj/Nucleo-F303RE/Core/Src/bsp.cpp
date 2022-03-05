@@ -35,8 +35,8 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 		"A1",
 		"A4",
 		"A5",
-		"VDDA"
 		"TEMP",
+		"VDDA"
 };
 
 const adc_conf_t adc_tester_channels[6] =
@@ -62,12 +62,12 @@ const adc_conf_t adc_tester_channels[6] =
 				ADC12_IN6_Pin
 		},
 		{
-				ADC_CHANNEL_VREFINT,
+				ADC_CHANNEL_TEMPSENSOR,
 				nullptr,
 				0
 		},
 		{
-				ADC_CHANNEL_TEMPSENSOR,
+				ADC_CHANNEL_VREFINT,
 				nullptr,
 				0
 		}
@@ -244,7 +244,7 @@ void adc_init(ADC_TypeDef * adc, uint32_t adc_trigger, const adc_conf_t adc_conf
 	}
 }
 
-bool adc_run(void)
+bool adc_run(uint32_t period_us)
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
 
@@ -252,6 +252,7 @@ bool adc_run(void)
 	{
 		hal_status = HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED);
 	}
+	__HAL_TIM_SET_AUTORELOAD(&htim1, (period_us - 1));
 	if (hal_status == HAL_OK)
 	{
 		hal_status = HAL_TIM_Base_Start(&htim1);
@@ -263,31 +264,6 @@ bool adc_run(void)
 	if (hal_status == HAL_OK)
 	{
 		hal_status = HAL_ADC_Start_DMA(&hadc, (uint32_t*) adc_buf, ADC_CHANNELS);
-	}
-
-	return hal_status == HAL_OK;
-}
-
-bool adc_start(void)
-{
-	HAL_StatusTypeDef hal_status = HAL_OK;
-
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_ADC_Start_DMA(&hadc, (uint32_t*) adc_buf, ADC_CHANNELS);
-	}
-
-	return hal_status == HAL_OK;
-}
-
-bool adc_stop(void)
-{
-	HAL_StatusTypeDef hal_status = HAL_OK;
-
-	if (hal_status == HAL_OK)
-	{
-		hal_status = HAL_ADC_Stop_DMA(&hadc);
-//		HAL_ADC_DeInit(&hadc1);
 	}
 
 	return hal_status == HAL_OK;
@@ -325,16 +301,7 @@ void dac_init(void)
     }
 }
 
-void dac_deinit()
-{
-    /* Peripheral clock disable */
-    __HAL_RCC_DAC1_CLK_DISABLE();
 
-    /**DAC1 GPIO Configuration
-    PA4     ------> DAC1_OUT1
-    */
-    HAL_GPIO_DeInit(ADC2_IN1_DAC1_GPIO_Port, ADC2_IN1_DAC1_Pin);
-}
 
 bool dac_run(void)
 {
@@ -343,6 +310,21 @@ bool dac_run(void)
 	{
 		hal_status = HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	}
+
+	return hal_status == HAL_OK;
+}
+
+bool pwm_run(void)
+{
+	HAL_StatusTypeDef hal_status = HAL_OK;
+//	if (hal_status == HAL_OK)
+//	{
+//		hal_status = HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+//	}
+//	if (hal_status == HAL_OK)
+//	{
+//		hal_status = HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+//	}
 
 	return hal_status == HAL_OK;
 }
@@ -390,55 +372,55 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* p_hadc)
 uint32_t pwm_get_duty(uint32_t channel)
 {
 	uint32_t duty = 0;
-	if (channel == CHANNEL_PWM1)
-	{
-		duty = LL_TIM_OC_GetCompareCH1(htim8.Instance);
-	}
-	if (channel == CHANNEL_PWM2)
-	{
-		duty =  LL_TIM_OC_GetCompareCH1(htim3.Instance);
-	}
+//	if (channel == CHANNEL_PWM1)
+//	{
+//		duty = LL_TIM_OC_GetCompareCH1(htim8.Instance);
+//	}
+//	if (channel == CHANNEL_PWM2)
+//	{
+//		duty =  LL_TIM_OC_GetCompareCH1(htim3.Instance);
+//	}
 	return duty;
 }
 
 void pwm_set_duty(uint32_t channel, uint32_t duty)
 {
-	if (channel == CHANNEL_PWM1)
-	{
-		LL_TIM_OC_SetCompareCH1(htim8.Instance, duty);
-	}
-	if (channel == CHANNEL_PWM2)
-	{
-		LL_TIM_OC_SetCompareCH1(htim3.Instance, duty);
-	}
+//	if (channel == CHANNEL_PWM1)
+//	{
+//		LL_TIM_OC_SetCompareCH1(htim8.Instance, duty);
+//	}
+//	if (channel == CHANNEL_PWM2)
+//	{
+//		LL_TIM_OC_SetCompareCH1(htim3.Instance, duty);
+//	}
 }
 
 uint32_t pwm_get_freq(uint32_t channel)
 {
 	// uint32_t LL_TIM_GetPrescaler(TIM_TypeDef *TIMx)
 	uint32_t freq = 0;
-	if (channel == CHANNEL_PWM1)
-	{
-		freq =  (LL_TIM_GetPrescaler(htim8.Instance) + 1);
-	}
-	if (channel == CHANNEL_PWM2)
-	{
-		freq =  (LL_TIM_GetPrescaler(htim3.Instance) + 1);
-	}
+//	if (channel == CHANNEL_PWM1)
+//	{
+//		freq =  (LL_TIM_GetPrescaler(htim8.Instance) + 1);
+//	}
+//	if (channel == CHANNEL_PWM2)
+//	{
+//		freq =  (LL_TIM_GetPrescaler(htim3.Instance) + 1);
+//	}
 	return freq;
 }
 
 void pwm_set_freq(uint32_t channel, uint32_t freq)
 {
 	// void LL_TIM_SetPrescaler(TIM_TypeDef *TIMx, uint32_t Prescaler)
-	if (channel == CHANNEL_PWM1)
-	{
-		LL_TIM_SetPrescaler(htim8.Instance, (freq - 1));
-	}
-	if (channel == CHANNEL_PWM2)
-	{
-		LL_TIM_SetPrescaler(htim3.Instance, (freq - 1));
-	}
+//	if (channel == CHANNEL_PWM1)
+//	{
+//		LL_TIM_SetPrescaler(htim8.Instance, (freq - 1));
+//	}
+//	if (channel == CHANNEL_PWM2)
+//	{
+//		LL_TIM_SetPrescaler(htim3.Instance, (freq - 1));
+//	}
 }
 
 uint32_t dac_get_value(void)

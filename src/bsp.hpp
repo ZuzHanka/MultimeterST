@@ -19,12 +19,10 @@ size_t terminal_receive(char * buff, size_t buff_size);
 bool terminal_transmit(const char * buff, size_t buff_size);
 
 void adc_init(ADC_TypeDef * adc, uint32_t adc_trigger, const adc_conf_t adc_conf[], size_t chan_count);
-bool adc_run(void);
-bool adc_start(void);
-bool adc_stop(void);
+bool adc_run(uint32_t period_us);
 void dac_init(void);
-void dac_deinit();
 bool dac_run(void);
+bool pwm_run(void);
 uint16_t adc_get_sample_mV(uint8_t channel);
 float adc_mV_to_Celsius(int16_t value_mV);
 uint32_t pwm_get_duty(uint32_t channel);

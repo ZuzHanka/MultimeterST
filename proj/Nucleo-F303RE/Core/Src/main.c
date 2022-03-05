@@ -99,6 +99,8 @@ int main(void)
   multimeter_main();
 #elif (defined APP_TYPE) && (APP_TYPE == APP_TYPE_SLAVE)
   multimeter_meas();
+#elif (defined APP_TYPE) && (APP_TYPE == APP_TYPE_MULTIMETER)
+  multimeter_main();
 #else
   #error Invalid APP_TYPE.
 #endif

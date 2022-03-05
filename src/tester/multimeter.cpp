@@ -35,7 +35,7 @@ extern "C" void multimeter_main()
 	adc_init(ADC1, ADC_EXTERNALTRIGCONV_T1_CC3, adc_tester_channels, ADC_CONF_LENGTH(adc_tester_channels));
 	dac_init();
 
-	(void) adc_run();
+	(void) adc_run(100);
 	(void) dac_run();
 
 	// init

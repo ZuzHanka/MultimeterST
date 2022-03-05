@@ -14,8 +14,6 @@ const char board_name[30] = "Nucleo-F303RE";
 
 // ADC channels
 enum Channel {
-// TODO: find better solution than this ifdef
-#if (defined APP_TYPE) && ((APP_TYPE == APP_TYPE_TESTER) || (APP_TYPE == APP_TYPE_SLAVE))
 	CHANNEL_1,
 	CHANNEL_2,
 	CHANNEL_3,
@@ -25,7 +23,6 @@ enum Channel {
 	CHANNEL_COUNT,
 	ADC_CHANNELS = CHANNEL_COUNT,		// Number of active channels.
 	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
-#endif
 };
 
 static constexpr uint8_t Channel_ordered[] =
