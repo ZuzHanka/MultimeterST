@@ -9,7 +9,6 @@
 #define MEAS_MAIN_HPP_
 
 
-#include "avg_filter.hpp"
 #include "bsp.hpp"
 
 #include <cstdint>

@@ -2,7 +2,6 @@
 #define TERMINAL_HPP_
 
 
-#include "avg_filter.hpp"
 #include "bsp.hpp"
 
 #include <cstdint>

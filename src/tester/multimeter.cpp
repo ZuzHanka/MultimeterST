@@ -1,6 +1,5 @@
 /* Includes ------------------------------------------------------------------*/
 
-#include "avg_filter.hpp"
 #include "bsp.hpp"
 #include "calculations.hpp"
 #include "terminal.hpp"

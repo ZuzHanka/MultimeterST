@@ -11,6 +11,7 @@
 #include "calculations.hpp"
 
 #include <cstdint>
+#include <cstdio>
 
 
 /* Constants ---------------------------------------------------------*/

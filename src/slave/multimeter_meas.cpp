@@ -1,7 +1,6 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include <slave/meas_main.hpp>
-#include "avg_filter.hpp"
 #include "bsp.hpp"
 #include "calculations.hpp"
 
