@@ -17,7 +17,7 @@ uint32_t get_tick(void);
 size_t terminal_receive(char * buff, size_t buff_size);
 bool terminal_transmit(const char * buff, size_t buff_size);
 
-void adc_init(ADC_TypeDef * adc, uint32_t adc_trigger, const adc_conf_t adc_conf[], size_t chan_count);
+void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count);
 bool adc_run(uint32_t period_us);
 void dac_init(void);
 bool dac_run(void);
