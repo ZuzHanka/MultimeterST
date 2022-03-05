@@ -93,6 +93,7 @@ const adc_conf_t adc_slave_channels[3] =
 };
 
 // printed PWM channel names
+// TODO: fix values for this MCU
 const char * pwm_ch_names[CHANNEL_PWM_COUNT] =
 {
 		"D10",
@@ -146,20 +147,33 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 	return HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
 }
 
-void adc_init(ADC_TypeDef * adc, uint32_t adc_trigger, const adc_conf_t adc_conf[], size_t chan_count)
+void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC12|RCC_PERIPHCLK_ADC34;
-	PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
-	PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV1;
+	if ((adc == ADC1) || (adc == ADC2))
+	{
+	    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC12;
+	    PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
+	}
+	else
+	{
+	    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC34;
+	    PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV1;
+	}
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
 	{
 		Error_Handler();
 	}
 
 	/* Peripheral clock enable */
-	__HAL_RCC_ADC12_CLK_ENABLE();
-
+	if ((adc == ADC1) || (adc == ADC2))
+	{
+	    __HAL_RCC_ADC12_CLK_ENABLE();
+	}
+	else
+	{
+	    __HAL_RCC_ADC34_CLK_ENABLE();
+	}
 
 	/**ADC GPIO Configuration*/
     GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -207,7 +221,7 @@ void adc_init(ADC_TypeDef * adc, uint32_t adc_trigger, const adc_conf_t adc_conf
     hadc.Init.ContinuousConvMode = DISABLE;
     hadc.Init.DiscontinuousConvMode = DISABLE;
     hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISINGFALLING;
-    hadc.Init.ExternalTrigConv = adc_trigger;
+    hadc.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC3;
     hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
     hadc.Init.NbrOfConversion = chan_count;
     hadc.Init.DMAContinuousRequests = ENABLE;

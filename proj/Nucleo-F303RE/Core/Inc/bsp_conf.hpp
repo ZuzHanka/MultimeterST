@@ -18,8 +18,8 @@ enum Channel {
 	CHANNEL_2,
 	CHANNEL_3,
 	CHANNEL_4,
-	CHANNEL_VREFINT,
 	CHANNEL_TEMP,
+	CHANNEL_VREFINT,
 	CHANNEL_COUNT,
 	ADC_CHANNELS = CHANNEL_COUNT,		// Number of active channels.
 	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
