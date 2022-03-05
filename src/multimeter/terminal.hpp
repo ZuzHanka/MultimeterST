@@ -6,6 +6,7 @@
 #include "bsp.hpp"
 
 #include <cstdint>
+#include <cstring>
 
 
 class Terminal

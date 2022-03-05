@@ -5,7 +5,7 @@
 #include "bsp.hpp"
 
 #include <cstdint>
-
+#include <cstring>
 
 enum MeasuringProcess {
 	IDLE,       // do nothing

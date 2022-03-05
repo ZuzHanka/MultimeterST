@@ -12,7 +12,7 @@
 
 #include <cstdint>
 #include <cstdio>
-
+#include <cstring>
 
 /* Constants ---------------------------------------------------------*/
 const uint16_t NO_MEASUREMENTS = 10;

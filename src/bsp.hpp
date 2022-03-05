@@ -11,7 +11,6 @@
 #include "bsp_conf.hpp"
 
 #include <cstdint>
-#include <cstring>
 
 uint32_t get_tick(void);
 
