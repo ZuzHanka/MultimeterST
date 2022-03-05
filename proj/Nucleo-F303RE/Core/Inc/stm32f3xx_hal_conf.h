@@ -16,6 +16,7 @@
   ******************************************************************************
   */
 #ifndef __STM32F3xx_HAL_CONF_H
+#define HAL_ADC_MODULE_ENABLED
 #define HAL_DAC_MODULE_ENABLED
 #endif
 /* USER CODE END Header */
@@ -37,7 +38,7 @@
   */
 
 #define HAL_MODULE_ENABLED
-  #define HAL_ADC_MODULE_ENABLED
+  /*#define HAL_ADC_MODULE_ENABLED   */
 /*#define HAL_CRYP_MODULE_ENABLED   */
 /*#define HAL_CAN_MODULE_ENABLED   */
 /*#define HAL_CEC_MODULE_ENABLED   */

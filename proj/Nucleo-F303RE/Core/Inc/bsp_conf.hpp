@@ -3,6 +3,11 @@
 
 #include "app_type.h"
 
+extern "C"
+{
+#include "main.h"
+}
+
 #include <cstdint>
 
 const char board_name[30] = "Nucleo-F303RE";
@@ -10,7 +15,7 @@ const char board_name[30] = "Nucleo-F303RE";
 // ADC channels
 enum Channel {
 // TODO: find better solution than this ifdef
-#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_TESTER)
+#if (defined APP_TYPE) && ((APP_TYPE == APP_TYPE_TESTER) || (APP_TYPE == APP_TYPE_SLAVE))
 	CHANNEL_1,
 	CHANNEL_2,
 	CHANNEL_3,
@@ -20,33 +25,31 @@ enum Channel {
 	CHANNEL_COUNT,
 	ADC_CHANNELS = CHANNEL_COUNT,		// Number of active channels.
 	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
-#elif (defined APP_TYPE) && (APP_TYPE == APP_TYPE_SLAVE)
-	CHANNEL_1,
-//	CHANNEL_2,
-//	CHANNEL_3,
-//	CHANNEL_4,
-//	CHANNEL_VREFINT,
-	CHANNEL_COUNT,
-	ADC_CHANNELS = CHANNEL_COUNT,		// Number of active channels.
-//	CHANNEL_VDDA = CHANNEL_VREFINT		// Return Vdda instead of Vrefint value.
-	CHANNEL_TEMP, // TODO: print_measured() will not compile without it
-	CHANNEL_VREFINT, // TODO: adc_get_sample_mV() will not compile without it
-	CHANNEL_VDDA, // TODO: adc_get_sample_mV() will not compile without it
 #endif
 };
 
 static constexpr uint8_t Channel_ordered[] =
 {
 		CHANNEL_1,
-// TODO: find better solution than this ifdef
-#if (defined APP_TYPE) && (APP_TYPE == APP_TYPE_TESTER)
 		CHANNEL_2,
 		CHANNEL_3,
 		CHANNEL_4
-#endif
 };
 
 extern const char * adc_ch_names[CHANNEL_COUNT];
+
+struct adc_conf_t
+{
+	uint32_t adc_channel;
+	GPIO_TypeDef * gpio_port;
+	uint16_t gpio_pin;
+};
+
+#define ADC_CONF_LENGTH(adc_conf) (sizeof(adc_conf) / sizeof(adc_conf_t))
+
+extern const adc_conf_t adc_tester_channels[6];
+
+extern const adc_conf_t adc_slave_channels[3];
 
 // ADC bits
 static const uint8_t ADC_BITS = 12;
