@@ -291,36 +291,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ADC12_IN6_Pin ADC12_IN7_Pin ADC12_IN8_Pin ADC12_IN9_Pin
-                           ADC2_IN5_Pin ADC2_IN11_Pin */
-  GPIO_InitStruct.Pin = ADC12_IN6_Pin|ADC12_IN7_Pin|ADC12_IN8_Pin|ADC12_IN9_Pin
-                          |ADC2_IN5_Pin|ADC2_IN11_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : ADC1_IN1_Pin ADC1_IN2_Pin ADC2_IN1_DAC1_Pin ADC2_IN3_Pin
-                           ADC2_IN4_Pin */
-  GPIO_InitStruct.Pin = ADC1_IN1_Pin|ADC1_IN2_Pin|ADC2_IN1_DAC1_Pin|ADC2_IN3_Pin
-                          |ADC2_IN4_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
   /*Configure GPIO pins : LD2_Pin SWITCH_Pin */
   GPIO_InitStruct.Pin = LD2_Pin|SWITCH_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : ADC3_IN12_Pin ADC3_IN1_Pin ADC2_IN12_Pin ADC12_IN14_Pin
-                           ADC4_IN3_Pin ADC3_IN5_Pin ADC4_IN4_Pin ADC4_IN5_Pin */
-  GPIO_InitStruct.Pin = ADC3_IN12_Pin|ADC3_IN1_Pin|ADC2_IN12_Pin|ADC12_IN14_Pin
-                          |ADC4_IN3_Pin|ADC3_IN5_Pin|ADC4_IN4_Pin|ADC4_IN5_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 

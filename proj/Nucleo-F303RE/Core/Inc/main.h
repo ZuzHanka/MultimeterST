@@ -60,6 +60,21 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define USART_TX_Pin GPIO_PIN_2
+#define USART_TX_GPIO_Port GPIOA
+#define USART_RX_Pin GPIO_PIN_3
+#define USART_RX_GPIO_Port GPIOA
+#define LD2_Pin GPIO_PIN_5
+#define LD2_GPIO_Port GPIOA
+#define SWITCH_Pin GPIO_PIN_8
+#define SWITCH_GPIO_Port GPIOA
+#define TMS_Pin GPIO_PIN_13
+#define TMS_GPIO_Port GPIOA
+#define TCK_Pin GPIO_PIN_14
+#define TCK_GPIO_Port GPIOA
+#define SWO_Pin GPIO_PIN_3
+#define SWO_GPIO_Port GPIOB
+/* USER CODE BEGIN Private defines */
 #define ADC12_IN6_Pin GPIO_PIN_0
 #define ADC12_IN6_GPIO_Port GPIOC
 #define ADC12_IN7_Pin GPIO_PIN_1
@@ -72,14 +87,8 @@ void Error_Handler(void);
 #define ADC1_IN1_GPIO_Port GPIOA
 #define ADC1_IN2_Pin GPIO_PIN_1
 #define ADC1_IN2_GPIO_Port GPIOA
-#define USART_TX_Pin GPIO_PIN_2
-#define USART_TX_GPIO_Port GPIOA
-#define USART_RX_Pin GPIO_PIN_3
-#define USART_RX_GPIO_Port GPIOA
 #define ADC2_IN1_DAC1_Pin GPIO_PIN_4
 #define ADC2_IN1_DAC1_GPIO_Port GPIOA
-#define LD2_Pin GPIO_PIN_5
-#define LD2_GPIO_Port GPIOA
 #define ADC2_IN3_Pin GPIO_PIN_6
 #define ADC2_IN3_GPIO_Port GPIOA
 #define ADC2_IN4_Pin GPIO_PIN_7
@@ -104,16 +113,6 @@ void Error_Handler(void);
 #define ADC4_IN4_GPIO_Port GPIOB
 #define ADC4_IN5_Pin GPIO_PIN_15
 #define ADC4_IN5_GPIO_Port GPIOB
-#define SWITCH_Pin GPIO_PIN_8
-#define SWITCH_GPIO_Port GPIOA
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
-#define TCK_Pin GPIO_PIN_14
-#define TCK_GPIO_Port GPIOA
-#define SWO_Pin GPIO_PIN_3
-#define SWO_GPIO_Port GPIOB
-/* USER CODE BEGIN Private defines */
-
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
