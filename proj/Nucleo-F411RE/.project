@@ -43,19 +43,24 @@
 			<locationURI>PARENT-2-PROJECT_LOC/src</locationURI>
 		</link>
 		<link>
+			<name>Core/Src/stm32f4xx_hal_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/git/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c</locationURI>
+		</link>
+		<link>
+			<name>Core/Src/stm32f4xx_hal_adc_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/git/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Core/Src/stm32f4xx_ll_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/git/MultimeterST/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_adc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_cortex.c</name>
@@ -131,11 +136,6 @@
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_uart.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/3party/STM32CubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
