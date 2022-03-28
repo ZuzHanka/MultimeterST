@@ -58,16 +58,27 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define ADC1_IN0_A0_Pin GPIO_PIN_0
-#define ADC1_IN0_A0_GPIO_Port GPIOA
-#define ADC1_IN1_A1_Pin GPIO_PIN_1
-#define ADC1_IN1_A1_GPIO_Port GPIOA
-#define ADC1_IN1_A2_Pin GPIO_PIN_2
-#define ADC1_IN1_A2_GPIO_Port GPIOA
-#define ADC1_IN3_A3_Pin GPIO_PIN_3
-#define ADC1_IN3_A3_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
-
+#define ADC1_IN0_Pin GPIO_PIN_0
+#define ADC1_IN0_GPIO_Port GPIOA
+#define ADC1_IN1_Pin GPIO_PIN_1
+#define ADC1_IN1_GPIO_Port GPIOA
+#define ADC1_IN2_Pin GPIO_PIN_2
+#define ADC1_IN2_GPIO_Port GPIOA
+#define ADC1_IN3_Pin GPIO_PIN_3
+#define ADC1_IN3_GPIO_Port GPIOA
+#define ADC1_IN4_Pin GPIO_PIN_4
+#define ADC1_IN4_GPIO_Port GPIOA
+#define ADC1_IN5_Pin GPIO_PIN_5
+#define ADC1_IN5_GPIO_Port GPIOA
+#define ADC1_IN6_Pin GPIO_PIN_6
+#define ADC1_IN6_GPIO_Port GPIOA
+#define ADC1_IN7_Pin GPIO_PIN_7
+#define ADC1_IN7_GPIO_Port GPIOA
+#define ADC1_IN8_Pin GPIO_PIN_0
+#define ADC1_IN8_GPIO_Port GPIOB
+#define ADC1_IN9_Pin GPIO_PIN_1
+#define ADC1_IN9_GPIO_Port GPIOB
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
@@ -75,5 +86,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

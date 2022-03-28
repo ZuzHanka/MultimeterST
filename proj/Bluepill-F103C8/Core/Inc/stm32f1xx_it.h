@@ -56,10 +56,9 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-void DMA1_Channel1_IRQHandler(void);
 void USB_LP_CAN1_RX0_IRQHandler(void);
 /* USER CODE BEGIN EFP */
-
+void DMA1_Channel1_IRQHandler(void);
 /* USER CODE END EFP */
 
 #ifdef __cplusplus
@@ -67,5 +66,3 @@ void USB_LP_CAN1_RX0_IRQHandler(void);
 #endif
 
 #endif /* __STM32F1xx_IT_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
