@@ -206,4 +206,3 @@ void DMA2_Stream0_IRQHandler(void)
   HAL_DMA_IRQHandler(&hdma_adc);
 }
 /* USER CODE END 1 */
-
