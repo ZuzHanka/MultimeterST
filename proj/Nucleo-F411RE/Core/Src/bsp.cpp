@@ -38,24 +38,24 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 const adc_conf_t adc_tester_channels[6] =
 {
 		{
-				ADC_CHANNEL_0,
-				ADC1_IN0_GPIO_Port,
-				ADC1_IN0_Pin
-		},
-		{
-				ADC_CHANNEL_1,
-				ADC1_IN1_GPIO_Port,
-				ADC1_IN1_Pin
-		},
-		{
 				ADC_CHANNEL_4,
 				ADC1_IN4_GPIO_Port,
 				ADC1_IN4_Pin
 		},
 		{
+				ADC_CHANNEL_6,
+				ADC1_IN6_GPIO_Port,
+				ADC1_IN6_Pin
+		},
+		{
 				ADC_CHANNEL_8,
 				ADC1_IN8_GPIO_Port,
 				ADC1_IN8_Pin
+		},
+		{
+				ADC_CHANNEL_9,
+				ADC1_IN9_GPIO_Port,
+				ADC1_IN9_Pin
 		},
 		{
 				ADC_CHANNEL_TEMPSENSOR,
@@ -72,19 +72,19 @@ const adc_conf_t adc_tester_channels[6] =
 const adc_conf_t adc_slave_channels[3] =
 {
 		{
-				ADC_CHANNEL_0,
-				ADC1_IN0_GPIO_Port,
-				ADC1_IN0_Pin
-		},
-		{
-				ADC_CHANNEL_1,
-				ADC1_IN1_GPIO_Port,
-				ADC1_IN1_Pin
-		},
-		{
 				ADC_CHANNEL_4,
 				ADC1_IN4_GPIO_Port,
 				ADC1_IN4_Pin
+		},
+		{
+				ADC_CHANNEL_6,
+				ADC1_IN6_GPIO_Port,
+				ADC1_IN6_Pin
+		},
+		{
+				ADC_CHANNEL_8,
+				ADC1_IN8_GPIO_Port,
+				ADC1_IN8_Pin
 		}
 };
 
@@ -202,7 +202,7 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
     /** Configure Channels */
     ADC_ChannelConfTypeDef sConfig = {0};
     sConfig.Rank = 1;
-    sConfig.SamplingTime = ADC_SAMPLETIME_112CYCLES;;
+    sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
 	for (size_t i = 0; i < chan_count; ++i)
 	{
 	    sConfig.Channel = adc_conf[i].adc_channel;

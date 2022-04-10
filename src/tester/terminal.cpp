@@ -16,8 +16,8 @@ void Terminal::loop()
 {
 	if (m_print_measured)
 	{
-		print_measured();
 		m_print_measured = false;
+		print_measured();
 	}
 }
 
@@ -145,15 +145,8 @@ void Terminal::adc_callback() {
 			}
 			break;
 		}
-		case RESETDAC :
-		{
-			reset_loop_counter();
-			m_process = RECHARGING;
-			break;
-		}
 		case CHARGED :
 		{
-			reset_loop_counter();
 			break;
 		}
 		case CHARGING :
@@ -180,12 +173,6 @@ void Terminal::adc_callback() {
 //			m_print_measured = true;
 			set_switch(true);
 			m_process = CHARGING;
-			break;
-		}
-		case SETDAC :
-		{
-			reset_loop_counter();
-			m_process = PRESTART;
 			break;
 		}
 		default : {}

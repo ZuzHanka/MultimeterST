@@ -9,19 +9,21 @@
 
 enum MeasuringProcess {
 	IDLE,       // do nothing
-	SETDAC,     // set DAC value before charging
-	PRESTART,   // capacitor uncharged -> save data for print
-				// next ADC callback starts charging, switch on
+	PRESTART,   // (precharge required)
+	            // capacitor uncharged
+	            // save init data (may be overwritten)
+				// next ADC callback starts charging, switch ON
 	CHARGING,   // charging capacitor
-    			// ADC callback reached N loops -> print
-	CHARGED,    // reset loop counter
-	RESETDAC,   // reset DAC value after charging
+    			// ADC callback reached 3N loops
+                // save finish data (may be overwritten)
+	CHARGED,    // do nothing
 	RECHARGING, // wait to recharge
-	START,      // capacitor uncharged -> save data for print
+	START,      // save init data
 	            // next ADC callback starts measuring, switch ON
 	RUNNING,    // measuring N loops
-	            // ADC callback reached N loops -> print
-	STOP        // switch OFF
+	            // ADC callback reached N loops
+	            // save finish data
+	STOP        // switch OFF, reset loop counter
 };
 
 
