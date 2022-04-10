@@ -9,8 +9,11 @@
 
 #include "bsp.hpp"
 
+extern "C"
+{
 #include "main.h"
 #include "stm32f4xx_hal.h"
+}
 
 /* Presunut do BSP ---------------------------------------------------*/
 
