@@ -1,10 +1,3 @@
-/*
- * bsp.cpp
- *
- *  Created on: 5 Dec 2020
- *      Author: ZuzHanka
- */
-
 /* Includes ------------------------------------------------------------------*/
 
 #include "bsp.hpp"
