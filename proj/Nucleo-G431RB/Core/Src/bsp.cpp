@@ -241,12 +241,15 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
     {
     	Error_Handler();
     }
-    ADC_MultiModeTypeDef multimode = {0};
-    multimode.Mode = ADC_MODE_INDEPENDENT;
-    if (HAL_ADCEx_MultiModeConfigChannel(&hadc, &multimode) != HAL_OK)
-    {
-    	Error_Handler();
-    }
+	if (adc == ADC1)
+	{
+		ADC_MultiModeTypeDef multimode = {0};
+		multimode.Mode = ADC_MODE_INDEPENDENT;
+		if (HAL_ADCEx_MultiModeConfigChannel(&hadc, &multimode) != HAL_OK)
+		{
+			Error_Handler();
+		}
+	}
 
     /** Configure Channels */
     ADC_ChannelConfTypeDef sConfig = {0};
