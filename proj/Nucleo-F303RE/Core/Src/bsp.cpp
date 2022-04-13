@@ -27,10 +27,10 @@ static const uint32_t TIMEOUT = 10;
 // printed voltmeter channel names
 const char * adc_ch_names[CHANNEL_COUNT] =
 {
-		"A0",
-		"A1",
-		"A4",
-		"A5",
+		"PC0",
+		"PC1",
+		"PC2",
+		"PC3",
 		"TEMP",
 		"VDDA"
 };

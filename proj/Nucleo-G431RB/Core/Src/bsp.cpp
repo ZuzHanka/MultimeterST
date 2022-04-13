@@ -23,10 +23,10 @@ static const uint32_t TIMEOUT = 10;
 // printed voltmeter channel names
 const char * adc_ch_names[CHANNEL_COUNT] =
 {
-		"A0",
-		"A1",
-		"A2",
-		"A3",
+		"PA1",
+		"PB0",
+		"PC1",
+		"PC0",
 		"TEMP",
 		"VDDA"
 };
@@ -68,19 +68,19 @@ const adc_conf_t adc_tester_channels[6] =
 const adc_conf_t adc_slave_channels[3] =
 {
 		{
-				ADC_CHANNEL_2,
-				ADC12_IN2_GPIO_Port,
-				ADC12_IN2_Pin
-		},
-		{
-				ADC_CHANNEL_15,
-				ADC1_IN15_GPIO_Port,
-				ADC1_IN15_Pin
+				ADC_CHANNEL_6,
+				ADC12_IN6_GPIO_Port,
+				ADC12_IN6_Pin
 		},
 		{
 				ADC_CHANNEL_7,
 				ADC12_IN7_GPIO_Port,
 				ADC12_IN7_Pin
+		},
+		{
+				ADC_CHANNEL_8,
+				ADC12_IN8_GPIO_Port,
+				ADC12_IN8_Pin
 		}
 };
 
