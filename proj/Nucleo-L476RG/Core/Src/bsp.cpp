@@ -23,10 +23,10 @@ static const uint32_t TIMEOUT = 10;
 // printed voltmeter channel names
 const char * adc_ch_names[CHANNEL_COUNT] =
 {
-		"A0",
-		"A1",
-		"A2",
-		"A3",
+		"PC0",
+		"PC1",
+		"PC2",
+		"PC3",
 		"TEMP",
 		"VDDA"
 };
@@ -34,24 +34,24 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 const adc_conf_t adc_tester_channels[6] =
 {
 		{
-				ADC_CHANNEL_5,
-				ADC12_IN5_GPIO_Port,
-				ADC12_IN5_Pin
+				ADC_CHANNEL_1,
+				ADC123_IN1_GPIO_Port,
+				ADC123_IN1_Pin
 		},
 		{
-				ADC_CHANNEL_6,
-				ADC12_IN6_GPIO_Port,
-				ADC12_IN6_Pin
+				ADC_CHANNEL_2,
+				ADC123_IN2_GPIO_Port,
+				ADC123_IN2_Pin
 		},
 		{
-				ADC_CHANNEL_9,
-				ADC12_IN9_GPIO_Port,
-				ADC12_IN9_Pin
+				ADC_CHANNEL_3,
+				ADC123_IN3_GPIO_Port,
+				ADC123_IN3_Pin
 		},
 		{
-				ADC_CHANNEL_15,
-				ADC12_IN15_GPIO_Port,
-				ADC12_IN15_Pin
+				ADC_CHANNEL_4,
+				ADC123_IN4_GPIO_Port,
+				ADC123_IN4_Pin
 		},
 		{
 				ADC_CHANNEL_TEMPSENSOR,
@@ -68,14 +68,14 @@ const adc_conf_t adc_tester_channels[6] =
 const adc_conf_t adc_slave_channels[3] =
 {
 		{
-				ADC_CHANNEL_1,
-				ADC123_IN1_GPIO_Port,
-				ADC123_IN1_Pin
-		},
-		{
 				ADC_CHANNEL_2,
 				ADC123_IN2_GPIO_Port,
 				ADC123_IN2_Pin
+		},
+		{
+				ADC_CHANNEL_1,
+				ADC123_IN1_GPIO_Port,
+				ADC123_IN1_Pin
 		},
 		{
 				ADC_CHANNEL_3,
