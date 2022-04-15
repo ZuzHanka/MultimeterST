@@ -1,8 +1,6 @@
 #ifndef INC_BSP_CONF_HPP_
 #define INC_BSP_CONF_HPP_
 
-#include "app_type.h"
-
 extern "C"
 {
 #include "main.h"
