@@ -143,6 +143,26 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 	return HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
 }
 
+static const uint32_t adc_ranks[16] =
+		{
+				ADC_REGULAR_RANK_1,
+				ADC_REGULAR_RANK_2,
+				ADC_REGULAR_RANK_3,
+				ADC_REGULAR_RANK_4,
+				ADC_REGULAR_RANK_5,
+				ADC_REGULAR_RANK_6,
+				ADC_REGULAR_RANK_7,
+				ADC_REGULAR_RANK_8,
+				ADC_REGULAR_RANK_9,
+				ADC_REGULAR_RANK_10,
+				ADC_REGULAR_RANK_11,
+				ADC_REGULAR_RANK_12,
+				ADC_REGULAR_RANK_13,
+				ADC_REGULAR_RANK_14,
+				ADC_REGULAR_RANK_15,
+				ADC_REGULAR_RANK_16
+		};
+
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
@@ -170,6 +190,9 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 	{
 	    __HAL_RCC_ADC34_CLK_ENABLE();
 	}
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
 
 	/**ADC GPIO Configuration*/
     GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -238,19 +261,18 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
     }
     /** Configure Channels */
     ADC_ChannelConfTypeDef sConfig = {0};
-    sConfig.Rank = ADC_REGULAR_RANK_1;
     sConfig.SingleDiff = ADC_SINGLE_ENDED;
     sConfig.SamplingTime = ADC_SAMPLETIME_601CYCLES_5;
     sConfig.OffsetNumber = ADC_OFFSET_NONE;
     sConfig.Offset = 0;
 	for (size_t i = 0; i < chan_count; ++i)
 	{
+	    sConfig.Rank = adc_ranks[i];
 	    sConfig.Channel = adc_conf[i].adc_channel;
 	    if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 	    {
 	      Error_Handler();
 	    }
-	    sConfig.Rank++;
 	}
 }
 

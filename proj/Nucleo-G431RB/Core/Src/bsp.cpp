@@ -265,7 +265,6 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 	    {
 	      Error_Handler();
 	    }
-	    sConfig.Rank++;
 	}
 }
 
