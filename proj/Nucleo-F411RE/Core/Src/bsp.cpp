@@ -144,6 +144,9 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
 	/* Peripheral clock enable */
 	__HAL_RCC_ADC1_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
 
 	/**ADC GPIO Configuration*/
     GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -187,7 +190,7 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
     /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
     */
     hadc.Instance = adc;
-    hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV8;
+    hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
     hadc.Init.Resolution = ADC_RESOLUTION_12B;
     hadc.Init.ScanConvMode = ENABLE;
     hadc.Init.ContinuousConvMode = DISABLE;
