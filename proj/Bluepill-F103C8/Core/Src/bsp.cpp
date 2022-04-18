@@ -153,11 +153,42 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 	return HAL_OK == HAL_UART_Transmit(&huart1, (uint8_t*) buff, buff_size, TIMEOUT * buff_size);
 }
 
+static const uint32_t adc_ranks[16] =
+		{
+				ADC_REGULAR_RANK_1,
+				ADC_REGULAR_RANK_2,
+				ADC_REGULAR_RANK_3,
+				ADC_REGULAR_RANK_4,
+				ADC_REGULAR_RANK_5,
+				ADC_REGULAR_RANK_6,
+				ADC_REGULAR_RANK_7,
+				ADC_REGULAR_RANK_8,
+				ADC_REGULAR_RANK_9,
+				ADC_REGULAR_RANK_10,
+				ADC_REGULAR_RANK_11,
+				ADC_REGULAR_RANK_12,
+				ADC_REGULAR_RANK_13,
+				ADC_REGULAR_RANK_14,
+				ADC_REGULAR_RANK_15,
+				ADC_REGULAR_RANK_16
+		};
+
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
 	/* Peripheral clock enable */
+	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
+	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+	{
+		Error_Handler();
+	}
+
+	/* Peripheral clock enable */
 	__HAL_RCC_ADC1_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
 
 	/**ADC GPIO Configuration*/
     GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -201,7 +232,7 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
     hadc.Instance = adc;
     hadc.Init.ScanConvMode = ADC_SCAN_ENABLE;
     hadc.Init.ContinuousConvMode = DISABLE;
-    hadc.Init.DiscontinuousConvMode = ENABLE;
+    hadc.Init.DiscontinuousConvMode = DISABLE;
     hadc.Init.NbrOfDiscConversion = chan_count;
     hadc.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1;
     hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
@@ -212,16 +243,15 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
     }
     /** Configure Channels */
     ADC_ChannelConfTypeDef sConfig = {0};
-    sConfig.Rank = 1;
     sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
 	for (size_t i = 0; i < chan_count; ++i)
 	{
+		sConfig.Rank = adc_ranks[i];
 	    sConfig.Channel = adc_conf[i].adc_channel;
 	    if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 	    {
 	      Error_Handler();
 	    }
-	    sConfig.Rank++;
 	}
 }
 
