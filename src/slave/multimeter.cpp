@@ -17,6 +17,9 @@ MeasurementMain measure = MeasurementMain();
 void adc_callback()
 {
 	measure.adc_callback();
+
+	// Uncomment to measure leakage current - stop ADC trigger timer.
+//	adc_trigger_stop();
 }
 
 extern "C" void multimeter_main()

@@ -19,6 +19,7 @@ bool terminal_transmit(const char * buff, size_t buff_size);
 
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count);
 bool adc_run(uint32_t period_us);
+void adc_trigger_stop();
 void dac_init(void);
 bool dac_run(void);
 bool pwm_run(void);

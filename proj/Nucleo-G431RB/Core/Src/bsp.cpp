@@ -293,6 +293,11 @@ bool adc_run(uint32_t period_us)
 	return hal_status == HAL_OK;
 }
 
+void adc_trigger_stop()
+{
+	(void) HAL_TIM_Base_Stop(&htim1);
+}
+
 void dac_init(void)
 {
 	// Dummy - no DAC.
