@@ -44,6 +44,8 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 
 const adc_conf_t adc_tester_channels[6] =
 {
+		// TODO: this version does not support ADC2, because ADC2 does not have DMA
+		// 		 and this BSP driver requires DMA
 		{
 				ADC_CHANNEL_0,
 				ADC12_IN0_GPIO_Port,
