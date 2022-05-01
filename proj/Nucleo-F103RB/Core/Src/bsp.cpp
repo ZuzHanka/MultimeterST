@@ -173,10 +173,15 @@ static const uint32_t adc_ranks[16] =
 
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
+	// Max ADC clock: 14MHz
+	// Max sampling rate: 1MHz
+	// 12bit approximation: 12.5 ticks
+	// Warning: ADC2 does not support DMA trigger (not suitable for Multimeter)
+
 	/* Peripheral clock enable */
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6; // 72MHz / 6 = 12MHz
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
 	{
 		Error_Handler();

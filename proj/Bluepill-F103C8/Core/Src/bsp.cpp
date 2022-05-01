@@ -47,23 +47,23 @@ const adc_conf_t adc_tester_channels[6] =
 {
 		{
 				ADC_CHANNEL_0,
-				ADC1_IN0_GPIO_Port,
-				ADC1_IN0_Pin
+				ADC12_IN0_GPIO_Port,
+				ADC12_IN0_Pin
 		},
 		{
 				ADC_CHANNEL_1,
-				ADC1_IN1_GPIO_Port,
-				ADC1_IN1_Pin
+				ADC12_IN1_GPIO_Port,
+				ADC12_IN1_Pin
 		},
 		{
 				ADC_CHANNEL_2,
-				ADC1_IN2_GPIO_Port,
-				ADC1_IN2_Pin
+				ADC12_IN2_GPIO_Port,
+				ADC12_IN2_Pin
 		},
 		{
 				ADC_CHANNEL_3,
-				ADC1_IN3_GPIO_Port,
-				ADC1_IN3_Pin
+				ADC12_IN3_GPIO_Port,
+				ADC12_IN3_Pin
 		},
 		{
 				ADC_CHANNEL_TEMPSENSOR,
@@ -81,18 +81,18 @@ const adc_conf_t adc_slave_channels[3] =
 {
 		{
 				ADC_CHANNEL_0,
-				ADC1_IN0_GPIO_Port,
-				ADC1_IN0_Pin
+				ADC12_IN0_GPIO_Port,
+				ADC12_IN0_Pin
 		},
 		{
 				ADC_CHANNEL_1,
-				ADC1_IN1_GPIO_Port,
-				ADC1_IN1_Pin
+				ADC12_IN1_GPIO_Port,
+				ADC12_IN1_Pin
 		},
 		{
 				ADC_CHANNEL_2,
-				ADC1_IN2_GPIO_Port,
-				ADC1_IN2_Pin
+				ADC12_IN2_GPIO_Port,
+				ADC12_IN2_Pin
 		}
 };
 
@@ -175,10 +175,15 @@ static const uint32_t adc_ranks[16] =
 
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
+	// Max ADC clock: 14MHz
+	// Max sampling rate: 1MHz
+	// 12bit approximation: 12.5 ticks
+	// Warning: ADC2 does not support DMA trigger (not suitable for Multimeter)
+
 	/* Peripheral clock enable */
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6; // 72MHz / 6 = 12MHz
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
 	{
 		Error_Handler();

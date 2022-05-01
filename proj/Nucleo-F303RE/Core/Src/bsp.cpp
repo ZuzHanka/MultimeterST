@@ -165,16 +165,20 @@ static const uint32_t adc_ranks[16] =
 
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
+	// Max ADC clock: 72MHz
+	// Max sampling rate: 5.14MHz (fast channel), 4.8MHz (slow channel)
+	// 12bit approximation: 12.5 ticks
+
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 	if ((adc == ADC1) || (adc == ADC2))
 	{
 	    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC12;
-	    PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
+	    PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1; // 72MHz
 	}
 	else
 	{
 	    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC34;
-	    PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV1;
+	    PeriphClkInit.Adc34ClockSelection = RCC_ADC34PLLCLK_DIV1; // 72MHz
 	}
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
 	{
