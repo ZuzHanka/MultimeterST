@@ -212,15 +212,40 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 	}
 
 	/* DMA controller clock enable */
-	__HAL_RCC_DMA1_CLK_ENABLE();
-
 	/* DMA interrupt init */
-	/* DMA1_Channel1_IRQn interrupt configuration */
-	HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
-
 	/* ADC DMA Init */
-	hdma_adc.Instance = DMA1_Channel1;
+	if (adc == ADC1)
+	{
+		__HAL_RCC_DMA1_CLK_ENABLE();
+		HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+		hdma_adc.Instance = DMA1_Channel1;
+	}
+	else if (adc == ADC2)
+	{
+		__HAL_RCC_DMA2_CLK_ENABLE();
+		HAL_NVIC_SetPriority(DMA2_Channel1_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(DMA2_Channel1_IRQn);
+		hdma_adc.Instance = DMA2_Channel1;
+	}
+	else if (adc == ADC3)
+	{
+		__HAL_RCC_DMA2_CLK_ENABLE();
+		HAL_NVIC_SetPriority(DMA2_Channel5_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(DMA2_Channel5_IRQn);
+		hdma_adc.Instance = DMA2_Channel5;
+	}
+	else if (adc == ADC4)
+	{
+		__HAL_RCC_DMA2_CLK_ENABLE();
+		HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(DMA2_Channel2_IRQn);
+		hdma_adc.Instance = DMA2_Channel2;
+	}
+	else
+	{
+		Error_Handler();
+	}
 	hdma_adc.Init.Direction = DMA_PERIPH_TO_MEMORY;
 	hdma_adc.Init.PeriphInc = DMA_PINC_DISABLE;
 	hdma_adc.Init.MemInc = DMA_MINC_ENABLE;

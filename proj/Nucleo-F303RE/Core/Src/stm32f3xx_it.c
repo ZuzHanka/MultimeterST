@@ -207,4 +207,25 @@ void DMA1_Channel1_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(&hdma_adc);
 }
+/**
+  * @brief This function handles DMA2 channel1 global interrupt.
+  */
+void DMA2_Channel1_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&hdma_adc);
+}
+/**
+  * @brief This function handles DMA2 channel2 global interrupt.
+  */
+void DMA2_Channel2_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&hdma_adc);
+}
+/**
+  * @brief This function handles DMA2 channel5 global interrupt.
+  */
+void DMA2_Channel5_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&hdma_adc);
+}
 /* USER CODE END 1 */
