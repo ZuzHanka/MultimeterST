@@ -270,6 +270,10 @@ bool adc_run(uint32_t period_us)
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
 
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_ADCEx_Calibration_Start(&hadc);
+	}
 	__HAL_TIM_SET_AUTORELOAD(&htim1, (period_us - 1));
 	if (hal_status == HAL_OK)
 	{
