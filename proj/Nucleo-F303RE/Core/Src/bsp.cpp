@@ -387,14 +387,27 @@ bool pwm_run(void)
 	HAL_StatusTypeDef hal_status = HAL_OK;
 	if (hal_status == HAL_OK)
 	{
-		hal_status = HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+		// Start TIM4 first. TIM4 waits for TIM3 trigger.
+		hal_status = HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
 	}
 	if (hal_status == HAL_OK)
 	{
-		hal_status = HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+		hal_status = HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	}
 
 	return hal_status == HAL_OK;
+}
+
+void pwm_synchronize()
+{
+	// Disable PWM4 trigger.
+	LL_TIM_SetSlaveMode(htim4.Instance, LL_TIM_SLAVEMODE_DISABLED);
+	// Stop PWM4.
+	LL_TIM_DisableCounter(htim4.Instance);
+	// Clear PWM4 counter.
+	LL_TIM_SetCounter(htim4.Instance, 0);
+	// Enable PWM4 trigger.
+	LL_TIM_SetSlaveMode(htim4.Instance, LL_TIM_SLAVEMODE_TRIGGER);
 }
 
 uint16_t adc_get_sample_mV(uint8_t channel)

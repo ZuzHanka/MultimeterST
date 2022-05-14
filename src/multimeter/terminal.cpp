@@ -314,7 +314,7 @@ bool Terminal::print_help(uint16_t help_spec)
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "f : set frequency for active PWM channel");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "d : set duty cycle for active PWM channel");
 			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "v : set DAC voltage");
-			success = success && print_advanced(row++, 2, CLEAR_LINE | color, " ");
+			success = success && print_advanced(row++, 2, CLEAR_LINE | color, "t : trigger PWM channels synchronization");
 		}
 		break;
 
@@ -1184,6 +1184,18 @@ bool Terminal::key_pressed()
 					}
 				}
 				break;
+
+			case 'T' :
+			case 't' :
+			{
+				if ((m_application_generator) && (m_generator_freq_mode == false) && (m_generator_duty_mode == false))
+				{
+					valid_key = true;
+					pwm_synchronize();
+					set_status("PWM channels synchronized.");
+				}
+				break;
+			}
 
 			case '+' :
 				{
