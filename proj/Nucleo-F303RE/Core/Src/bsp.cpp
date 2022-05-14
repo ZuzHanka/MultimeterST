@@ -13,11 +13,14 @@ extern "C"
 
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim4;
 DAC_HandleTypeDef hdac1;
 ADC_HandleTypeDef hadc;
 DMA_HandleTypeDef hdma_adc;
+
+TIM_HandleTypeDef * const pwm_htim[CHANNEL_PWM_COUNT] = { &htim3, &htim4 };
+float pwm_duty[CHANNEL_PWM_COUNT] = { 0.0, 0.0 };
 
 /* Constants ---------------------------------------------------------*/
 
@@ -89,11 +92,10 @@ const adc_conf_t adc_slave_channels[3] =
 };
 
 // printed PWM channel names
-// TODO: fix values for this MCU
 const char * pwm_ch_names[CHANNEL_PWM_COUNT] =
 {
-		"D10",
-		"D12"
+		"D5", // PB4
+		"D10" // PB6
 };
 
 // printed DAC channel names
@@ -383,14 +385,14 @@ bool dac_run(void)
 bool pwm_run(void)
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
-//	if (hal_status == HAL_OK)
-//	{
-//		hal_status = HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-//	}
-//	if (hal_status == HAL_OK)
-//	{
-//		hal_status = HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-//	}
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	}
+	if (hal_status == HAL_OK)
+	{
+		hal_status = HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+	}
 
 	return hal_status == HAL_OK;
 }
@@ -435,58 +437,177 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* p_hadc)
 	}
 }
 
-uint32_t pwm_get_duty(uint32_t channel)
+float pwm_get_duty(uint32_t channel)
 {
-	uint32_t duty = 0;
-//	if (channel == CHANNEL_PWM1)
-//	{
-//		duty = LL_TIM_OC_GetCompareCH1(htim8.Instance);
-//	}
-//	if (channel == CHANNEL_PWM2)
-//	{
-//		duty =  LL_TIM_OC_GetCompareCH1(htim3.Instance);
-//	}
-	return duty;
+	uint32_t duty = LL_TIM_OC_GetCompareCH1(pwm_htim[channel]->Instance);
+	uint32_t period = LL_TIM_GetAutoReload(pwm_htim[channel]->Instance);
+
+	float f_duty = (float) (duty * 100) / (float) (period + 1);
+	if (f_duty > 100)
+	{
+		f_duty = 100;
+	}
+	return f_duty;
 }
 
 void pwm_set_duty(uint32_t channel, uint32_t duty)
 {
-//	if (channel == CHANNEL_PWM1)
-//	{
-//		LL_TIM_OC_SetCompareCH1(htim8.Instance, duty);
-//	}
-//	if (channel == CHANNEL_PWM2)
-//	{
-//		LL_TIM_OC_SetCompareCH1(htim3.Instance, duty);
-//	}
+	uint32_t period = LL_TIM_GetAutoReload(pwm_htim[channel]->Instance);
+
+	pwm_duty[channel] = (float) duty / 100.0;
+
+	uint32_t round = 50;
+	duty = (duty * (period + 1) + round) / 100;
+	if (duty > UINT16_MAX)
+	{
+		duty = UINT16_MAX;
+	}
+
+	LL_TIM_OC_SetCompareCH1(pwm_htim[channel]->Instance, duty);
 }
 
-uint32_t pwm_get_freq(uint32_t channel)
+void pwm_duty_increment(uint32_t channel, int32_t increment_promile)
+{
+	int32_t duty = LL_TIM_OC_GetCompareCH1(pwm_htim[channel]->Instance);
+	uint32_t period = LL_TIM_GetAutoReload(pwm_htim[channel]->Instance);
+
+	int32_t increment = ((int32_t) (period + 1) * increment_promile) / 1000;
+	if (increment == 0)
+	{
+		// Always increment at least minimal possible step.
+		if (increment_promile > 0)
+		{
+			increment = 1;
+		}
+		else
+		{
+			increment = -1;
+		}
+	}
+
+	duty += increment;
+	if (duty > UINT16_MAX)
+	{
+		duty = UINT16_MAX;
+	}
+	else if (duty < 0)
+	{
+		duty = 0;
+	}
+
+	pwm_duty[channel] = (float) duty / (float) (period + 1);
+
+	LL_TIM_OC_SetCompareCH1(pwm_htim[channel]->Instance, duty);
+}
+
+float pwm_get_freq(uint32_t channel)
 {
 	// uint32_t LL_TIM_GetPrescaler(TIM_TypeDef *TIMx)
-	uint32_t freq = 0;
-//	if (channel == CHANNEL_PWM1)
-//	{
-//		freq =  (LL_TIM_GetPrescaler(htim8.Instance) + 1);
-//	}
-//	if (channel == CHANNEL_PWM2)
-//	{
-//		freq =  (LL_TIM_GetPrescaler(htim3.Instance) + 1);
-//	}
+	// uint32_t LL_TIM_GetAutoReload(TIM_TypeDef *TIMx)
+
+	uint32_t prescaler = 0;
+	uint32_t period = 0;
+
+	prescaler = LL_TIM_GetPrescaler(pwm_htim[channel]->Instance);
+	period = LL_TIM_GetAutoReload(pwm_htim[channel]->Instance);
+
+	float freq = (float) TIMER_BASE_FREQUENCY_MAX / (float) ((prescaler + 1) * (period + 1));
+
 	return freq;
 }
 
-void pwm_set_freq(uint32_t channel, uint32_t freq)
+void pwm_set_freq(uint32_t channel, uint32_t freq_Hz)
 {
 	// void LL_TIM_SetPrescaler(TIM_TypeDef *TIMx, uint32_t Prescaler)
-//	if (channel == CHANNEL_PWM1)
-//	{
-//		LL_TIM_SetPrescaler(htim8.Instance, (freq - 1));
-//	}
-//	if (channel == CHANNEL_PWM2)
-//	{
-//		LL_TIM_SetPrescaler(htim3.Instance, (freq - 1));
-//	}
+	// void LL_TIM_SetAutoReload(TIM_TypeDef *TIMx, uint32_t AutoReload)
+
+	uint32_t prescaler = (TIMER_BASE_FREQUENCY_MAX >> 16) / freq_Hz;  // = factor / (2^16 * freq)
+	if (prescaler > UINT16_MAX)
+	{
+		prescaler = UINT16_MAX;
+	}
+
+	uint32_t presc_freq = freq_Hz * (prescaler + 1);
+	uint32_t round = presc_freq / 2;
+	uint32_t period = (TIMER_BASE_FREQUENCY_MAX + round) / presc_freq;
+	if (period > UINT16_MAX)
+	{
+		period = UINT16_MAX;
+	}
+	else if (period <= 1)
+	{
+		period = 1;
+	}
+	else
+	{
+		period -= 1;
+	}
+
+	uint32_t duty = pwm_duty[channel] * (period + 1);
+	if (duty > UINT16_MAX)
+	{
+		duty = UINT16_MAX;
+	}
+
+	LL_TIM_OC_SetCompareCH1(pwm_htim[channel]->Instance, duty);
+	LL_TIM_SetPrescaler(pwm_htim[channel]->Instance, prescaler);
+	LL_TIM_SetAutoReload(pwm_htim[channel]->Instance, period);
+}
+
+void pwm_freq_increment(uint32_t channel, int32_t increment_promile)
+{
+	// void LL_TIM_SetPrescaler(TIM_TypeDef *TIMx, uint32_t Prescaler)
+	// void LL_TIM_SetAutoReload(TIM_TypeDef *TIMx, uint32_t AutoReload)
+
+	uint32_t period = LL_TIM_GetAutoReload(pwm_htim[channel]->Instance);
+	uint32_t prescaler = LL_TIM_GetPrescaler(pwm_htim[channel]->Instance);
+	int64_t factor = (period + 1) * (prescaler + 1);
+
+	int64_t factor_inc = (factor * increment_promile) / 1000;
+	if (factor_inc == 0)
+	{
+		// Always increment at least minimal possible step.
+		if (increment_promile > 0)
+		{
+			factor_inc = 1;
+		}
+		else
+		{
+			factor_inc = -1;
+		}
+	}
+	// Note: increment frequency => decrement period.
+	factor -= factor_inc;
+
+	prescaler = ((uint32_t) factor) >> 16; // = factor / 2^16
+	if (prescaler > UINT16_MAX)
+	{
+		prescaler = UINT16_MAX;
+	}
+
+	period = factor / (prescaler + 1);
+	if (period > UINT16_MAX)
+	{
+		period = UINT16_MAX;
+	}
+	else if (period <= 1)
+	{
+		period = 1;
+	}
+	else
+	{
+		period -= 1;
+	}
+
+	uint32_t duty = pwm_duty[channel] * (period + 1);
+	if (duty > UINT16_MAX)
+	{
+		duty = UINT16_MAX;
+	}
+
+	LL_TIM_OC_SetCompareCH1(pwm_htim[channel]->Instance, duty);
+	LL_TIM_SetPrescaler(pwm_htim[channel]->Instance, prescaler);
+	LL_TIM_SetAutoReload(pwm_htim[channel]->Instance, period);
 }
 
 uint32_t dac_get_value(void)

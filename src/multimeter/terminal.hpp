@@ -86,7 +86,8 @@ private:
 	uint16_t m_dac_mV;
 	bool m_voltmeter_no_samples_mode = false;
 	bool m_read_int = false;
-	uint16_t m_no_from_keybord = 65535;
+	static const uint32_t MAX_NO_FROM_KEYBOARD = UINT32_MAX;
+	uint32_t m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 	bool m_read_sign = false;
 	bool m_generator_step_up = false;
 	bool m_generator_step_down = false;

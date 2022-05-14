@@ -509,17 +509,13 @@ bool Terminal::print_generator()
 		success = success && print_advanced(row, 1 + sizeof(pwm_ch_names[ch]), BRIGHT | BOLD | CYAN, ":");
 		success = success && print_advanced(row, 10, BRIGHT | BOLD | CYAN, "PWM");
 
-		snprintf(buffer, TERMINAL_WIDTH, "%7.3f", convert2freq(pwm_get_freq(ch)));
-		success = success && print_advanced(row, 18, BRIGHT | BOLD | CYAN, buffer);
-		success = success && print_advanced(row, 18 + 8, BRIGHT | BOLD | CYAN, "Hz");
-		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_freq(ch));
-		success = success && print_advanced(row, 60, BRIGHT | BOLD | CYAN, buffer);
+		snprintf(buffer, TERMINAL_WIDTH, "%12.3f", pwm_get_freq(ch));
+		success = success && print_advanced(row, 14, BRIGHT | BOLD | CYAN, buffer);
+		success = success && print_advanced(row, 14 + 13, BRIGHT | BOLD | CYAN, "Hz");
 
-		snprintf(buffer, TERMINAL_WIDTH, "%6.3f", convert2duty(pwm_get_duty(ch)));
+		snprintf(buffer, TERMINAL_WIDTH, "%7.3f", pwm_get_duty(ch));
 		success = success && print_advanced(row, 33, BRIGHT | BOLD | CYAN, buffer);
-		success = success && print_advanced(row, 33 + 7, BRIGHT | BOLD | CYAN, "%");
-		snprintf(buffer, TERMINAL_WIDTH, "%6d", (int) pwm_get_duty(ch));
-		success = success && print_advanced(row++, 70, BRIGHT | BOLD | CYAN, buffer);
+		success = success && print_advanced(row++, 33 + 8, BRIGHT | BOLD | CYAN, "%");
 	}
 
 	for (int ch=0; ch<CHANNEL_DAC_COUNT; ch++)
@@ -528,9 +524,9 @@ bool Terminal::print_generator()
 		success = success && print_advanced(row, 1 + sizeof(dac_ch_names[ch]), BRIGHT | BOLD | CYAN, ":");
 		success = success && print_advanced(row, 10, BRIGHT | BOLD | CYAN, "DAC");
 
-		snprintf(buffer, TERMINAL_WIDTH, "%7.3f", convert_mV2V(m_dac_mV));
-		success = success && print_advanced(row, 18, BRIGHT | BOLD | CYAN, buffer);
-		success = success && print_advanced(row++, 18 + 8, BRIGHT | BOLD | CYAN, "V");
+		snprintf(buffer, TERMINAL_WIDTH, "%5.3f", convert_mV2V(m_dac_mV));
+		success = success && print_advanced(row, 21, BRIGHT | BOLD | CYAN, buffer);
+		success = success && print_advanced(row++, 21 + 6, BRIGHT | BOLD | CYAN, "V");
 	}
 
 	return success;
@@ -572,13 +568,13 @@ bool Terminal::print_generator()
 
 void Terminal::update_voltmeter()
 {
-	if ((m_application_voltmeter) && (m_voltmeter_no_samples_mode == false) && (m_no_from_keybord < 65535))
+	if ((m_application_voltmeter) && (m_voltmeter_no_samples_mode == false) && (m_no_from_keybord < MAX_NO_FROM_KEYBOARD))
 	{
 		AvgFilter::set_no_samples(m_no_from_keybord);
 		print_voltmeter();
 		m_voltmeter_no_samples_mode = false;
 		m_read_int = false;
-		m_no_from_keybord = 65535;
+		m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 	}
 
 	uint16_t is_new_average = 0;
@@ -727,7 +723,7 @@ void Terminal::update_generator()
 {
 	if (m_voltmeter_logging == false)
 	{
-		if ((m_application_generator) && (m_no_from_keybord < 65535) && (m_read_int)
+		if ((m_application_generator) && (m_no_from_keybord < MAX_NO_FROM_KEYBOARD) && (m_read_int)
 				&& (m_generator_duty_mode == false) && (m_generator_freq_mode == false)
 				&& (m_generator_dac_mode == false))
 		{
@@ -742,27 +738,27 @@ void Terminal::update_generator()
 				{
 					if (m_generator_channel_upper)
 					{
-						pwm_set_duty(CHANNEL_PWM1, duty2intvalue(m_no_from_keybord));
+						pwm_set_duty(CHANNEL_PWM1, m_no_from_keybord);
 					}
 					else
 					{
-						pwm_set_duty(CHANNEL_PWM2, duty2intvalue(m_no_from_keybord));
+						pwm_set_duty(CHANNEL_PWM2, m_no_from_keybord);
 					}
 				}
 				else
 				{
 					if (m_generator_channel_upper)
 					{
-						pwm_set_freq(CHANNEL_PWM1, freq2intvalue(m_no_from_keybord));
+						pwm_set_freq(CHANNEL_PWM1, m_no_from_keybord);
 					}
 					else
 					{
-						pwm_set_freq(CHANNEL_PWM2, freq2intvalue(m_no_from_keybord));
+						pwm_set_freq(CHANNEL_PWM2, m_no_from_keybord);
 					}
 				}
 			}
 			m_read_int = false;
-			m_no_from_keybord = 65535;
+			m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 			print_generator();
 		}
 
@@ -783,31 +779,30 @@ void Terminal::update_generator()
 			}
 			else
 			{
-				uint32_t value;
 				if (m_generator_flag_duty_nofreq)
 				{
 					if (m_generator_channel_upper)
 					{
-						value = pwm_get_duty(CHANNEL_PWM1);
-						if ((m_generator_step_up) && (value < COUNTER_PERIOD))
+						float value = pwm_get_duty(CHANNEL_PWM1);
+						if ((m_generator_step_up) && (value < 100))
 						{
-							pwm_set_duty(CHANNEL_PWM1, value + 1);
+							pwm_duty_increment(CHANNEL_PWM1, 1);
 						}
 						if ((m_generator_step_down) && (value > 0))
 						{
-							pwm_set_duty(CHANNEL_PWM1, value - 1);
+							pwm_duty_increment(CHANNEL_PWM1, -1);
 						}
 					}
 					else
 					{
-						value = pwm_get_duty(CHANNEL_PWM2);
-						if ((m_generator_step_up) && (value < COUNTER_PERIOD))
+						float value = pwm_get_duty(CHANNEL_PWM2);
+						if ((m_generator_step_up) && (value < 100))
 						{
-							pwm_set_duty(CHANNEL_PWM2, value + 1);
+							pwm_duty_increment(CHANNEL_PWM2, 1);
 						}
 						if ((m_generator_step_down) && (value > 0))
 						{
-							pwm_set_duty(CHANNEL_PWM2, value - 1);
+							pwm_duty_increment(CHANNEL_PWM2, -1);
 						}
 					}
 				}
@@ -815,105 +810,26 @@ void Terminal::update_generator()
 				{
 					if (m_generator_channel_upper)
 					{
-						value = pwm_get_freq(CHANNEL_PWM1);
-						uint32_t step;
-						if (value > 9999)
+						float value = pwm_get_freq(CHANNEL_PWM1);
+						if ((m_generator_step_up) && (value < 1000000))
 						{
-							step = 1000;
+							pwm_freq_increment(CHANNEL_PWM1, 1);
 						}
-						else if (value > 4999)
+						if ((m_generator_step_down) && (value > 1))
 						{
-							step = 500;
-						}
-						else if (value > 3332)
-						{
-							step = 100;
-						}
-						else if (value > 1999)
-						{
-							step = 50;
-						}
-						else if (value > 1249)
-						{
-							step = 20;
-						}
-						else if (value > 908)
-						{
-							step = 10;
-						}
-						else if (value > 665)
-						{
-							step = 5;
-						}
-						else if (value > 415)
-						{
-							step = 2;
-						}
-						else
-						{
-							step = 1;
-						}
-
-						if ((m_generator_step_up) && (value > 1))
-						{
-							// frequency up means prescaler must go down
-							pwm_set_freq(CHANNEL_PWM1, value - step);  // TODO
-						}
-						if ((m_generator_step_down) && (value < 50000))
-						{
-							// frequency down means prescaler must go up
-							pwm_set_freq(CHANNEL_PWM1, value + step);  // TODO
+							pwm_freq_increment(CHANNEL_PWM1, -1);
 						}
 					}
 					else
 					{
-						value = pwm_get_freq(CHANNEL_PWM2);
-						uint32_t step;
-						if (value > 9999)
+						float value = pwm_get_freq(CHANNEL_PWM2);
+						if ((m_generator_step_up) && (value < 1000000))
 						{
-							step = 1000;
+							pwm_freq_increment(CHANNEL_PWM2, 1);
 						}
-						else if (value > 4999)
+						if ((m_generator_step_down) && (value > 1))
 						{
-							step = 500;
-						}
-						else if (value > 3332)
-						{
-							step = 100;
-						}
-						else if (value > 1999)
-						{
-							step = 50;
-						}
-						else if (value > 1249)
-						{
-							step = 20;
-						}
-						else if (value > 908)
-						{
-							step = 10;
-						}
-						else if (value > 665)
-						{
-							step = 5;
-						}
-						else if (value > 415)
-						{
-							step = 2;
-						}
-						else
-						{
-							step = 1;
-						}
-						if ((m_generator_step_up) && (value > 1))
-						{
-							// frequency up means prescaler must go down
-							pwm_set_freq(CHANNEL_PWM2, value - step);  // TODO
-						}
-						if ((m_generator_step_down) && (value < 50000))
-						{
-							// frequency down means prescaler must go up
-							pwm_set_freq(CHANNEL_PWM2, value + step);  // TODO
+							pwm_freq_increment(CHANNEL_PWM2, -1);
 						}
 					}
 				}
@@ -969,7 +885,7 @@ bool Terminal::key_pressed()
 					{
 						m_voltmeter_no_samples_mode = false;
 						m_read_int = false;
-						m_no_from_keybord = 65535;
+						m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 						m_from_keyboard_message = nullptr;
 						set_status("Number of samples per average was NOT set.");
 					}
@@ -982,7 +898,7 @@ bool Terminal::key_pressed()
 					{
 						m_generator_dac_mode = false;
 						m_read_int = false;
-						m_no_from_keybord = 65535;
+						m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 						m_from_keyboard_message = nullptr;
 						if (m_read_sign)
 						{
@@ -998,7 +914,7 @@ bool Terminal::key_pressed()
 					{
 						m_generator_freq_mode = false;
 						m_read_int = false;
-						m_no_from_keybord = 65535;
+						m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 						m_from_keyboard_message = nullptr;
 						if (m_read_sign)
 						{
@@ -1014,7 +930,7 @@ bool Terminal::key_pressed()
 					{
 						m_generator_duty_mode = false;
 						m_read_int = false;
-						m_no_from_keybord = 65535;
+						m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 						m_from_keyboard_message = nullptr;
 						if (m_read_sign)
 						{
@@ -1092,7 +1008,7 @@ bool Terminal::key_pressed()
 						else if (m_read_sign)
 						{
 							m_read_int = false;
-							m_no_from_keybord = 65535;
+							m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 							set_status("Voltage edit mode finished.");
 						}
 						else
@@ -1216,7 +1132,7 @@ bool Terminal::key_pressed()
 							else if (m_read_sign)
 							{
 								m_read_int = false;
-								m_no_from_keybord = 65535;
+								m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 								set_status("Duty cycle mode finished.");
 							}
 							else
@@ -1243,7 +1159,7 @@ bool Terminal::key_pressed()
 							m_read_sign = true;
 							m_no_from_keybord = 0;
 							m_generator_flag_duty_nofreq = false;
-							set_status("Set frequency for edited channel (1 .. 10000):");
+							set_status("Set frequency for edited channel (1 .. 1000000):");
 						}
 						else
 						{
@@ -1255,7 +1171,7 @@ bool Terminal::key_pressed()
 							else if (m_read_sign)
 							{
 								m_read_int = false;
-								m_no_from_keybord = 65535;
+								m_no_from_keybord = MAX_NO_FROM_KEYBOARD;
 								set_status("Frequency mode finished.");
 							}
 							else
@@ -1341,7 +1257,7 @@ bool Terminal::key_pressed()
 							const size_t TERMINAL_WIDTH = 80;
 							static char buffer[TERMINAL_WIDTH + 1];
 							buffer[TERMINAL_WIDTH] = '\0';
-							snprintf(buffer, TERMINAL_WIDTH, "%5d", m_no_from_keybord);
+							snprintf(buffer, TERMINAL_WIDTH, "%5ld", m_no_from_keybord);
 							set_status("Set number of samples per average (1 .. 1000):");
 							set_from_keyboard(buffer);
 						}
@@ -1357,10 +1273,10 @@ bool Terminal::key_pressed()
 							m_no_from_keybord = 100;
 							m_from_keyboard_message = nullptr;
 						}
-						else if ((m_generator_freq_mode) && (m_no_from_keybord > 10000))
+						else if ((m_generator_freq_mode) && (m_no_from_keybord > 1000000))
 						{
-							set_status("Frequency reached maximum (10000).");
-							m_no_from_keybord = 10000;
+							set_status("Frequency reached maximum (1000000).");
+							m_no_from_keybord = 1000000;
 							m_from_keyboard_message = nullptr;
 						}
 						else if ((m_generator_dac_mode) && (m_no_from_keybord > 3300))
@@ -1374,14 +1290,14 @@ bool Terminal::key_pressed()
 							const size_t TERMINAL_WIDTH = 80;
 							static char buffer[TERMINAL_WIDTH + 1];
 							buffer[TERMINAL_WIDTH] = '\0';
-							snprintf(buffer, TERMINAL_WIDTH, "%5d", m_no_from_keybord);
+							snprintf(buffer, TERMINAL_WIDTH, "%5ld", m_no_from_keybord);
 							if (m_generator_duty_mode)
 							{
 								set_status("Set duty cycle for edited channel (0 .. 100):");
 							}
 							if (m_generator_freq_mode)
 							{
-								set_status("Set frequency for edited channel (1 .. 10000):");
+								set_status("Set frequency for edited channel (1 .. 1000000):");
 							}
 							if (m_generator_dac_mode)
 							{
