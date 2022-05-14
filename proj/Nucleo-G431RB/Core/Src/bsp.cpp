@@ -309,6 +309,7 @@ bool dac_run(void)
 	return true;
 }
 
+// TODO: implementation for this MCU
 bool pwm_run(void)
 {
 	HAL_StatusTypeDef hal_status = HAL_OK;
@@ -322,6 +323,12 @@ bool pwm_run(void)
 //	}
 
 	return hal_status == HAL_OK;
+}
+
+// TODO: implementation for this MCU
+void pwm_synchronize()
+{
+	// Dummy.
 }
 
 uint16_t adc_get_sample_mV(uint8_t channel)
@@ -374,7 +381,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* p_hadc)
 	}
 }
 
-uint32_t pwm_get_duty(uint32_t channel)
+// TODO: implementation for this MCU
+float pwm_get_duty(uint32_t channel)
 {
 	uint32_t duty = 0;
 //	if (channel == CHANNEL_PWM1)
@@ -388,6 +396,7 @@ uint32_t pwm_get_duty(uint32_t channel)
 	return duty;
 }
 
+// TODO: implementation for this MCU
 void pwm_set_duty(uint32_t channel, uint32_t duty)
 {
 //	if (channel == CHANNEL_PWM1)
@@ -400,7 +409,15 @@ void pwm_set_duty(uint32_t channel, uint32_t duty)
 //	}
 }
 
-uint32_t pwm_get_freq(uint32_t channel)
+// TODO: implementation for this MCU
+void pwm_duty_increment(uint32_t channel, int32_t increment_promile)
+{
+	(void) channel;
+	(void) increment_promile;
+}
+
+// TODO: implementation for this MCU
+float pwm_get_freq(uint32_t channel)
 {
 	// uint32_t LL_TIM_GetPrescaler(TIM_TypeDef *TIMx)
 	uint32_t freq = 0;
@@ -415,6 +432,14 @@ uint32_t pwm_get_freq(uint32_t channel)
 	return freq;
 }
 
+// TODO: implementation for this MCU
+void pwm_freq_increment(uint32_t channel, int32_t increment_promile)
+{
+	(void) channel;
+	(void) increment_promile;
+}
+
+// TODO: implementation for this MCU
 void pwm_set_freq(uint32_t channel, uint32_t freq)
 {
 	// void LL_TIM_SetPrescaler(TIM_TypeDef *TIMx, uint32_t Prescaler)

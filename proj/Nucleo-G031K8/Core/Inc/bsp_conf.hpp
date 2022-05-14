@@ -64,11 +64,6 @@ enum Channel_PWM {
 
 extern const char * pwm_ch_names[CHANNEL_PWM_COUNT];
 
-// generator PWM - timer settings
-// TODO specify correct values for this MCU
-static const uint16_t COUNTER_PERIOD = 7199;
-static const uint16_t FREQUENCY_MAX = (72000000 / (COUNTER_PERIOD + 1));
-
 // DAC channels
 enum Channel_DAC {
 	CHANNEL_DAC_COUNT
