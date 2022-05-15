@@ -142,6 +142,15 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
+	// Max ADC clock: 36MHz
+	// 12bit approximation: 12 ticks
+	//
+	// Current setting:
+	//   APB2 CLK:		100MHz
+	//   ADC DIV: 		4
+	//   ADC CLK: 		25MHz
+	//   ADC Sample:	480
+
 	/* Peripheral clock enable */
 	__HAL_RCC_ADC1_CLK_ENABLE();
 	__HAL_RCC_GPIOA_CLK_ENABLE();
@@ -190,7 +199,7 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
     /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
     */
     hadc.Instance = adc;
-    hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+    hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
     hadc.Init.Resolution = ADC_RESOLUTION_12B;
     hadc.Init.ScanConvMode = ENABLE;
     hadc.Init.ContinuousConvMode = DISABLE;
