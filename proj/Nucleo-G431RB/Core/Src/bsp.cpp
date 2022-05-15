@@ -155,6 +155,15 @@ static const uint32_t adc_ranks[16] =
 
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
+	// Max ADC clock: 60MHz (single ADC), 42MHz (all ADC, single ended)
+	// 12bit approximation: 12.5 ticks
+	//
+	// Current setting:
+	//   SYS CLK:		170MHz
+	//   ADC DIV: 		4
+	//   ADC CLK: 		42.5MHz
+	//   ADC Sample:	640.5
+
 	/** Initializes the peripherals clocks */
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC12;

@@ -135,6 +135,15 @@ bool terminal_transmit(const char * buff, size_t buff_size)
 
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
+	// Max ADC clock: 36MHz
+	// 12bit approximation: 12 ticks
+	//
+	// Current setting:
+	//   APB2 CLK:		45MHz
+	//   ADC DIV: 		2
+	//   ADC CLK: 		22.5MHz
+	//   ADC Sample:	480
+
 	/* Peripheral clock enable */
 	if (adc == ADC1)
 	{

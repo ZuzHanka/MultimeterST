@@ -179,6 +179,12 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 	// Max sampling rate: 1MHz
 	// 12bit approximation: 12.5 ticks
 	// Warning: ADC2 does not support DMA trigger (not suitable for Multimeter)
+	//
+	// Current setting:
+	//   APB2 CLK:		64MHz
+	//   RCC DIV: 		6
+	//   ADC CLK: 		12MHz
+	//   ADC Sample:	239.5
 
 	/* Peripheral clock enable */
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};

@@ -155,10 +155,20 @@ static const uint32_t adc_ranks[16] =
 
 void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 {
+	// Max ADC clock: 80MHz
+	// Max sampling rate: 5.33MHz (fast channel), 4.21MHz (slow channel)
+	// 12bit approximation: 12.5 ticks
+	//
+	// Current setting:
+	//   SYS CLK:		80MHz
+	//   ADC DIV: 		1
+	//   ADC CLK: 		80MHz
+	//   ADC Sample:	640.5
+
 	/** Initializes the peripherals clocks */
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-	PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_SYSCLK;
+	PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_SYSCLK; // 80MHz
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
 	{
 		Error_Handler();

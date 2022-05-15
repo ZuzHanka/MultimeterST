@@ -170,6 +170,13 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 	// Max ADC clock: 72MHz
 	// Max sampling rate: 5.14MHz (fast channel), 4.8MHz (slow channel)
 	// 12bit approximation: 12.5 ticks
+	//
+	// Current setting:
+	//   PLL CLK:		72MHz
+	//   RCC DIV: 		1
+	//   ADC DIV: 		1
+	//   ADC CLK: 		72MHz
+	//   ADC Sample:	601.5
 
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 	if ((adc == ADC1) || (adc == ADC2))

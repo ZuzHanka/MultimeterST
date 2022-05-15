@@ -179,11 +179,17 @@ void adc_init(ADC_TypeDef * adc, const adc_conf_t adc_conf[], size_t chan_count)
 	// Max sampling rate: 1MHz
 	// 12bit approximation: 12.5 ticks
 	// Warning: ADC2 does not support DMA trigger (not suitable for Multimeter)
+	//
+	// Current setting:
+	//   APB2 CLK:		64MHz
+	//   RCC DIV: 		6
+	//   ADC CLK: 		10.66MHz
+	//   ADC Sample:	239.5
 
 	/* Peripheral clock enable */
 	RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6; // 72MHz / 6 = 12MHz
+	PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6; // 64MHz / 6 = 10.66MHz
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
 	{
 		Error_Handler();
