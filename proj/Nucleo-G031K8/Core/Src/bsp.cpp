@@ -34,24 +34,24 @@ const char * adc_ch_names[CHANNEL_COUNT] =
 const adc_conf_t adc_tester_channels[6] =
 {
 		{
-				ADC_CHANNEL_0,
-				ADC1_IN0_GPIO_Port,
-				ADC1_IN0_Pin
+				ADC_CHANNEL_6,
+				ADC1_IN6_GPIO_Port,
+				ADC1_IN6_Pin
 		},
 		{
-				ADC_CHANNEL_1,
-				ADC1_IN1_GPIO_Port,
-				ADC1_IN1_Pin
+				ADC_CHANNEL_8,
+				ADC1_IN8_GPIO_Port,
+				ADC1_IN8_Pin
 		},
 		{
-				ADC_CHANNEL_4,
-				ADC1_IN4_GPIO_Port,
-				ADC1_IN4_Pin
+				ADC_CHANNEL_9,
+				ADC1_IN9_GPIO_Port,
+				ADC1_IN9_Pin
 		},
 		{
-				ADC_CHANNEL_5,
-				ADC1_IN5_GPIO_Port,
-				ADC1_IN5_Pin
+				ADC_CHANNEL_10,
+				ADC1_IN10_GPIO_Port,
+				ADC1_IN10_Pin
 		},
 		{
 				ADC_CHANNEL_TEMPSENSOR,
@@ -68,19 +68,19 @@ const adc_conf_t adc_tester_channels[6] =
 const adc_conf_t adc_slave_channels[3] =
 {
 		{
-				ADC_CHANNEL_0,
-				ADC1_IN0_GPIO_Port,
-				ADC1_IN0_Pin
+				ADC_CHANNEL_9,
+				ADC1_IN9_GPIO_Port,
+				ADC1_IN9_Pin
 		},
 		{
-				ADC_CHANNEL_1,
-				ADC1_IN1_GPIO_Port,
-				ADC1_IN1_Pin
+				ADC_CHANNEL_8,
+				ADC1_IN8_GPIO_Port,
+				ADC1_IN8_Pin
 		},
 		{
-				ADC_CHANNEL_4,
-				ADC1_IN4_GPIO_Port,
-				ADC1_IN4_Pin
+				ADC_CHANNEL_10,
+				ADC1_IN10_GPIO_Port,
+				ADC1_IN10_Pin
 		}
 };
 

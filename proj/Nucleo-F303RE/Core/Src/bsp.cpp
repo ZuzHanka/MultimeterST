@@ -94,14 +94,14 @@ const adc_conf_t adc_slave_channels[3] =
 // printed PWM channel names
 const char * pwm_ch_names[CHANNEL_PWM_COUNT] =
 {
-		"D5", // PB4
-		"D10" // PB6
+		"PB4",  // D5
+		"PB6"  // D10
 };
 
 // printed DAC channel names
 const char * dac_ch_names[CHANNEL_DAC_COUNT] =
 {
-		"A2"
+		"PA4"  // A2
 };
 
 /* Variables ---------------------------------------------------------*/

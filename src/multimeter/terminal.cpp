@@ -1302,7 +1302,7 @@ bool Terminal::key_pressed()
 							const size_t TERMINAL_WIDTH = 80;
 							static char buffer[TERMINAL_WIDTH + 1];
 							buffer[TERMINAL_WIDTH] = '\0';
-							snprintf(buffer, TERMINAL_WIDTH, "%5ld", m_no_from_keybord);
+							snprintf(buffer, TERMINAL_WIDTH, "%8ld", m_no_from_keybord);
 							if (m_generator_duty_mode)
 							{
 								set_status("Set duty cycle for edited channel (0 .. 100):");

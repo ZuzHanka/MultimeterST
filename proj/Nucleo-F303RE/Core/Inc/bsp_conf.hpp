@@ -25,10 +25,10 @@ enum Channel {
 
 static constexpr uint8_t Channel_ordered[] =
 {
-		CHANNEL_2,
 		CHANNEL_1,
-		CHANNEL_4,
-		CHANNEL_3
+		CHANNEL_2,
+		CHANNEL_3,
+		CHANNEL_4
 };
 
 extern const char * adc_ch_names[CHANNEL_COUNT];

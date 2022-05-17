@@ -16,7 +16,7 @@ const uint16_t DAC_VOLTAGE_MAX_mV = 3200;  // maximum value set to DAC [mV]
 const uint16_t DAC_VOLTAGE_STEP_mV = 100;  // step rising value set to DAC [mV]
 
 // voltage close to 0V - reverted current
-const uint16_t DAC_VOLTAGE_REVERT_mV = 400;  // max voltage [mV]
+const uint16_t DAC_VOLTAGE_REVERT_mV = 200;  // max voltage [mV]
 const uint16_t DAC_VOLTAGE_PRECHARGE_mV = 3000;  // precharge value set to DAC [mV]
 const uint16_t DAC_RECHARGE_LOOPS = 10;  // recharge loops after voltage reset just before measuring
 
@@ -34,7 +34,7 @@ extern "C" void multimeter_main()
 	adc_init(ADC1, adc_tester_channels, ADC_CONF_LENGTH(adc_tester_channels));
 	dac_init();
 
-	(void) adc_run(100);
+	(void) adc_run(10000);
 	(void) dac_run();
 
 	// init
@@ -53,7 +53,7 @@ extern "C" void multimeter_main()
 		{
 			// reset capacitor
 			terminal.set_dac_mV(DAC_VOLTAGE_PRECHARGE_mV);
-			delay(1000);
+			delay(100);
 			// prepare charge
 			terminal.m_process = PRESTART;
 
@@ -72,7 +72,7 @@ extern "C" void multimeter_main()
 		{
 			// reset capacitor
 			terminal.set_dac_mV(dac_voltage_mV);
-			delay(1000);
+			delay(100);
 			// prepare measuring
 			terminal.m_process = START;
 		}
